@@ -2,18 +2,27 @@ using UnityEngine;
 
 public class Skill
 {
+    public enum elementalType
+    {
+        Fire,
+        Water,
+        Plant,
+        Normal
+    }
+
     public string name;
-    public string elementalType;
+    public elementalType type;
     public float damage;
     public int manaCost;
 
     //Constructor
-    public Skill(string name, string elementalType, float damage, int manaCost)
+    public Skill(string name, elementalType type, float damage, int manaCost)
     {
         this.name = name;
-        this.elementalType = elementalType;
+        this.type = type;
         this.damage = damage;
         this.manaCost = manaCost;
-
     }
 }
+
+
