@@ -1,7 +1,10 @@
 using UnityEngine;
+using Elementals; //for elemental types
+
 
 public class CombatHandler
 {
+
     public CombatHandler()
     {
         // Constructor logic if needed
@@ -30,8 +33,17 @@ public class CombatHandler
                     case 1: // Attack
                         //default basic attack for now
                         //int attackOption = GameManager.Instance.playerController.PollForAttackInput();
-                        int attackOption = 1;
-                        ExecuteAttack(ours, enemy, ours.skillset[attackOption - 1]);
+                        int attackOption = 2;
+                        if (TryDodge(enemy))
+                        {
+                            Debug.Log(enemy.moncargName + " dodged the attack!");
+                        }
+                        else
+                        {
+
+                            ExecuteAttack(ours, enemy, ours.skillset[attackOption - 1]);
+                        }
+                        
                         break;
 
                     case 2: // Switch
@@ -88,8 +100,10 @@ public class CombatHandler
         // Deduct mana cost
         attacker.mana -= attackChoice.manaCost;
 
-        // Calculate damage
+        // Calculate base damage
         float damage = attackChoice.damage + attacker.attack - defender.defense;
+
+        damage = checkElemental(attacker, defender, attackChoice, damage);
 
         // Ensure damage is not negative
         if (damage < 0)
@@ -109,6 +123,49 @@ public class CombatHandler
             defender.active = false;
             Debug.Log(defender.moncargName + " has been defeated!");
         }
+    }
+
+    public bool TryDodge(Moncarg defender)
+    {
+        float roll = Random.value; // random number between 0.0 and 1.0
+        return roll < defender.dodgeChance;
+    }
+
+    public float checkElemental(Moncarg attacker, Moncarg defender, Skill attackChoice, float damage)
+    {
+        //Check for elemental effectiveness | REFACTOR THIS INTO ANOTHER METHOD LATER
+        if (attackChoice.type == ElementalType.Fire && defender.type == ElementalType.Plant)
+        {
+            damage *= 1.2f; // Fire is strong against Plant
+            Debug.Log("Fire vs Plant, " + attacker.moncargName + " deals +20% damage!");
+        }
+        else if (attackChoice.type == ElementalType.Water && defender.type == ElementalType.Fire)
+        {
+            damage *= 1.2f; // Water is strong against Fire
+            Debug.Log("Water vs Fire, " + attacker.moncargName + " deals +20% damage!");
+        }
+        else if (attackChoice.type == ElementalType.Plant && defender.type == ElementalType.Water)
+        {
+            damage *= 1.2f; // Plant is strong against Water
+            Debug.Log("Plant vs Water, " + attacker.moncargName + " deals +20% damage!");
+        }
+        else if (attackChoice.type == ElementalType.Fire && defender.type == ElementalType.Water)
+        {
+            damage *= 0.8f; // Fire is weak against Water
+            Debug.Log("Fire vs Water, " + attacker.moncargName + " damage is decreased by 20%!");
+        }
+        else if (attackChoice.type == ElementalType.Water && defender.type == ElementalType.Plant)
+        {
+            damage *= 0.8f; // Water is weak against Plant
+            Debug.Log("Water vs Plant, " + attacker.moncargName + " damage is decreased by 20%!");
+        }
+        else if (attackChoice.type == ElementalType.Plant && defender.type == ElementalType.Fire)
+        {
+            damage *= 0.8f; // Plant is weak against Fire
+            Debug.Log("Plant vs Fire, " + attacker.moncargName + " damage is decreased by 20%!");
+        }
+
+        return damage;
     }
 }
 

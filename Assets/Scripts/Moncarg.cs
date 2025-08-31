@@ -1,4 +1,5 @@
 using UnityEngine;
+using Elementals;
 
 public class Moncarg : MonoBehaviour
 {
@@ -21,15 +22,7 @@ public class Moncarg : MonoBehaviour
     public Skill[] skillset;
     private SkillList skillList;
 
-    public enum elementalType
-    {
-        Fire,
-        Water,
-        Plant,
-        Normal
-    }
-
-    public elementalType type;
+    public ElementalType type;
 
     public enum moncargRole
     {
@@ -58,9 +51,11 @@ public class Moncarg : MonoBehaviour
         active = true;
         health = maxHealth;
 
-        basicAttack = new Skill("Tackle", "Basic", 30.0f, 20);
-        skill = new Skill("Ignite", "Fire", 20.0f, 20);
-        ultimate = new Skill("Incinerate", "Fire", 80.0f, 70);
+        skillList = new SkillList();
+
+        basicAttack = skillList.skills[1];
+        skill = skillList.skills[3];
+        ultimate = skillList.skills[7];
 
         skillset = new Skill[3];
         skillset[0] = basicAttack;
@@ -81,7 +76,7 @@ public class Moncarg : MonoBehaviour
         Moncarg enemy = enemyObj.GetComponent<Moncarg>();
         
         enemy.moncargName = "Wild Moncarg";
-        enemy.health = 50;
+        enemy.health = 500;
         enemy.maxHealth = 50;
         enemy.attack = 15;
         enemy.defense = 5;
@@ -89,11 +84,12 @@ public class Moncarg : MonoBehaviour
         enemy.exp = 20;
         enemy.level = 1;
         enemy.mana = 30;
+        enemy.type = ElementalType.Plant;
         enemy.catchChance = 0.2f;
         enemy.dodgeChance = 0.1f;
         enemy.active = true;
         enemy.skillset = new Skill[1];
-        enemy.skillset[0] = new Skill("Scratch", "Normal", 10.0f, 5);
+        enemy.skillset[0] = new Skill("Scratch", ElementalType.Normal, 10.0f, 5);
         enemy.mockEnemyMoncargPrefab = null; // Prevent infinite spawning
 
         // Run combat handler
