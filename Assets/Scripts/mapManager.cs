@@ -1,0 +1,147 @@
+using UnityEngine;
+using System.Collections.Generic;
+
+public class MapManager : MonoBehaviour
+{
+    // Prefabs for different room types. Assign these in the Unity Inspector.
+    public GameObject normalPrefab;
+    public GameObject grassPrefab;
+    public GameObject waterPrefab;
+    public GameObject firePrefab;
+    public GameObject miniBossPrefab;
+    public GameObject finalBossPrefab;
+
+    // The prefab to use for the lines connecting rooms.
+    public GameObject linePrefab;
+
+    // The generated map's starting node.
+    private MapGenerator.MapNode startNode;
+
+    // The MapGenerator instance.
+    private MapGenerator mapGenerator;
+
+    // Spacing between rooms for visual layout.
+    private const float xSpacing = 4f;
+    private const float ySpacing = 2f;
+
+    // Tracks visited nodes to prevent infinite loops on a non-tree graph.
+    private HashSet<MapGenerator.MapNode> visitedNodes = new HashSet<MapGenerator.MapNode>();
+    private Dictionary<MapGenerator.MapNode, Vector3> nodePositions = new Dictionary<MapGenerator.MapNode, Vector3>();
+
+    void Start()
+    {
+        // Check if all required prefabs have been assigned in the inspector.
+        if (normalPrefab == null || grassPrefab == null || waterPrefab == null || firePrefab == null || miniBossPrefab == null || finalBossPrefab == null || linePrefab == null)
+        {
+            Debug.LogError("One or more prefabs are not assigned! Please assign them in the Unity Inspector.");
+            return;
+        }
+
+        // Create an instance of the MapGenerator.
+        mapGenerator = new MapGenerator();
+
+        // Generate the map and store the starting node.
+        startNode = mapGenerator.GenerateMap();
+
+        Debug.Log("Map generation complete! Now displaying the map in the scene.");
+
+        // Start the recursive process of displaying the map.
+        // The map starts at the specified origin point.
+        DisplayMap(startNode, new Vector3(0, -13, 0));
+    }
+
+    /// <summary>
+    /// Recursively displays the map by instantiating GameObjects for each room.
+    /// </summary>
+    /// <param name="node">The current map node to display.</param>
+    /// <param name="position">The position to place the current room.</param>
+    private void DisplayMap(MapGenerator.MapNode node, Vector3 position)
+    {
+        // If we've already displayed this node, stop.
+        if (visitedNodes.Contains(node))
+        {
+            return;
+        }
+
+        // Add the current node to the set of visited nodes.
+        visitedNodes.Add(node);
+        nodePositions[node] = position;
+
+        // Get the correct prefab based on the room's type.
+        GameObject selectedPrefab = GetPrefabForRoomType(node.Room.Type);
+        GameObject roomObj = Instantiate(selectedPrefab, position, Quaternion.identity);
+        roomObj.name = $"Room {node.Room.Name} ({node.Room.Type})";
+
+        // Calculate the next level's position.
+        float nextLevelY = position.y + ySpacing;
+
+        // Iterate through all the exits from the current room.
+        int exitCount = node.Exits.Count;
+        for (int i = 0; i < exitCount; i++)
+        {
+            // Calculate the horizontal position for each exit.
+            float horizontalOffset = 0;
+            if (exitCount > 1)
+            {
+                horizontalOffset = (i - (exitCount - 1) / 2f) * xSpacing;
+            }
+
+            // Calculate the position of the next room.
+            Vector3 nextPosition = new Vector3(position.x + horizontalOffset, nextLevelY, position.z);
+            
+            // Check if the next node has been visited. If so, draw a line to its existing position.
+            if (nodePositions.ContainsKey(node.Exits[i]))
+            {
+                DrawLine(position, nodePositions[node.Exits[i]]);
+            } else {
+                DrawLine(position, nextPosition);
+            }
+            
+            // Recursively call this method for the next room.
+            DisplayMap(node.Exits[i], nextPosition);
+        }
+    }
+    
+    private void DrawLine(Vector3 start, Vector3 end)
+    {
+        GameObject lineObj = Instantiate(linePrefab, transform);
+        LineRenderer lineRenderer = lineObj.GetComponent<LineRenderer>();
+        if (lineRenderer != null)
+        {
+            lineRenderer.positionCount = 2;
+            lineRenderer.SetPosition(0, start);
+            lineRenderer.SetPosition(1, end);
+        }
+        else
+        {
+            Vector3 midpoint = (start + end) / 2;
+            lineObj.transform.position = midpoint;
+            lineObj.transform.LookAt(end);
+            lineObj.transform.localScale = new Vector3(lineObj.transform.localScale.x, lineObj.transform.localScale.y, Vector3.Distance(start, end));
+        }
+    }
+
+    /// <summary>
+    /// Returns the appropriate prefab based on the room's type.
+    /// </summary>
+    private GameObject GetPrefabForRoomType(MapGenerator.RoomType type)
+    {
+        switch (type)
+        {
+            case MapGenerator.RoomType.Normal:
+                return normalPrefab;
+            case MapGenerator.RoomType.Grass:
+                return grassPrefab;
+            case MapGenerator.RoomType.Water:
+                return waterPrefab;
+            case MapGenerator.RoomType.Fire:
+                return firePrefab;
+            case MapGenerator.RoomType.MiniBoss:
+                return miniBossPrefab;
+            case MapGenerator.RoomType.FinalBoss:
+                return finalBossPrefab;
+            default:
+                return normalPrefab;
+        }
+    }
+}
