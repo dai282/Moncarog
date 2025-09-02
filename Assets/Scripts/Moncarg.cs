@@ -54,7 +54,7 @@ public class Moncarg : MonoBehaviour
         skillList = new SkillList();
 
         basicAttack = skillList.skills[1];
-        skill = skillList.skills[3];
+        skill = skillList.skills[4];
         ultimate = skillList.skills[7];
 
         skillset = new Skill[3];
@@ -80,7 +80,7 @@ public class Moncarg : MonoBehaviour
         enemy.maxHealth = 50;
         enemy.attack = 15;
         enemy.defense = 5;
-        enemy.speed = 10;
+        enemy.speed = 5;
         enemy.exp = 20;
         enemy.level = 1;
         enemy.mana = 30;
