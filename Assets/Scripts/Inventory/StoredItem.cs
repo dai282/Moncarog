@@ -1,6 +1,4 @@
 using System;
-using UnityEngine;
-using Assets.Scripts.Inventory; // <-- Add this at the top
 
 [Serializable]
 public class StoredItem

@@ -129,6 +129,7 @@ GameObject:
   m_Component:
   - component: {fileID: 542693147}
   - component: {fileID: 542693146}
+  - component: {fileID: 542693148}
   m_Layer: 5
   m_Name: InventoryUI
   m_TagString: Untagged
@@ -174,6 +175,23 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &542693148
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 542693145}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8dffb6c875b628340a380781ab0e05be, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Assets.Scripts.PlayerInventory
+  StoredItems:
+  - Details: {fileID: 11400000, guid: 1d94ae96f3bf1c54e92b4996a1332437, type: 2}
+  InventoryDimensions:
+    Height: 9
+    Width: 6
 --- !u!1 &2062626330
 GameObject:
   m_ObjectHideFlags: 0
