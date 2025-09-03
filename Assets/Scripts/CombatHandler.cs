@@ -1,18 +1,85 @@
 using UnityEngine;
 using Elementals; //for elemental types
+using UnityEngine.UIElements;
 
 
 public class CombatHandler
 {
+    private UIDocument combatUI;
+
+    private bool callbacksRegistered = false;
+
+    private VisualElement optionsContainer;
+    private VisualElement fightContainer;
+
+    private Button fightButton;
+    private Button fleeButton;
+    private Button inventoryButton;
+    private Button switchButton;
+    private Button skill1Button;
+    private Button skill2Button;
+    private Button skill3Button;
+    private Button backButton;
+
+
+    private Moncarg player;
+    private Moncarg enemy;
+    private Moncarg currentTurn;
+    private Moncarg other;
 
     public CombatHandler()
     {
         // Constructor logic if needed
     }
 
+    //setter for UI
+    public void SetUI(UIDocument uiDoc)
+    {
+        combatUI = uiDoc;
+        var root = combatUI.rootVisualElement;
+
+        optionsContainer = root.Q<VisualElement>("OptionsContainer");
+        fightContainer = root.Q<VisualElement>("FightContainer");
+
+        
+
+        fightButton = root.Q<Button>("FightButton");
+        fleeButton = root.Q<Button>("FleeButton");
+        inventoryButton = root.Q<Button>("InventoryButton");
+        switchButton = root.Q<Button>("SwitchButton");
+        skill1Button = root.Q<Button>("Move0");
+        skill2Button = root.Q<Button>("Move1");
+        skill3Button = root.Q<Button>("Move2");
+        backButton = root.Q<Button>("BackButton");
+
+        // Register UI callbacks
+        if (!callbacksRegistered)
+        {
+            //fightButton.clicked += OnAttackClicked;
+            fightButton.clicked += ShowFightPanel;
+            backButton.clicked += ShowOptionsPanel;
+
+            fleeButton.clicked += OnFleeClicked;
+
+            //wrapping the call in a lambda to pass the attack option
+            skill1Button.clicked += () => OnAttackClicked(1);
+            skill2Button.clicked += () => OnAttackClicked(2);
+            skill3Button.clicked += () => OnAttackClicked(3);
+
+            callbacksRegistered = true;
+
+        }
+
+    }
+
+    /*
     public void BeginEncounter(Moncarg ours, Moncarg enemy)
     {
         int option = 0;
+        m_OurMoncargLabel = root.Q<Label>("HealthLabel");
+        m_OurMoncargLabel.text = "" + ours.moncargName + " HP: " + ours.health + "";
+
+
 
         // Decide who goes first
         Moncarg currentTurn = (ours.speed >= enemy.speed) ? ours : enemy;
@@ -26,6 +93,7 @@ public class CombatHandler
 
                 //poll for option, default attack for now
                 //option = GameManager.Instance.playerController.PollForEncounterInput();
+
                 option = 1;
 
                 switch (option)
@@ -88,6 +156,141 @@ public class CombatHandler
 
 
     }
+    */
+
+
+    //START EVENT DRIVEN BEGIN ENCOUNTER
+    public void BeginEncounter(Moncarg ours, Moncarg enemyMoncarg)
+    {
+        player = ours;
+        enemy = enemyMoncarg;
+
+        //setup health display
+        player.SetHealthLabel(combatUI.rootVisualElement.Q<Label>("OurHealthLabel"));
+        player.UpdateHealthLabel();
+        enemy.SetHealthLabel(combatUI.rootVisualElement.Q<Label>("EnemyHealthLabel"));
+        enemy.UpdateHealthLabel();
+
+        //setup mana display
+        player.SetManaLabel(combatUI.rootVisualElement.Q<Label>("OurManaLabel"));
+        player.UpdateManaLabel();
+        enemy.SetManaLabel(combatUI.rootVisualElement.Q<Label>("EnemyManaLabel"));
+        enemy.UpdateManaLabel();
+
+        // Decide who goes first
+        currentTurn = (player.speed >= enemy.speed) ? player : enemy;
+        other = (currentTurn == player) ? enemy : player;
+
+        // Start first turn
+        NextTurn();
+    }
+
+    private void NextTurn()
+    {
+        if (!player.active)
+        {
+            Debug.Log("You need to switch Moncargs!");
+            return;
+        }
+        if (!enemy.active)
+        {
+            Debug.Log("You won the battle!");
+            return;
+        }
+
+        if (currentTurn == player)
+        {
+            Debug.Log("Your turn! Choose an action.");
+            // UI buttons are active, waiting for player click
+        }
+        else
+        {
+            Debug.Log("Enemy's turn!");
+            EnemyTurn();
+        }
+    }
+
+    //Hides options display and just shows fight moves
+    private void ShowFightPanel()
+    {
+        optionsContainer.style.display = DisplayStyle.None;
+        fightContainer.style.display = DisplayStyle.Flex;
+
+    }
+
+    //Hides fight moves and just shows combat encounter options
+    private void ShowOptionsPanel()
+    {
+        fightContainer.style.display = DisplayStyle.None;
+        optionsContainer.style.display = DisplayStyle.Flex;
+    }
+
+    private void OnAttackClicked(int attackOption)
+    {
+        if (currentTurn != player) return;
+
+        Debug.Log("Player chose Attack!");
+
+        Skill attackChoice = player.skillset[attackOption - 1];
+
+        if (TryDodge(enemy))
+        {
+            Debug.Log($"{enemy.moncargName} dodged the attack!");
+        }
+        else
+        {
+            ExecuteAttack(player, enemy, attackChoice);
+        }
+
+        EndTurn();
+    }
+
+    private void OnFleeClicked()
+    {
+        if (currentTurn != player) return;
+
+        Debug.Log("You fled the battle!");
+        // Cleanup if needed
+        Cleanup();
+
+        //go back to the map
+    }
+
+    private void EnemyTurn()
+    {
+        ExecuteAttack(enemy, player, enemy.skillset[0]);
+        EndTurn();
+    }
+
+    private void EndTurn()
+    {
+        // Swap turn
+        Moncarg temp = currentTurn;
+        currentTurn = other;
+        other = temp;
+
+        NextTurn();
+    }
+
+    private void Cleanup()
+    {
+        if (callbacksRegistered)
+        {
+            // Unregister callbacks so buttons don’t stack
+            skill1Button.clicked -= () => OnAttackClicked(1);
+            skill2Button.clicked -= () => OnAttackClicked(2);
+            skill3Button.clicked -= () => OnAttackClicked(3);
+            fleeButton.clicked -= OnFleeClicked;
+            fightButton.clicked += ShowFightPanel;
+            backButton.clicked += ShowOptionsPanel;
+
+            callbacksRegistered = false;
+        }
+        
+    }
+
+
+    //END EVENT DRIVEN BEGIN ENCOUNTER
 
     public void ExecuteAttack(Moncarg attacker, Moncarg defender, Skill attackChoice)
     {
@@ -99,6 +302,8 @@ public class CombatHandler
 
         // Deduct mana cost
         attacker.mana -= attackChoice.manaCost;
+        //update mana display
+        attacker.UpdateManaLabel();
 
         // Calculate base damage
         float damage = attackChoice.damage + attacker.attack - defender.defense;
@@ -115,6 +320,9 @@ public class CombatHandler
         defender.health -= damage;
 
         Debug.Log(attacker.moncargName + " used " + attackChoice.name + " on " + defender.moncargName + " for " + damage + " damage!");
+
+        //update health display
+        defender.UpdateHealthLabel();
 
         // Check if defender is defeated
         if (defender.health <= 0)
@@ -168,26 +376,3 @@ public class CombatHandler
         return damage;
     }
 }
-
-// Experience and Leveling System (draft)
-/*
-if (defender.role == Moncarg.moncargRole.Wild && attacker.role == Moncarg.moncargRole.PlayerOwned)
-{
-    // Award experience points
-    attacker.exp += defender.exp;
-    Debug.Log(attacker.moncargName + " gained " + defender.exp + " EXP!");
-
-    // Check for level up
-    if (attacker.exp >= attacker.level * 100) // Example leveling formula
-    {
-        attacker.level++;
-        attacker.exp = 0; // Reset EXP after leveling up
-        attacker.maxHealth += 10; // Example stat increase
-        attacker.attack += 5;
-        attacker.defense += 5;
-        attacker.mana += 5;
-        attacker.health = attacker.maxHealth; // Heal to full on level up
-        Debug.Log(attacker.moncargName + " leveled up to level " + attacker.level + "!");
-    }
-}
-*/

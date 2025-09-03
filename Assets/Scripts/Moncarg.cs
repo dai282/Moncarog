@@ -1,5 +1,6 @@
 using UnityEngine;
 using Elementals;
+using UnityEngine.UIElements;
 
 public class Moncarg : MonoBehaviour
 {
@@ -30,15 +31,24 @@ public class Moncarg : MonoBehaviour
         Wild
     }
 
+    private Label m_MoncargHealthLabel;
+    private Label m_MoncargManaLabel;
+
     public moncargRole role;
 
     //DELETE LATER, ONLY FOR TESTING COMBAT
-    public CombatHandler combatHandler;
     public GameObject mockEnemyMoncargPrefab;
+        // these 2 need to be moved to Game Manager, after we merge Moncarg with Main, now here for testing health display in combat
+    [SerializeField] private UIDocument moncargHealthUI;
+    private CombatHandler combatHandler = new CombatHandler();
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        //this goes to Start in GameManager after we merge Moncarg with Main
+        combatHandler.SetUI(moncargHealthUI);
+
+
         InitStats();
     }
 
@@ -63,9 +73,37 @@ public class Moncarg : MonoBehaviour
         skillset[2] = ultimate;
 
         //mock enemy for testing combat system
-        combatHandler = new CombatHandler();
         TestMockEncounter();
 
+    }
+
+    public void SetHealthLabel(Label label)
+    {
+        m_MoncargHealthLabel = label;
+        UpdateHealthLabel(); // Initialize
+    }
+
+    public void UpdateHealthLabel()
+    {
+        if (m_MoncargHealthLabel != null)
+        {
+            m_MoncargHealthLabel.text = $"{moncargName} HP: {health}";
+        }
+            
+    }
+
+    public void SetManaLabel(Label label)
+    {
+        m_MoncargManaLabel = label;
+        UpdateManaLabel(); // Initialize
+    }
+
+    public void UpdateManaLabel()
+    {
+        if (m_MoncargManaLabel != null)
+        {
+            m_MoncargManaLabel.text = $"{moncargName} MP: {mana}";
+        }
     }
 
     // TESTING ONLY - remove once encounter system is ready

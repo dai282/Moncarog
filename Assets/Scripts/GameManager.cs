@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class GameManager : MonoBehaviour
 {
@@ -11,6 +12,10 @@ public class GameManager : MonoBehaviour
 
     //static instance that stores reference to the GameManager. public get and private set
     public static GameManager Instance { get; private set; }
+
+    /* create UI document and combat handler variables  here
+    [SerializeField] private UIDocument moncargHealthUI;
+    private CombatHandler combatHandler = new CombatHandler(); */
 
 
     //Awakeis called before Start when the GameObject is created
@@ -32,6 +37,8 @@ public class GameManager : MonoBehaviour
 
         //initialize the game components here
         //initialize UI elements
+
+        //combatHandler.SetUI(moncargHealthUI);
         //initialize the board (BoardManager.Init())
         //spawn the player (does he already have a moncarg with him?)
         //the moncarog encounter trigger code should be within the board manager script, not here?

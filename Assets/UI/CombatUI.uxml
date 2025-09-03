@@ -1,4 +1,8 @@
 <ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <ui:Label text="Pikachu Health Here" name="OurHealthLabel" selectable="false" focusable="false" style="font-size: 36px; color: rgb(255, 255, 255);" />
+    <ui:Label text="Enemy Health Here" name="EnemyHealthLabel" selectable="false" focusable="false" style="font-size: 36px; color: rgb(255, 255, 255);" />
+    <ui:Label text="Our Mana Here" name="OurManaLabel" selectable="false" focusable="false" style="font-size: 36px; color: rgb(255, 255, 255);" />
+    <ui:Label text="Enemy Mana Here" name="EnemyManaLabel" selectable="false" focusable="false" style="font-size: 36px; color: rgb(255, 255, 255);" />
     <ui:VisualElement name="OptionsContainer" style="flex-grow: 1; flex-direction: row; display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: flex-end; align-self: flex-end; align-content: flex-end; width: 45%; height: 40%;">
         <ui:Button text="Fight" name="FightButton" style="height: 17%; width: 45%; top: auto; left: auto; right: auto; bottom: auto; min-width: auto; font-size: 30%; position: relative;" />
         <ui:Button text="Inventory" name="InventoryButton" parse-escape-sequences="false" style="height: 17%; width: 45%; top: auto; left: auto; right: auto; bottom: auto; min-width: auto; font-size: 20%; position: relative;" />
