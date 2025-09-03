@@ -189,6 +189,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Assets.Scripts.PlayerInventory
   StoredItems:
   - Details: {fileID: 11400000, guid: 1d94ae96f3bf1c54e92b4996a1332437, type: 2}
+  - Details: {fileID: 11400000, guid: 1d94ae96f3bf1c54e92b4996a1332437, type: 2}
+  - Details: {fileID: 11400000, guid: 1d94ae96f3bf1c54e92b4996a1332437, type: 2}
+  - Details: {fileID: 11400000, guid: 1d94ae96f3bf1c54e92b4996a1332437, type: 2}
   InventoryDimensions:
     Height: 9
     Width: 6
