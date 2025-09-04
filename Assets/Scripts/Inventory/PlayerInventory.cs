@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.UIElements;
+using UnityEngine.InputSystem;
 
 public sealed class PlayerInventory : MonoBehaviour
 {
@@ -10,12 +11,16 @@ public sealed class PlayerInventory : MonoBehaviour
 
     private VisualElement m_Root;
     private VisualElement m_InventoryGrid;
+    private UIDocument m_UIDocument;
 
     private static Label m_ItemDetailHeader;
     private static Label m_ItemDetailBody;
     private static Label m_ItemDetailPrice;
     private bool m_IsInventoryReady;
     private VisualElement m_Telegraph;
+    
+    // Toggle state
+    private bool m_IsInventoryOpen = true;
 
     public List<StoredItem> StoredItems = new List<StoredItem>();
     public Dimensions InventoryDimensions;
@@ -35,6 +40,47 @@ public sealed class PlayerInventory : MonoBehaviour
         }
     }
 
+    private void Update()
+    {
+        // Check for 'I' key press to toggle inventory using new Input System
+        if (Keyboard.current.iKey.wasPressedThisFrame)
+        {
+            ToggleInventory();
+        }
+    }
+
+    private void ToggleInventory()
+    {
+        m_IsInventoryOpen = !m_IsInventoryOpen;
+        
+        if (m_UIDocument != null)
+        {
+            m_UIDocument.rootVisualElement.style.display = m_IsInventoryOpen ? DisplayStyle.Flex : DisplayStyle.None;
+        }
+        
+        Debug.Log($"Inventory {(m_IsInventoryOpen ? "opened" : "closed")}");
+    }
+
+    // Public method to check if inventory is open (useful for other scripts)
+    public bool IsInventoryOpen => m_IsInventoryOpen;
+
+    // Public methods to explicitly open/close inventory
+    public void OpenInventory()
+    {
+        if (!m_IsInventoryOpen)
+        {
+            ToggleInventory();
+        }
+    }
+
+    public void CloseInventory()
+    {
+        if (m_IsInventoryOpen)
+        {
+            ToggleInventory();
+        }
+    }
+
     private void Configure()
     {
         StartCoroutine(ConfigureCoroutine());
@@ -42,7 +88,8 @@ public sealed class PlayerInventory : MonoBehaviour
 
     private IEnumerator ConfigureCoroutine()
     {
-        m_Root = GetComponentInChildren<UIDocument>().rootVisualElement;
+        m_UIDocument = GetComponentInChildren<UIDocument>();
+        m_Root = m_UIDocument?.rootVisualElement;
         
         if (m_Root == null)
         {
@@ -75,6 +122,7 @@ public sealed class PlayerInventory : MonoBehaviour
         yield return null; // Wait one frame
 
         ConfigureSlotDimensions();
+        ConfigureInventoryTelegraph();
 
         m_IsInventoryReady = true;
         Debug.Log("Inventory configuration complete");
