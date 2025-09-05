@@ -200,8 +200,17 @@ public class CombatHandler
 
         if (currentTurn == player)
         {
-            Debug.Log("Your turn! Choose an action.");
-            // UI buttons are active, waiting for player click
+            //automatic resting
+            if (player.mana <=0 )
+            {
+                Debug.Log(player.moncargName + " ran out of mana! Automatic resting...");
+                Rest(player);
+            }
+            else
+            {
+                Debug.Log("Your turn! Choose an action.");
+                // UI buttons are active, waiting for player click
+            }
         }
         else
         {
@@ -233,15 +242,22 @@ public class CombatHandler
 
         Skill attackChoice = player.skillset[attackOption - 1];
 
-        if (TryDodge(enemy))
+        if (attackChoice.name == "Rest")
         {
-            Debug.Log($"{enemy.moncargName} dodged the attack!");
+            Rest(player);
+            return;
         }
         else
         {
-            ExecuteAttack(player, enemy, attackChoice);
+            if (TryDodge(enemy))
+            {
+                Debug.Log($"{enemy.moncargName} dodged the attack!");
+            }
+            else
+            {
+                ExecuteAttack(player, enemy, attackChoice);
+            }
         }
-
         EndTurn();
     }
 
@@ -258,6 +274,14 @@ public class CombatHandler
 
     private void EnemyTurn()
     {
+        if (enemy.mana <= 0)
+        {
+            Debug.Log(enemy.moncargName + " ran out of mana! Automatic resting...");
+            Rest(enemy);
+            return;
+        }
+
+        // For now, enemy always uses basic attack
         ExecuteAttack(enemy, player, enemy.skillset[0]);
         EndTurn();
     }
@@ -374,5 +398,19 @@ public class CombatHandler
         }
 
         return damage;
+    }
+
+    private void Rest(Moncarg moncarg)
+    {
+        int manaRecovered = moncarg.maxMana / 4; // Recover 25% of max mana
+        moncarg.mana += manaRecovered;
+        //in case of overheal
+        if (moncarg.mana > moncarg.maxMana)
+        {
+            moncarg.mana = moncarg.maxMana;
+        }
+        moncarg.UpdateManaLabel();
+        Debug.Log(moncarg.moncargName + " rested and recovered " + manaRecovered + " mana.");
+        EndTurn();
     }
 }
