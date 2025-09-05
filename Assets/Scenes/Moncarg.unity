@@ -208,8 +208,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Moncarg
   moncargName: Pikachu
-  maxHealth: 100
-  health: 100
+  maxHealth: 500
+  health: 500
   attack: 5
   defense: 5
   speed: 5

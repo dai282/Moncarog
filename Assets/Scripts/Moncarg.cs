@@ -17,9 +17,7 @@ public class Moncarg : MonoBehaviour
     public float dodgeChance;
     public bool active;
 
-    public Skill basicAttack;
-    public Skill skill;
-    public Skill ultimate;
+    
     public Skill[] skillset;
     private SkillList skillList;
 
@@ -63,14 +61,13 @@ public class Moncarg : MonoBehaviour
 
         skillList = new SkillList();
 
-        basicAttack = skillList.skills[1];
-        skill = skillList.skills[4];
-        ultimate = skillList.skills[7];
+      
 
-        skillset = new Skill[3];
-        skillset[0] = basicAttack;
-        skillset[1] = skill;
-        skillset[2] = ultimate;
+        skillset = new Skill[4];
+        skillset[0] = skillList.skills[0];
+        skillset[1] = skillList.skills[1];
+        skillset[2] = skillList.skills[4];
+        skillset[3] = skillList.skills[7];
 
         //mock enemy for testing combat system
         TestMockEncounter();

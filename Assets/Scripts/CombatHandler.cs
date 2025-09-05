@@ -2,7 +2,6 @@ using UnityEngine;
 using Elementals; //for elemental types
 using UnityEngine.UIElements;
 
-
 public class CombatHandler
 {
     private UIDocument combatUI;
@@ -19,6 +18,8 @@ public class CombatHandler
     private Button skill1Button;
     private Button skill2Button;
     private Button skill3Button;
+    private Button skill4Button;
+    private Button[] skillButtons = new Button[4];
     private Button backButton;
 
 
@@ -50,7 +51,14 @@ public class CombatHandler
         skill1Button = root.Q<Button>("Move0");
         skill2Button = root.Q<Button>("Move1");
         skill3Button = root.Q<Button>("Move2");
+        skill4Button = root.Q<Button>("Move3");
         backButton = root.Q<Button>("BackButton");
+
+        skillButtons[0] = skill1Button;
+        skillButtons[1] = skill2Button;
+        skillButtons[2] = skill3Button;
+        skillButtons[3] = skill4Button;
+
 
         // Register UI callbacks
         if (!callbacksRegistered)
@@ -65,10 +73,12 @@ public class CombatHandler
             skill1Button.clicked += () => OnAttackClicked(1);
             skill2Button.clicked += () => OnAttackClicked(2);
             skill3Button.clicked += () => OnAttackClicked(3);
+            skill4Button.clicked += () => OnAttackClicked(4);
 
             callbacksRegistered = true;
 
         }
+
 
     }
 
@@ -177,6 +187,13 @@ public class CombatHandler
         enemy.SetManaLabel(combatUI.rootVisualElement.Q<Label>("EnemyManaLabel"));
         enemy.UpdateManaLabel();
 
+        //Set skill button labels
+        skill1Button.text = player.skillset[0].name;
+        skill2Button.text = player.skillset[1].name;
+        skill3Button.text = player.skillset[2].name;
+        skill4Button.text = player.skillset[3].name;
+
+
         // Decide who goes first
         currentTurn = (player.speed >= enemy.speed) ? player : enemy;
         other = (currentTurn == player) ? enemy : player;
@@ -201,6 +218,17 @@ public class CombatHandler
         if (currentTurn == player)
         {
             Debug.Log("Your turn! Choose an action.");
+            for (int i = 0; i < 4; i++ )
+            {
+                if(player.mana < player.skillset[i].manaCost)
+                {
+                    skillButtons[i].SetEnabled(false);
+                }
+                else
+                {
+                    skillButtons[i].SetEnabled(true);
+                }
+            }
             // UI buttons are active, waiting for player click
         }
         else
