@@ -13,6 +13,7 @@ public class Moncarg : MonoBehaviour
     public int exp;
     public int level;
     public int mana;
+    public int maxMana;
     public float catchChance;
     public float dodgeChance;
     public bool active;
@@ -56,8 +57,13 @@ public class Moncarg : MonoBehaviour
         {
             maxHealth = health;
         }
+        if (maxMana <= 0)
+        {
+            maxMana = mana;
+        }
         active = true;
         health = maxHealth;
+        mana = maxMana;
 
         skillList = new SkillList();
 
@@ -118,6 +124,7 @@ public class Moncarg : MonoBehaviour
         enemy.speed = 5;
         enemy.exp = 20;
         enemy.level = 1;
+        enemy.maxMana = 30;
         enemy.mana = 30;
         enemy.type = ElementalType.Plant;
         enemy.catchChance = 0.2f;

@@ -209,13 +209,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Moncarg
   moncargName: Pikachu
   maxHealth: 500
+<<<<<<< HEAD
   health: 500
+=======
+  health: 100
+>>>>>>> 9be78322f6cac5346d4919072ee7fd173090d894
   attack: 5
   defense: 5
   speed: 5
   exp: 4
   level: 5
   mana: 100
+  maxMana: 0
   catchChance: 0.1
   dodgeChance: 0.1
   active: 1
