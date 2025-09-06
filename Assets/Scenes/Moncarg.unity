@@ -222,8 +222,6 @@ MonoBehaviour:
   active: 1
   type: 0
   role: 0
-  mockEnemyMoncargPrefab: {fileID: 1909571526152986902, guid: 28ea6eec80dcb2f40980d8ed37d09abd, type: 3}
-  moncargHealthUI: {fileID: 1240192366}
 --- !u!4 &790650006
 Transform:
   m_ObjectHideFlags: 0
