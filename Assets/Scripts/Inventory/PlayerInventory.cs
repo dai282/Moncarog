@@ -65,8 +65,8 @@ public sealed class PlayerInventory : MonoBehaviour
 
     private void Update()
     {
-        // Check for 'I' key press to toggle inventory
-        if (Input.GetKeyDown(KeyCode.I))
+        // Check for 'I' key press to toggle inventory using new Input System
+        if (UnityEngine.InputSystem.Keyboard.current.iKey.wasPressedThisFrame)
         {
             ToggleInventory();
         }
