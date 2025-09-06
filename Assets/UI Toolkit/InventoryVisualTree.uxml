@@ -2,7 +2,7 @@
     <Style src="project://database/Assets/InventoryStyle.uss?fileID=7433441132597879392&amp;guid=e645ff5d96843f342949745b608cc47a&amp;type=3#InventoryStyle" />
     <ui:VisualElement name="Container" style="flex-grow: 1; background-color: rgb(34, 22, 28);">
         <ui:VisualElement name="Header" style="flex-direction: row; height: 100px; max-height: 150px; min-height: 100px; padding-left: 10px; padding-right: 10px; padding-top: 0; padding-bottom: 0; border-bottom-color: rgb(255, 124, 0); border-bottom-width: 1px;">
-            <ui:Label text="INVENTORY" display-tooltip-when-elided="true" name="lbl_Header" class="header_Main header_main" style="flex-grow: 1; -unity-text-align: middle-left; -unity-font: url(&quot;project://database/Library/unity%20default%20resources?fileID=10102&amp;guid=0000000000000000e000000000000000&amp;type=0#LegacyRuntime&quot;); color: rgb(255, 255, 255);" />
+            <ui:Label text="INVENTORY" display-tooltip-when-elided="true" name="lbl_Header" class="header_Main header_main" style="flex-grow: 1; -unity-text-align: middle-left; color: rgb(255, 255, 255);" />
             <ui:VisualElement name="Container_Level" style="flex-grow: 1; flex-direction: row; justify-content: center; padding-top: 10px;">
                 <ui:Button text="MONCARG" name="btn_Moncarg" style="flex-direction: column; width: 96px; border-left-color: rgb(226, 137, 45); border-right-color: rgb(226, 137, 45); border-top-color: rgb(226, 137, 45); border-bottom-color: rgb(226, 137, 45); background-color: rgb(226, 137, 45);" />
                 <ui:Button text="Items" name="btn_Items" style="flex-direction: column; width: 112px; border-left-color: rgb(226, 137, 45); border-right-color: rgb(226, 137, 45); border-top-color: rgb(226, 137, 45); border-bottom-color: rgb(226, 137, 45); background-color: rgb(226, 137, 45);" />
@@ -13,7 +13,7 @@
             </ui:VisualElement>
             <ui:VisualElement name="Container_Weight" style="flex-grow: 1; flex-direction: row; align-items: center; justify-content: flex-end; padding-top: 10px;">
                 <ui:VisualElement name="Icon" style="width: 60px; height: 60px; margin-right: 10px; background-image: url(&quot;project://database/Assets/UI%20Toolkit/InventoryAssets/backpack.png?fileID=2800000&amp;guid=b76b648b07f78eb419749b3591f673cf&amp;type=3#backpack&quot;);" />
-                <ui:Label text="0/54" display-tooltip-when-elided="true" name="Value" class="header_Main header_main" style="-unity-font: url(&apos;project://database/Assets/ui-toolkit-spatial-inventory-pt1/ui-toolkit-spatial-inventory-pt1-final/Assets/UI%20Toolkit/UnityThemes/UnityDefaultRuntimeTheme.tss?fileID=2230732570650464555&amp;guid=d5d23b911fb574a4abe55aa36c3a4fd5&amp;type=3#NotInter-Regular&apos;); color: rgb(255, 255, 255);" />
+                <ui:Label text="0/54" display-tooltip-when-elided="true" name="Value" class="header_Main header_main" style="color: rgb(255, 255, 255);" />
             </ui:VisualElement>
         </ui:VisualElement>
         <ui:VisualElement name="Body" style="flex-grow: 1; flex-direction: row-reverse; padding-left: 10px; padding-right: 10px; padding-top: 10px; padding-bottom: 10px;">
