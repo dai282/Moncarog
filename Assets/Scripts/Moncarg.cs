@@ -35,22 +35,6 @@ public class Moncarg : MonoBehaviour
 
     public moncargRole role;
 
-    //DELETE LATER, ONLY FOR TESTING COMBAT
-    public GameObject mockEnemyMoncargPrefab;
-        // these 2 need to be moved to Game Manager, after we merge Moncarg with Main, now here for testing health display in combat
-    [SerializeField] private UIDocument moncargHealthUI;
-    private CombatHandler combatHandler = new CombatHandler();
-
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-        //this goes to Start in GameManager after we merge Moncarg with Main
-        combatHandler.SetUI(moncargHealthUI);
-
-
-        InitStats();
-    }
-
     public void InitStats()
     {
         if (maxHealth <= 0)
@@ -67,7 +51,7 @@ public class Moncarg : MonoBehaviour
 
         skillList = new SkillList();
 
-      
+        Debug.Log($"InitStats for {moncargName}, skillList.skills length = {skillList.skills?.Length}");
 
         skillset = new Skill[4];
         skillset[0] = skillList.skills[0];
@@ -76,7 +60,7 @@ public class Moncarg : MonoBehaviour
         skillset[3] = skillList.skills[7];
 
         //mock enemy for testing combat system
-        TestMockEncounter();
+        //TestMockEncounter();
 
     }
 
@@ -107,35 +91,6 @@ public class Moncarg : MonoBehaviour
         {
             m_MoncargManaLabel.text = $"{moncargName} MP: {mana}";
         }
-    }
-
-    // TESTING ONLY - remove once encounter system is ready
-    public void TestMockEncounter()
-    {
-        // Spawn a separate Moncarg object in memory (not the same as 'this')
-        GameObject enemyObj = Instantiate(mockEnemyMoncargPrefab);
-        Moncarg enemy = enemyObj.GetComponent<Moncarg>();
-        
-        enemy.moncargName = "Wild Moncarg";
-        enemy.health = 500;
-        enemy.maxHealth = 50;
-        enemy.attack = 15;
-        enemy.defense = 5;
-        enemy.speed = 5;
-        enemy.exp = 20;
-        enemy.level = 1;
-        enemy.maxMana = 30;
-        enemy.mana = 30;
-        enemy.type = ElementalType.Plant;
-        enemy.catchChance = 0.2f;
-        enemy.dodgeChance = 0.1f;
-        enemy.active = true;
-        enemy.skillset = new Skill[1];
-        enemy.skillset[0] = new Skill("Scratch", ElementalType.Normal, 10.0f, 5);
-        enemy.mockEnemyMoncargPrefab = null; // Prevent infinite spawning
-
-        // Run combat handler
-        combatHandler.BeginEncounter(this, enemy);
     }
 
     //does not need Update() since combathandler will handle actions

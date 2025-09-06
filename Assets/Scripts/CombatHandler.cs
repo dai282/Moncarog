@@ -42,8 +42,6 @@ public class CombatHandler
         optionsContainer = root.Q<VisualElement>("OptionsContainer");
         fightContainer = root.Q<VisualElement>("FightContainer");
 
-        
-
         fightButton = root.Q<Button>("FightButton");
         fleeButton = root.Q<Button>("FleeButton");
         inventoryButton = root.Q<Button>("InventoryButton");
@@ -78,95 +76,7 @@ public class CombatHandler
             callbacksRegistered = true;
 
         }
-
-
     }
-
-    /*
-    public void BeginEncounter(Moncarg ours, Moncarg enemy)
-    {
-        int option = 0;
-        m_OurMoncargLabel = root.Q<Label>("HealthLabel");
-        m_OurMoncargLabel.text = "" + ours.moncargName + " HP: " + ours.health + "";
-
-
-
-        // Decide who goes first
-        Moncarg currentTurn = (ours.speed >= enemy.speed) ? ours : enemy;
-        Moncarg other = (currentTurn == ours) ? enemy : ours;
-
-        while (ours.active && enemy.active && option != 4)
-        {
-            if (currentTurn == ours)
-            {
-                // --- Player Turn ---
-
-                //poll for option, default attack for now
-                //option = GameManager.Instance.playerController.PollForEncounterInput();
-
-                option = 1;
-
-                switch (option)
-                {
-                    case 1: // Attack
-                        //default basic attack for now
-                        //int attackOption = GameManager.Instance.playerController.PollForAttackInput();
-                        int attackOption = 2;
-                        if (TryDodge(enemy))
-                        {
-                            Debug.Log(enemy.moncargName + " dodged the attack!");
-                        }
-                        else
-                        {
-
-                            ExecuteAttack(ours, enemy, ours.skillset[attackOption - 1]);
-                        }
-                        
-                        break;
-
-                    case 2: // Switch
-                            // TODO: switch logic
-                        break;
-
-                    case 3: // Item
-                            // TODO: item logic
-                        break;
-                }
-            }
-            else
-            {
-                // --- Enemy Turn ---
-                // TODO: expand to randomize enemy actions
-                ExecuteAttack(enemy, ours, enemy.skillset[0]);
-            }
-
-            // Swap turn
-            Moncarg temp = currentTurn;
-            currentTurn = other;
-            other = temp;
-        }
-
-        //Check whether player fleed or one of the moncargs was defeated
-        if (option == 4)
-        {
-            Debug.Log("You fled the battle!");
-        }
-
-        if (!ours.active)
-        {
-            //poll for switch
-            Debug.Log("You need to switch Moncargs!");
-            //Moncarg substitute = GameManager.Instance.playerController.PollForSwitchInput();
-            //BeginEncounter(substitute, enemy);
-        }
-        if (!enemy.active)
-        {
-            Debug.Log("You won the battle!");
-        }
-
-
-    }
-    */
 
 
     //START EVENT DRIVEN BEGIN ENCOUNTER
@@ -217,21 +127,7 @@ public class CombatHandler
 
         if (currentTurn == player)
         {
-<<<<<<< HEAD
-            Debug.Log("Your turn! Choose an action.");
-            for (int i = 0; i < 4; i++ )
-            {
-                if(player.mana < player.skillset[i].manaCost)
-                {
-                    skillButtons[i].SetEnabled(false);
-                }
-                else
-                {
-                    skillButtons[i].SetEnabled(true);
-                }
-            }
-            // UI buttons are active, waiting for player click
-=======
+
             //automatic resting
             if (player.mana <=0 )
             {
@@ -241,9 +137,19 @@ public class CombatHandler
             else
             {
                 Debug.Log("Your turn! Choose an action.");
+                for (int i = 0; i < 4; i++ )
+                {
+                    if(player.mana < player.skillset[i].manaCost)
+                    {
+                        skillButtons[i].SetEnabled(false);
+                    }
+                    else
+                    {
+                        skillButtons[i].SetEnabled(true);
+                    }
+                }
                 // UI buttons are active, waiting for player click
             }
->>>>>>> 9be78322f6cac5346d4919072ee7fd173090d894
         }
         else
         {
