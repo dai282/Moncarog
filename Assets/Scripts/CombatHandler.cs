@@ -221,7 +221,7 @@ public class CombatHandler
         }
 
         // For now, enemy always uses basic attack
-        ExecuteAttack(enemy, player, enemy.skillset[0]);
+        ExecuteAttack(enemy, player, enemy.skillset[1]);
         EndTurn();
     }
 
