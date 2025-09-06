@@ -1,0 +1,56 @@
+using UnityEngine;
+using Elementals;
+
+[CreateAssetMenu(fileName = "New Moncarg Item", menuName = "Inventory/Moncarg Item")]
+public class MoncargInventoryAdapter : ScriptableObject
+{
+    [Header("Display Info")]
+    public string FriendlyName;
+    public Sprite Icon;
+    
+    [Header("Moncarg Data")]
+    public MoncargData moncargData;
+    
+    [Header("Inventory Settings")]
+    public Dimensions SlotDimension = new Dimensions { Width = 1, Height = 1 };
+    public bool IsEquipped = false;
+    
+    // Convert to description string for inventory display
+    public string Description
+    {
+        get
+        {
+            return $"Level {moncargData.level} {moncargData.type} type\n" +
+                   $"Health: {moncargData.health}/{moncargData.maxHealth}\n" +
+                   $"Mana: {moncargData.mana}/{moncargData.maxMana}\n" +
+                   $"Attack: {moncargData.attack} | Defense: {moncargData.defense}\n" +
+                   $"Speed: {moncargData.speed} | Experience: {moncargData.exp}";
+        }
+    }
+    
+    // Create a Moncarg GameObject from this data
+    public GameObject CreateMoncargGameObject()
+    {
+        GameObject moncargGO = new GameObject(FriendlyName);
+        Moncarg moncargComponent = moncargGO.AddComponent<Moncarg>();
+        
+        // Copy data from MoncargData to Moncarg component
+        moncargComponent.moncargName = moncargData.moncargName;
+        moncargComponent.maxHealth = moncargData.maxHealth;
+        moncargComponent.health = moncargData.health;
+        moncargComponent.attack = moncargData.attack;
+        moncargComponent.defense = moncargData.defense;
+        moncargComponent.speed = moncargData.speed;
+        moncargComponent.exp = moncargData.exp;
+        moncargComponent.level = moncargData.level;
+        moncargComponent.mana = moncargData.mana;
+        moncargComponent.maxMana = moncargData.maxMana;
+        moncargComponent.catchChance = moncargData.catchChance;
+        moncargComponent.dodgeChance = moncargData.dodgeChance;
+        moncargComponent.type = moncargData.type;
+        moncargComponent.active = moncargData.active;
+        moncargComponent.role = Moncarg.moncargRole.PlayerOwned;
+        
+        return moncargGO;
+    }
+}
