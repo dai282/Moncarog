@@ -5,7 +5,7 @@ public class GameManager : MonoBehaviour
 {
     //Instance of PlayerController, BoardManager, and Moncarog here
     //remember to assign instances of these classes in the inspector window (once we combine scenes)
-    //public PlayerController playerController;
+    public Player player;
     //public BoardManager boardManager;
     public GameObject startingMoncargPrefab;
     public GameObject enemyMoncargPrefab;
@@ -37,14 +37,17 @@ public class GameManager : MonoBehaviour
 
         //initialize the game components here
 
+        //initialize player
+        player.Init();
+
         //initialize UI elements
-        combatHandler.SetUI(CombatUI);
+        combatHandler.SetUI(CombatUI, player);
 
         //initialize starting Moncarg and test encounter
-        // Spawn player Moncarg
+        // Spawn starting Moncarg
         GameObject playerObj = Instantiate(startingMoncargPrefab);
-        Moncarg player = playerObj.GetComponent<Moncarg>();
-        player.InitStats();
+        Moncarg startingMoncarg = playerObj.GetComponent<Moncarg>();
+        startingMoncarg.InitStats();
 
         // Spawn enemy Moncarg
         GameObject enemyObj = Instantiate(enemyMoncargPrefab);
@@ -52,7 +55,7 @@ public class GameManager : MonoBehaviour
         enemy.InitStats();
 
         // Begin encounter
-        combatHandler.BeginEncounter(player, enemy);
+        combatHandler.BeginEncounter(startingMoncarg, enemy);
 
 
         //initialize the board (BoardManager.Init())

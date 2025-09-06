@@ -5,6 +5,7 @@ using UnityEngine.UIElements;
 public class CombatHandler
 {
     private UIDocument combatUI;
+    private UIDocument inventoryUI;
 
     private bool callbacksRegistered = false;
 
@@ -34,23 +35,24 @@ public class CombatHandler
     }
 
     //setter for UI
-    public void SetUI(UIDocument uiDoc)
+    public void SetUI(UIDocument CombatUiDoc, Player player)
     {
-        combatUI = uiDoc;
-        var root = combatUI.rootVisualElement;
+        combatUI = CombatUiDoc;
 
-        optionsContainer = root.Q<VisualElement>("OptionsContainer");
-        fightContainer = root.Q<VisualElement>("FightContainer");
+        var combatRoot = combatUI.rootVisualElement;
 
-        fightButton = root.Q<Button>("FightButton");
-        fleeButton = root.Q<Button>("FleeButton");
-        inventoryButton = root.Q<Button>("InventoryButton");
-        switchButton = root.Q<Button>("SwitchButton");
-        skill1Button = root.Q<Button>("Move0");
-        skill2Button = root.Q<Button>("Move1");
-        skill3Button = root.Q<Button>("Move2");
-        skill4Button = root.Q<Button>("Move3");
-        backButton = root.Q<Button>("BackButton");
+        optionsContainer = combatRoot.Q<VisualElement>("OptionsContainer");
+        fightContainer = combatRoot.Q<VisualElement>("FightContainer");
+
+        fightButton = combatRoot.Q<Button>("FightButton");
+        fleeButton = combatRoot.Q<Button>("FleeButton");
+        inventoryButton = combatRoot.Q<Button>("InventoryButton");
+        switchButton = combatRoot.Q<Button>("SwitchButton");
+        skill1Button = combatRoot.Q<Button>("Move0");
+        skill2Button = combatRoot.Q<Button>("Move1");
+        skill3Button = combatRoot.Q<Button>("Move2");
+        skill4Button = combatRoot.Q<Button>("Move3");
+        backButton = combatRoot.Q<Button>("BackButton");
 
         skillButtons[0] = skill1Button;
         skillButtons[1] = skill2Button;
@@ -72,6 +74,8 @@ public class CombatHandler
             skill2Button.clicked += () => OnAttackClicked(2);
             skill3Button.clicked += () => OnAttackClicked(3);
             skill4Button.clicked += () => OnAttackClicked(4);
+
+            inventoryButton.clicked += () => player.ViewInventory();
 
             callbacksRegistered = true;
 

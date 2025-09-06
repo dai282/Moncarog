@@ -19,8 +19,8 @@ public sealed class PlayerInventory : MonoBehaviour
     private bool m_IsInventoryReady;
     private VisualElement m_Telegraph;
     
-    // Toggle state
-    private bool m_IsInventoryOpen = true;
+    // Toggle state (closed by default)
+    private bool m_IsInventoryOpen = false;
 
     public List<StoredItem> StoredItems = new List<StoredItem>();
     public Dimensions InventoryDimensions;
@@ -49,7 +49,7 @@ public sealed class PlayerInventory : MonoBehaviour
         }
     }
 
-    private void ToggleInventory()
+    public void ToggleInventory()
     {
         m_IsInventoryOpen = !m_IsInventoryOpen;
         
