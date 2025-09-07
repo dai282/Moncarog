@@ -22,7 +22,10 @@ public class CombatHandler
     private Button skill4Button;
     private Button[] skillButtons = new Button[4];
     private Button backButton;
-
+    private ProgressBar playerHealth;
+    private ProgressBar playerMana;
+    private ProgressBar enemyHealth;
+    private ProgressBar enemyMana;
 
     private Moncarg player;
     private Moncarg enemy;
@@ -59,6 +62,10 @@ public class CombatHandler
         skillButtons[2] = skill3Button;
         skillButtons[3] = skill4Button;
 
+        playerHealth = combatRoot.Q<ProgressBar>("PlayerHealth");
+        playerMana = combatRoot.Q<ProgressBar>("PlayerMana");
+        enemyHealth = combatRoot.Q<ProgressBar>("EnemyHealth");
+        enemyMana = combatRoot.Q<ProgressBar>("EnemyMana");
 
         // Register UI callbacks
         if (!callbacksRegistered)
@@ -90,16 +97,19 @@ public class CombatHandler
         enemy = enemyMoncarg;
 
         //setup health display
-        player.SetHealthLabel(combatUI.rootVisualElement.Q<Label>("OurHealthLabel"));
-        player.UpdateHealthLabel();
-        enemy.SetHealthLabel(combatUI.rootVisualElement.Q<Label>("EnemyHealthLabel"));
-        enemy.UpdateHealthLabel();
+        playerHealth.highValue = player.maxHealth;
+        playerHealth.value = player.health;
+
+        enemyHealth.highValue = enemy.maxHealth;
+        enemyHealth.value = enemy.health;
+
 
         //setup mana display
-        player.SetManaLabel(combatUI.rootVisualElement.Q<Label>("OurManaLabel"));
-        player.UpdateManaLabel();
-        enemy.SetManaLabel(combatUI.rootVisualElement.Q<Label>("EnemyManaLabel"));
-        enemy.UpdateManaLabel();
+        playerMana.highValue = player.maxMana;
+        playerMana.value = player.mana;
+
+        enemyMana.highValue = enemy.maxMana;
+        enemyMana.value = enemy.mana;
 
         //Set skill button labels
         skill1Button.text = player.skillset[0].name;
@@ -270,7 +280,8 @@ public class CombatHandler
         // Deduct mana cost
         attacker.mana -= attackChoice.manaCost;
         //update mana display
-        attacker.UpdateManaLabel();
+        playerMana.value = player.mana;
+        enemyMana.value = enemy.mana;
 
         // Calculate base damage
         float damage = attackChoice.damage + attacker.attack - defender.defense;
@@ -289,7 +300,8 @@ public class CombatHandler
         Debug.Log(attacker.moncargName + " used " + attackChoice.name + " on " + defender.moncargName + " for " + damage + " damage!");
 
         //update health display
-        defender.UpdateHealthLabel();
+        playerHealth.value = player.health;
+        enemyHealth.value = enemy.health;
 
         // Check if defender is defeated
         if (defender.health <= 0)
@@ -352,7 +364,8 @@ public class CombatHandler
         {
             moncarg.mana = moncarg.maxMana;
         }
-        moncarg.UpdateManaLabel();
+        playerMana.value = player.mana;
+        enemyMana.value = enemy.mana;
         Debug.Log(moncarg.moncargName + " rested and recovered " + manaRecovered + " mana.");
         EndTurn();
     }

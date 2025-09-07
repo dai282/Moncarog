@@ -1,19 +1,19 @@
 <ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
-    <ui:Label text="Pikachu Health Here" name="OurHealthLabel" selectable="false" focusable="false" style="font-size: 36px; color: rgb(255, 255, 255);" />
-    <ui:Label text="Enemy Health Here" name="EnemyHealthLabel" selectable="false" focusable="false" style="font-size: 36px; color: rgb(255, 255, 255);" />
-    <ui:Label text="Our Mana Here" name="OurManaLabel" selectable="false" focusable="false" style="font-size: 36px; color: rgb(255, 255, 255);" />
-    <ui:Label text="Enemy Mana Here" name="EnemyManaLabel" selectable="false" focusable="false" style="font-size: 36px; color: rgb(255, 255, 255);" />
-    <ui:VisualElement name="OptionsContainer" style="flex-grow: 1; flex-direction: row; display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: flex-end; align-self: flex-end; align-content: flex-end; width: 45%; height: 40%;">
-        <ui:Button text="Fight" name="FightButton" style="height: 17%; width: 45%; top: auto; left: auto; right: auto; bottom: auto; min-width: auto; font-size: 30%; position: relative;" />
-        <ui:Button text="Inventory" name="InventoryButton" parse-escape-sequences="false" style="height: 17%; width: 45%; top: auto; left: auto; right: auto; bottom: auto; min-width: auto; font-size: 20%; position: relative;" />
-        <ui:Button text="Switch" name="SwitchButton" style="height: 17%; width: 45%; top: auto; left: auto; right: auto; bottom: auto; min-width: auto; font-size: 30%; position: relative;" />
-        <ui:Button text="Flee" name="FleeButton" style="height: 17%; width: 45%; top: auto; left: auto; right: auto; bottom: auto; min-width: auto; font-size: 30%; position: relative;" />
-    </ui:VisualElement>
+    <ui:ProgressBar value="22" title="Enemy HP" name="EnemyHealth" style="align-items: stretch; width: 40%; top: 0%; left: 57%; font-size: 50%; height: 5%;" />
+    <ui:ProgressBar value="22" title="Enemy Mana" name="EnemyMana" style="align-items: stretch; width: 40%; top: 0%; left: 57%; font-size: 50%; height: 5%;" />
+    <ui:ProgressBar value="22" title="Your HP" name="PlayerHealth" style="align-items: stretch; width: 40%; top: 0%; left: 0%; font-size: 50%; height: 5%;" />
+    <ui:ProgressBar value="22" title="Your Mana" name="PlayerMana" style="align-items: stretch; width: 40%; top: 0%; left: 0%; font-size: 50%; height: 5%;" />
     <ui:VisualElement name="FightContainer" style="flex-grow: 1; flex-direction: row; display: none; flex-wrap: wrap; align-items: flex-end; justify-content: flex-end; align-self: flex-end; align-content: flex-end; width: 45%; height: 40%;">
         <ui:Button text="move 1" name="Move0" style="height: 17%; width: 45%; top: auto; left: auto; right: auto; bottom: auto; min-width: auto; font-size: 30%; position: relative;" />
         <ui:Button text="move 2" name="Move1" parse-escape-sequences="false" style="height: 17%; width: 45%; top: auto; left: auto; right: auto; bottom: auto; min-width: auto; font-size: 30%; position: relative;" />
         <ui:Button text="move 3" name="Move2" style="height: 17%; width: 45%; top: auto; left: auto; right: auto; bottom: auto; min-width: auto; font-size: 30%; position: relative;" />
         <ui:Button text="move 4" name="Move3" style="height: 17%; width: 45%; top: auto; left: auto; right: auto; bottom: auto; min-width: auto; font-size: 30%; position: relative;" />
         <ui:Button text="Back" name="BackButton" emoji-fallback-support="false" style="width: 45%; height: 17%; font-size: 30px;" />
+    </ui:VisualElement>
+    <ui:VisualElement name="OptionsContainer" style="flex-grow: 1; flex-direction: row; display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: flex-end; align-self: flex-end; align-content: flex-end; width: 45%; height: 40%;">
+        <ui:Button text="Fight" name="FightButton" style="height: 17%; width: 45%; top: auto; left: auto; right: auto; bottom: auto; min-width: auto; font-size: 30%; position: relative;" />
+        <ui:Button text="Inventory" name="InventoryButton" parse-escape-sequences="false" style="height: 17%; width: 45%; top: auto; left: auto; right: auto; bottom: auto; min-width: auto; font-size: 20%; position: relative;" />
+        <ui:Button text="Switch" name="SwitchButton" style="height: 17%; width: 45%; top: auto; left: auto; right: auto; bottom: auto; min-width: auto; font-size: 30%; position: relative;" />
+        <ui:Button text="Flee" name="FleeButton" style="height: 17%; width: 45%; top: auto; left: auto; right: auto; bottom: auto; min-width: auto; font-size: 30%; position: relative;" />
     </ui:VisualElement>
 </ui:UXML>

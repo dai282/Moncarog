@@ -82,34 +82,6 @@ public class Moncarg : MonoBehaviour
 
     }
 
-    public void SetHealthLabel(Label label)
-    {
-        m_MoncargHealthLabel = label;
-        UpdateHealthLabel(); // Initialize
-    }
-
-    public void UpdateHealthLabel()
-    {
-        if (m_MoncargHealthLabel != null)
-        {
-            m_MoncargHealthLabel.text = $"{moncargName} HP: {health}";
-        }
-            
-    }
-
-    public void SetManaLabel(Label label)
-    {
-        m_MoncargManaLabel = label;
-        UpdateManaLabel(); // Initialize
-    }
-
-    public void UpdateManaLabel()
-    {
-        if (m_MoncargManaLabel != null)
-        {
-            m_MoncargManaLabel.text = $"{moncargName} MP: {mana}";
-        }
-    }
 
     /*
     
