@@ -165,6 +165,18 @@ public sealed class PlayerInventory : MonoBehaviour
                 if (m_EquipButton != null) m_EquipButton.clicked += OnEquipButtonClicked;
                 if (m_DropButton != null) m_DropButton.clicked += OnDropButtonClicked;
             }
+            
+            // Setup close button (try both locations)
+            var closeButton = m_Root.Q<Button>("bttn_close");
+            if (closeButton == null)
+            {
+                closeButton = itemDetails.Q<Button>("bttn_close");
+            }
+            
+            if (closeButton != null)
+            {
+                closeButton.clicked += () => HideInventory();
+            }
         }
     }
 

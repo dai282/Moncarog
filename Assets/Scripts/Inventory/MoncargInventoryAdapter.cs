@@ -2,19 +2,20 @@ using UnityEngine;
 using Elementals;
 
 [CreateAssetMenu(fileName = "New Moncarg Item", menuName = "Inventory/Moncarg Item")]
-public class MoncargInventoryAdapter : ScriptableObject
+public class MoncargInventoryAdapter : ScriptableObject //MoncargItemDefinition
 {
     [Header("Display Info")]
     public string FriendlyName;
     public Sprite Icon;
-    
+
+    //item definition holds data, which is also part of Moncarg component
     [Header("Moncarg Data")]
     public MoncargData moncargData;
-    
+
     [Header("Inventory Settings")]
     public Dimensions SlotDimension = new Dimensions { Width = 1, Height = 1 };
     public bool IsEquipped = false;
-    
+
     // Convert to description string for inventory display
     public string Description
     {
@@ -27,13 +28,13 @@ public class MoncargInventoryAdapter : ScriptableObject
                    $"Speed: {moncargData.speed} | Experience: {moncargData.exp}";
         }
     }
-    
-    // Create a Moncarg GameObject from this data
+
+    // Create a Moncarg GameObject from this data || THIS IS ALSO DONE IN StoredMoncarg Awake()
     public GameObject CreateMoncargGameObject()
     {
         GameObject moncargGO = new GameObject(FriendlyName);
         Moncarg moncargComponent = moncargGO.AddComponent<Moncarg>();
-        
+
         // Copy data from MoncargData to Moncarg component
         moncargComponent.moncargName = moncargData.moncargName;
         moncargComponent.maxHealth = moncargData.maxHealth;
@@ -50,7 +51,7 @@ public class MoncargInventoryAdapter : ScriptableObject
         moncargComponent.type = moncargData.type;
         moncargComponent.active = moncargData.active;
         moncargComponent.role = Moncarg.moncargRole.PlayerOwned;
-        
+
         return moncargGO;
     }
 }
