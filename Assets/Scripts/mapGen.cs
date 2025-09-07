@@ -13,8 +13,7 @@ public class MapGenerator
 
     private int currentY = 0;
     private float horizontalSpacing = 2f;
-    private float verticalSpacing = 2f;
-
+    private float verticalSpacing = -2f;
 
     // A class to represent a single room.
     public class Room
@@ -37,14 +36,14 @@ public class MapGenerator
     {
     }
 
-    /// <summary>
-    /// Generates the complete map graph from start to finish.
-    /// </summary>
-    /// <returns>The starting MapNode of the generated map.</returns>
+    // Generates the complete map graph from start to finish.
+    // <returns>The starting MapNode of the generated map.
     public MapNode GenerateMap()
     {
-        // 1. Create the starting room.
+        // 1. Create the starting room (always Normal)
         MapNode startNode = new MapNode { Room = GetNewRoom(RoomType.Normal) };
+        startNode.Position = new Vector2(0, 0);
+        currentY++;
 
         Debug.Log("Generating map with forced initial split.");
 
@@ -57,6 +56,11 @@ public class MapGenerator
         startNode.Exits.Add(path1Start);
         startNode.Exits.Add(path2Start);
 
+        // Position the initial split nodes
+        path1Start.Position = new Vector2(-horizontalSpacing, -verticalSpacing);
+        path2Start.Position = new Vector2(horizontalSpacing, -verticalSpacing);
+        currentY++;
+
         currentPathEnds.Add(path1Start);
         currentPathEnds.Add(path2Start);
 
@@ -66,40 +70,61 @@ public class MapGenerator
             currentPathEnds = GenerateNextLevel(currentPathEnds);
         }
 
-        // Capture all node positions just before mini-boss level
-        List<Vector2> preMiniBossNodePositions = currentPathEnds.Select(node => node.Position).ToList();
+        // 4. Ensure we have exactly 3 paths before creating mini-bosses
+        while (currentPathEnds.Count < 3)
+        {
+            // If we have less than 3 paths, split one of them
+            int indexToSplit = Random.Range(0, currentPathEnds.Count);
+            MapNode nodeToSplit = currentPathEnds[indexToSplit];
 
-        // 4. Create the mini-boss nodes.
+            MapNode newPath1 = new MapNode { Room = GetNewRoom() };
+            MapNode newPath2 = new MapNode { Room = GetNewRoom() };
+            nodeToSplit.Exits.Add(newPath1);
+            nodeToSplit.Exits.Add(newPath2);
+
+            // Position the new nodes
+            float baseX = nodeToSplit.Position.x;
+            newPath1.Position = new Vector2(baseX - horizontalSpacing / 2, currentY * -verticalSpacing);
+            newPath2.Position = new Vector2(baseX + horizontalSpacing / 2, currentY * -verticalSpacing);
+
+            // Remove the split node and add the new ones
+            currentPathEnds.RemoveAt(indexToSplit);
+            currentPathEnds.Add(newPath1);
+            currentPathEnds.Add(newPath2);
+
+            currentY++;
+        }
+
+        // 5. Create the mini-boss nodes.
         MapNode miniBoss1 = new MapNode { Room = GetNewRoom(RoomType.MiniBoss) };
         MapNode miniBoss2 = new MapNode { Room = GetNewRoom(RoomType.MiniBoss) };
         MapNode miniBoss3 = new MapNode { Room = GetNewRoom(RoomType.MiniBoss) };
 
-        // 5. Connect the ends of the divergent paths to the mini-bosses.
+        // 6. Connect the ends of the divergent paths to the mini-bosses.
         ConnectToMiniBossHub(currentPathEnds, new List<MapNode> { miniBoss1, miniBoss2, miniBoss3 });
 
-        // 6. Build the final, converging path to the final boss.
+        // 7. Build the final, converging path to the final boss.
         BuildFinalPath(new List<MapNode> { miniBoss1, miniBoss2, miniBoss3 });
 
         CenterMap(startNode);
         return startNode;
     }
 
-    /// <summary>
-    /// Generates the next level of the map based on the current path ends.
-    /// </summary>
+    // Generates the next level of the map based on the current path ends.
     private List<MapNode> GenerateNextLevel(List<MapNode> pathEnds)
     {
         List<MapNode> newPathEnds = new List<MapNode>();
         Dictionary<MapNode, int> mergeCounts = new Dictionary<MapNode, int>();
-
-
 
         // Step 1: Roll each path to determine its intent.
         var intents = new List<string>();
         foreach (var node in pathEnds)
         {
             float roll = Random.Range(0f, 1f);
-            if (roll < 0.33f)
+            Debug.Log($"testing");
+            if (node.Exits.Count >= 2) intents.Add("Merge"); // Prevent over-splitting
+
+            else if (roll < 0.33f)
                 intents.Add("Split");
             else if (roll < 0.66f)
                 intents.Add("Merge");
@@ -120,23 +145,33 @@ public class MapGenerator
             {
                 if (i > 0 && intents[i - 1] == "Continue" && pathEnds[i - 1].Exits.Count > 0)
                 {
-                    // Use previous node's last child as merge target
+                    // Merge into previous node's last child
                     mergeTarget = pathEnds[i - 1].Exits.Last();
                 }
                 else if (i < intents.Count - 1 && intents[i + 1] == "Merge")
                 {
-                    // Both this and next node want to merge — create a shared node
+                    // Shared new node for two merges
                     mergeTarget = new MapNode { Room = GetNewRoom() };
                     currentNode.Exits.Add(mergeTarget);
                     pathEnds[i + 1].Exits.Add(mergeTarget);
                     newPathEnds.Add(mergeTarget);
-                    i++; // Skip next node, already processed
+                    i++;
                     continue;
+                }
+
+                // Fallback: if no mergeTarget, treat as Continue
+                if (mergeTarget == null)
+                {
+                    MapNode newNode = new MapNode { Room = GetNewRoom() };
+                    currentNode.Exits.Add(newNode);
+                    newPathEnds.Add(newNode);
+                    continue; // <-- critical: skip the Split/Continue code below
                 }
                 else
                 {
-                    // No merge target — fallback to continue
-                    intent = "Continue";
+                    currentNode.Exits.Add(mergeTarget);
+                    newPathEnds.Add(mergeTarget);
+                    continue; // <-- also critical
                 }
             }
 
@@ -164,11 +199,15 @@ public class MapGenerator
                 Debug.Log($"Room {currentNode.Room.Name} merged into room {mergeTarget.Room.Name}.");
             }
         }
+
         // Center-align X positions of newPathEnds
-        float startX = -(newPathEnds.Count - 1) * 0.5f * horizontalSpacing;
-        for (int i = 0; i < newPathEnds.Count; i++)
+        if (newPathEnds.Count > 0)
         {
-            newPathEnds[i].Position = new Vector2(startX + i * horizontalSpacing, currentY * -verticalSpacing);
+            float startX = -(newPathEnds.Count - 1) * 0.5f * horizontalSpacing;
+            for (int i = 0; i < newPathEnds.Count; i++)
+            {
+                newPathEnds[i].Position = new Vector2(startX + i * horizontalSpacing, currentY * -verticalSpacing);
+            }
         }
         currentY++;
 
@@ -176,45 +215,41 @@ public class MapGenerator
     }
 
 
-    /// <summary>
-    /// Connects the end of a divergent path to the mini-boss hub.
-    /// </summary>
+    // Connects the end of a divergent path to the mini-boss hub.
+
     private void ConnectToMiniBossHub(List<MapNode> pathEndNodes, List<MapNode> miniBosses)
-{
-    // If there are only two paths, force one to split to get a third path.
-    if (pathEndNodes.Count < 3)
     {
-        MapNode pathToEnd = new MapNode { Room = GetNewRoom() };
-        pathEndNodes[0].Exits.Add(pathToEnd);
-        pathEndNodes.Add(pathToEnd);
+        // Calculate positions based on path end nodes
+        float minX = pathEndNodes.Min(n => n.Position.x);
+        float maxX = pathEndNodes.Max(n => n.Position.x);
+        float centerX = (minX + maxX) / 2f;
+        float y = currentY * -verticalSpacing;
+
+        // Position mini-bosses based on the path structure
+        Debug.Log(minX);
+        Debug.Log(maxX);
+        Debug.Log(centerX);
+        miniBosses[0].Position = new Vector2(minX, y);
+        miniBosses[1].Position = new Vector2(centerX, y);
+        miniBosses[2].Position = new Vector2(maxX, y);
+        currentY++;
+
+        // Connect each path end to the closest mini-boss
+        foreach (var endNode in pathEndNodes)
+        {
+            // Find the closest mini-boss
+            MapNode closestBoss = miniBosses
+                .OrderBy(boss => Mathf.Abs(boss.Position.x - endNode.Position.x))
+                .First();
+
+            endNode.Exits.Add(closestBoss);
+            Debug.Log($"Path ending at room {endNode.Room.Name} connected to mini-boss {closestBoss.Room.Name}.");
+        }
     }
 
-    // Calculate center X based on previous level
-    float averageX = pathEndNodes.Average(n => n.Position.x);
-    float y = currentY * -verticalSpacing;
 
-    // Spread mini-bosses slightly around center
-    float spacing = horizontalSpacing;
-    miniBosses[0].Position = new Vector2(averageX, y);
-    miniBosses[1].Position = new Vector2(averageX + spacing, y);
-    miniBosses[2].Position = new Vector2(averageX + (spacing*200), y);
-    currentY++;
+    // Builds a single path from the mini-bosses to the final boss.
 
-    // Connect each path end to a mini-boss in round robin
-    int bossIndex = 0;
-    foreach (var endNode in pathEndNodes)
-    {
-        MapNode bossToConnect = miniBosses[bossIndex];
-        endNode.Exits.Add(bossToConnect);
-        Debug.Log($"Path ending at room {endNode.Room.Name} connected to mini-boss {bossToConnect.Room.Name}.");
-        bossIndex = (bossIndex + 1) % miniBosses.Count;
-    }
-}
-
-
-    /// <summary>
-    /// Builds a single path from the mini-bosses to the final boss.
-    /// </summary>
     private void BuildFinalPath(List<MapNode> miniBosses)
     {
         // The start of the final path is the mini-bosses.
@@ -228,34 +263,32 @@ public class MapGenerator
 
         // Connect all the last nodes to a single final boss room.
         MapNode finalBossNode = new MapNode { Room = GetNewRoom(RoomType.FinalBoss) };
-        foreach (var endNode in currentPathEnds)
-        {
-            endNode.Exits.Add(finalBossNode);
-        }
-        // Calculate position
-        float averageX = currentPathEnds.Average(n => n.Position.x);
+
+        // Calculate position based on the current path ends
+        // float averageX = currentPathEnds.Average(n => n.Position.x);
         float y = currentY * -verticalSpacing;
-        finalBossNode.Position = new Vector2(averageX, y);
+        finalBossNode.Position = new Vector2(0, y);
         currentY++;
 
         foreach (var endNode in currentPathEnds)
         {
             endNode.Exits.Add(finalBossNode);
         }
-
     }
 
-    /// <summary>
-    /// Gets a new room with a random type.
-    /// </summary>
-    private Room GetNewRoom(RoomType forcedType = RoomType.Normal)
-    {
-        Room newRoom = new Room { Name = roomCounter };
-        roomCounter++;
+    // Gets a new room with a random type.
 
-        if (forcedType == RoomType.Normal)
+    private Room GetNewRoom(RoomType? forcedType = null)
+    {
+        Room newRoom = new Room { Name = roomCounter++ };
+
+        if (forcedType.HasValue)
         {
-            int totalTypes = 4;
+            newRoom.Type = forcedType.Value;
+        }
+        else
+        {
+            int totalTypes = 4; // Normal, Grass, Water, Fire
             int randomType = Random.Range(0, totalTypes);
             switch (randomType)
             {
@@ -265,13 +298,9 @@ public class MapGenerator
                 case 3: newRoom.Type = RoomType.Fire; break;
             }
         }
-        else
-        {
-            newRoom.Type = forcedType;
-        }
         return newRoom;
     }
-    
+
     private void CenterMap(MapNode root)
     {
         List<MapNode> allNodes = new List<MapNode>();
@@ -299,4 +328,5 @@ public class MapGenerator
             node.Position = new Vector2(node.Position.x - centerX, node.Position.y);
         }
     }
+
 }

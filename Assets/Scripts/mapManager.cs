@@ -1,5 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
+using System;
+using Unity.VisualScripting;
 
 public class MapManager : MonoBehaviour
 {
@@ -36,7 +38,6 @@ public class MapManager : MonoBehaviour
             Debug.LogError("One or more prefabs are not assigned! Please assign them in the Unity Inspector.");
             return;
         }
-
         // Create an instance of the MapGenerator.
         mapGenerator = new MapGenerator();
 
@@ -47,60 +48,44 @@ public class MapManager : MonoBehaviour
 
         // Start the recursive process of displaying the map.
         // The map starts at the specified origin point.
-        DisplayMap(startNode, new Vector3(0, -13, 0));
+        DisplayMap(startNode, new Vector3(0, -15, 0));
     }
 
-    /// <summary>
-    /// Recursively displays the map by instantiating GameObjects for each room.
-    /// </summary>
-    /// <param name="node">The current map node to display.</param>
-    /// <param name="position">The position to place the current room.</param>
-    private void DisplayMap(MapGenerator.MapNode node, Vector3 position)
+    // Recursively displays the map by instantiating GameObjects for each room.
+    // <param name="node">The current map node to display.
+    // <param name="position">The position to place the current room.
+    private void DisplayMap(MapGenerator.MapNode node, Vector3 origin)
     {
-        // If we've already displayed this node, stop.
         if (visitedNodes.Contains(node))
-        {
             return;
-        }
 
-        // Add the current node to the set of visited nodes.
         visitedNodes.Add(node);
+
+        // Use the node's generated position, shifted by origin
+        Vector3 position = origin + new Vector3(node.Position.x, node.Position.y, 0);
         nodePositions[node] = position;
 
-        // Get the correct prefab based on the room's type.
         GameObject selectedPrefab = GetPrefabForRoomType(node.Room.Type);
         GameObject roomObj = Instantiate(selectedPrefab, position, Quaternion.identity);
         roomObj.name = $"Room {node.Room.Name} ({node.Room.Type})";
 
-        // Calculate the next level's position.
-        float nextLevelY = position.y + ySpacing;
-
-        // Iterate through all the exits from the current room.
-        int exitCount = node.Exits.Count;
-        for (int i = 0; i < exitCount; i++)
+        foreach (var exit in node.Exits)
         {
-            // Calculate the horizontal position for each exit.
-            float horizontalOffset = 0;
-            if (exitCount > 1)
+            Vector3 nextPos = origin + new Vector3(exit.Position.x, exit.Position.y, 0);
+
+            if (nodePositions.ContainsKey(exit))
             {
-                horizontalOffset = (i - (exitCount - 1) / 2f) * xSpacing;
+                DrawLine(position, nodePositions[exit]);
+            }
+            else
+            {
+                DrawLine(position, nextPos);
             }
 
-            // Calculate the position of the next room.
-            Vector3 nextPosition = new Vector3(position.x + horizontalOffset, nextLevelY, position.z);
-            
-            // Check if the next node has been visited. If so, draw a line to its existing position.
-            if (nodePositions.ContainsKey(node.Exits[i]))
-            {
-                DrawLine(position, nodePositions[node.Exits[i]]);
-            } else {
-                DrawLine(position, nextPosition);
-            }
-            
-            // Recursively call this method for the next room.
-            DisplayMap(node.Exits[i], nextPosition);
+            DisplayMap(exit, origin);
         }
     }
+
     
     private void DrawLine(Vector3 start, Vector3 end)
     {
@@ -121,9 +106,7 @@ public class MapManager : MonoBehaviour
         }
     }
 
-    /// <summary>
     /// Returns the appropriate prefab based on the room's type.
-    /// </summary>
     private GameObject GetPrefabForRoomType(MapGenerator.RoomType type)
     {
         switch (type)

@@ -119,20 +119,25 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
---- !u!1 &423377203 stripped
+--- !u!1 &53210178 stripped
 GameObject:
-  m_CorrespondingSourceObject: {fileID: 5161003070840505614, guid: d5dd2fbb26e07034d97330a4745746a6, type: 3}
-  m_PrefabInstance: {fileID: 2609959869306705387}
+  m_CorrespondingSourceObject: {fileID: 3661486889777600591, guid: 3a405cffcdf010e4d9e2cd1d083f088c, type: 3}
+  m_PrefabInstance: {fileID: 7778360986453203338}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &604193676 stripped
+--- !u!1 &152114168 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 449937769515789103, guid: 3d9efe8294dd8034d82a4835c21dacee, type: 3}
   m_PrefabInstance: {fileID: 7774549175837046813}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &664605039 stripped
+--- !u!1 &374727551 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 6085401042312020229, guid: 97647a4195e8b3242ad16f6bd119eb9d, type: 3}
   m_PrefabInstance: {fileID: 5056730381844933656}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &1040665752 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1105728506138198369, guid: b6b01367aca586a42bec43c5aca99ecc, type: 3}
+  m_PrefabInstance: {fileID: 3186993143757962811}
   m_PrefabAsset: {fileID: 0}
 --- !u!1 &1426226469
 GameObject:
@@ -196,7 +201,7 @@ Camera:
   far clip plane: 1000
   field of view: 60
   orthographic: 1
-  orthographic size: 20
+  orthographic size: 15
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -271,20 +276,15 @@ MonoBehaviour:
     m_VarianceClampScale: 0.9
     m_ContrastAdaptiveSharpening: 0
   m_Version: 2
---- !u!1 &1431570308 stripped
+--- !u!1 &1855490224 stripped
 GameObject:
-  m_CorrespondingSourceObject: {fileID: 3661486889777600591, guid: 3a405cffcdf010e4d9e2cd1d083f088c, type: 3}
-  m_PrefabInstance: {fileID: 7778360986453203338}
+  m_CorrespondingSourceObject: {fileID: 5161003070840505614, guid: d5dd2fbb26e07034d97330a4745746a6, type: 3}
+  m_PrefabInstance: {fileID: 2609959869306705387}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &1641551688 stripped
+--- !u!1 &1888419961 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 4016677973293317378, guid: eecd6f1a1d91502438a33d43bec2e664, type: 3}
   m_PrefabInstance: {fileID: 2417208414485031849}
-  m_PrefabAsset: {fileID: 0}
---- !u!1 &1920997222 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 1105728506138198369, guid: b6b01367aca586a42bec43c5aca99ecc, type: 3}
-  m_PrefabInstance: {fileID: 3186993143757962811}
   m_PrefabAsset: {fileID: 0}
 --- !u!1 &2037254730
 GameObject:
@@ -315,13 +315,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5b1ef3d314c4af64eace80d96f1f8b38, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MapManager
-  normalPrefab: {fileID: 1641551688}
-  grassPrefab: {fileID: 604193676}
-  waterPrefab: {fileID: 1431570308}
-  firePrefab: {fileID: 664605039}
-  miniBossPrefab: {fileID: 423377203}
-  finalBossPrefab: {fileID: 423377203}
-  linePrefab: {fileID: 1920997222}
+  normalPrefab: {fileID: 1888419961}
+  grassPrefab: {fileID: 152114168}
+  waterPrefab: {fileID: 53210178}
+  firePrefab: {fileID: 374727551}
+  miniBossPrefab: {fileID: 1855490224}
+  finalBossPrefab: {fileID: 1855490224}
+  linePrefab: {fileID: 1040665752}
 --- !u!4 &2037254732
 Transform:
   m_ObjectHideFlags: 0
@@ -704,6 +704,6 @@ SceneRoots:
   - {fileID: 2609959869306705387}
   - {fileID: 5056730381844933656}
   - {fileID: 7778360986453203338}
+  - {fileID: 2417208414485031849}
   - {fileID: 7774549175837046813}
   - {fileID: 3186993143757962811}
-  - {fileID: 2417208414485031849}
