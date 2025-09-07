@@ -6,13 +6,20 @@ public class RoomGrid : MonoBehaviour
 {
     public Tilemap collisionTilemap;
 
-    private Dictionary<Vector3Int, bool> cellData = new Dictionary<Vector3Int, bool>();
+    public enum CellType
+    {
+        Walkable,
+        Unwalkable,
+        Door
+    }
+
+    private Dictionary<Vector3Int, CellType> cellData = new Dictionary<Vector3Int, CellType>();
+
+    private Dictionary<Vector3Int, DoorDetector> doors = new Dictionary<Vector3Int, DoorDetector>();
 
     void Awake()
     {
         GenerateCellData();
-        //Test whether the tiles are being added as unwalkable
-        //PrintUnwalkableTiles();
     }
 
     void GenerateCellData()
@@ -27,24 +34,23 @@ public class RoomGrid : MonoBehaviour
 
                 if (collisionTilemap.HasTile(pos))
                 {
-                    cellData[pos] = false;
+                    cellData[pos] = CellType.Unwalkable;
                 }
                 else
                 {
-                    cellData[pos] = true;
+                    cellData[pos] = CellType.Walkable;
                 }
             }
         }
-
     }
 
     public bool IsWalkable(Vector3 worldPos)
     {
         Vector3Int cellPos = collisionTilemap.WorldToCell(worldPos);
 
-        if (cellData.TryGetValue(cellPos, out bool walkable))
+        if (cellData.TryGetValue(cellPos, out CellType type))
         {
-            return walkable;
+            return type != CellType.Unwalkable;
         }
 
         return true;
@@ -60,5 +66,33 @@ public class RoomGrid : MonoBehaviour
                 Debug.Log($"Unwalkable Tile at Cell: {pos} | World Position: {worldPos}");
             }
         }
+    }
+
+    public void PrintDoorTiles()
+        {
+            foreach (var kvp in cellData)
+            {
+                Vector3Int cellPos = kvp.Key;
+                CellType type = kvp.Value;
+
+                if (type == CellType.Door)
+                {
+                    DoorDetector door = GetDoorAtCell(cellPos);
+                    string doorName = door != null ? door.gameObject.name : "NoDoorObject";
+                    Debug.Log($"Door tile at cell: {cellPos} | Door object: {doorName}");
+                }
+            }
+        }
+
+    public void RegisterDoor(Vector3Int cellPos, DoorDetector door)
+    {
+        cellData[cellPos] = CellType.Door;
+        doors[cellPos] = door;
+    }
+
+    public DoorDetector GetDoorAtCell(Vector3Int cellPos)
+    {
+        doors.TryGetValue(cellPos, out DoorDetector door);
+        return door;
     }
 }
