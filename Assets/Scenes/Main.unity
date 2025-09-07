@@ -394,9 +394,11 @@ MonoBehaviour:
   - Details: {fileID: 11400000, guid: 1d94ae96f3bf1c54e92b4996a1332437, type: 2}
   - Details: {fileID: 11400000, guid: 1d94ae96f3bf1c54e92b4996a1332437, type: 2}
   - Details: {fileID: 11400000, guid: 1d94ae96f3bf1c54e92b4996a1332437, type: 2}
+  StoredMoncargs: []
   InventoryDimensions:
     Height: 9
     Width: 6
+  MaxWeight: 54
 --- !u!114 &1079650102
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -67,6 +67,19 @@ public class CombatHandler
         enemyHealth = combatRoot.Q<ProgressBar>("EnemyHealth");
         enemyMana = combatRoot.Q<ProgressBar>("EnemyMana");
 
+        //assigning colours
+        var playerHealthProgress = playerHealth.Q(className: "unity-progress-bar__progress");
+        playerHealthProgress.style.backgroundColor = new StyleColor(Color.green);
+
+        var enemyHealthProgress = enemyHealth.Q(className: "unity-progress-bar__progress");
+        enemyHealthProgress.style.backgroundColor = new StyleColor(Color.green);
+
+        var playerManaProgress = playerMana.Q(className: "unity-progress-bar__progress");
+        playerManaProgress.style.backgroundColor = new StyleColor(Color.blue);
+
+        var enemyManaProgress = enemyMana.Q(className: "unity-progress-bar__progress");
+        enemyManaProgress.style.backgroundColor = new StyleColor(Color.blue);
+
         // Register UI callbacks
         if (!callbacksRegistered)
         {
@@ -99,17 +112,20 @@ public class CombatHandler
         //setup health display
         playerHealth.highValue = player.maxHealth;
         playerHealth.value = player.health;
+        playerHealth.title = $"HP: {player.health} / {player.maxHealth}";
 
         enemyHealth.highValue = enemy.maxHealth;
         enemyHealth.value = enemy.health;
-
+        enemyHealth.title = $"HP: {enemy.health} / {enemy.maxHealth}";
 
         //setup mana display
         playerMana.highValue = player.maxMana;
         playerMana.value = player.mana;
+        playerMana.title = $"Mana: {player.mana} / {player.maxMana}";
 
         enemyMana.highValue = enemy.maxMana;
         enemyMana.value = enemy.mana;
+        enemyMana.title = $"Mana: {enemy.mana} / {enemy.maxMana}";
 
         //Set skill button labels
         skill1Button.text = player.skillset[0].name;
@@ -282,6 +298,8 @@ public class CombatHandler
         //update mana display
         playerMana.value = player.mana;
         enemyMana.value = enemy.mana;
+        playerMana.title = $"Mana: {player.mana} / {player.maxMana}";
+        enemyMana.title = $"Mana: {enemy.mana} / {enemy.maxMana}";
 
         // Calculate base damage
         float damage = attackChoice.damage + attacker.attack - defender.defense;
@@ -302,6 +320,8 @@ public class CombatHandler
         //update health display
         playerHealth.value = player.health;
         enemyHealth.value = enemy.health;
+        playerHealth.title = $"HP: {player.health} / {player.maxHealth}";
+        enemyHealth.title = $"HP: {enemy.health} / {enemy.maxHealth}";
 
         // Check if defender is defeated
         if (defender.health <= 0)
@@ -364,8 +384,12 @@ public class CombatHandler
         {
             moncarg.mana = moncarg.maxMana;
         }
+
         playerMana.value = player.mana;
         enemyMana.value = enemy.mana;
+        playerMana.title = $"Mana: {player.mana} / {player.maxMana}";
+        enemyMana.title = $"Mana: {enemy.mana} / {enemy.maxMana}";
+
         Debug.Log(moncarg.moncargName + " rested and recovered " + manaRecovered + " mana.");
         EndTurn();
     }
