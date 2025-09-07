@@ -4,10 +4,11 @@ using UnityEngine.UIElements;
 
 public class Moncarg : MonoBehaviour
 {
-    /*
+
+    //moncarg stats are now stored in MoncargData ScriptableObject
     public MoncargData data;
 
-    
+
     public string moncargName { get => data.moncargName; set => data.moncargName = value; }
     public float maxHealth { get => data.maxHealth; set => data.maxHealth = value; }
     public float health { get => data.health; set => data.health = value; }
@@ -21,9 +22,9 @@ public class Moncarg : MonoBehaviour
     public float catchChance { get => data.catchChance; set => data.catchChance = value; }
     public float dodgeChance { get => data.dodgeChance; set => data.dodgeChance = value; }
     public bool active { get => data.active; set => data.active = value; }
-    public ElementalType type { get => data.type; set => data.type = value; } */
+    public ElementalType type { get => data.type; set => data.type = value; }
 
-    
+    /*
     public string moncargName;
     public float maxHealth;
     public float health;
@@ -37,7 +38,7 @@ public class Moncarg : MonoBehaviour
     public float catchChance;
     public float dodgeChance;
     public bool active;
-    public ElementalType type;
+    public ElementalType type;*/
 
     public Skill[] skillset;
     private SkillList skillList;
@@ -82,9 +83,37 @@ public class Moncarg : MonoBehaviour
 
     }
 
+    public void SetHealthLabel(Label label)
+    {
+        m_MoncargHealthLabel = label;
+        UpdateHealthLabel(); // Initialize
+    }
 
-    /*
-    
+    public void UpdateHealthLabel()
+    {
+        if (m_MoncargHealthLabel != null)
+        {
+            m_MoncargHealthLabel.text = $"{moncargName} HP: {health}";
+        }
+
+    }
+
+    public void SetManaLabel(Label label)
+    {
+        m_MoncargManaLabel = label;
+        UpdateManaLabel(); // Initialize
+    }
+
+    public void UpdateManaLabel()
+    {
+        if (m_MoncargManaLabel != null)
+        {
+            m_MoncargManaLabel.text = $"{moncargName} MP: {mana}";
+        }
+    }
+
+
+
     // New method to get data for inventory
     public MoncargData GetMoncargData()
     {
@@ -97,6 +126,6 @@ public class Moncarg : MonoBehaviour
         data = newData;
         InitStats(); // Reinitialize with loaded data
     }
-    
-    */
+
+
 }

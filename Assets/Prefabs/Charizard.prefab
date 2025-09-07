@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 1684202634488028894}
   - component: {fileID: 8447921039221293261}
   - component: {fileID: -8208106590729387127}
+  - component: {fileID: 2235280704622220614}
   m_Layer: 0
   m_Name: Charizard
   m_TagString: Untagged
@@ -103,20 +104,32 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4720bd42dcd40bc40980140288c74169, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Moncarg
-  moncargName: Charizard
-  maxHealth: 500
-  health: 500
-  attack: 15
-  defense: 5
-  speed: 5
-  exp: 20
-  level: 1
-  mana: 30
-  maxMana: 30
-  catchChance: 0.2
-  dodgeChance: 0.1
-  active: 1
-  type: 0
+  data:
+    moncargName: 
+    maxHealth: 0
+    health: 0
+    attack: 0
+    defense: 0
+    speed: 0
+    exp: 0
+    level: 0
+    mana: 0
+    maxMana: 0
+    catchChance: 0
+    dodgeChance: 0
+    type: 0
+    active: 0
   role: 1
-  mockEnemyMoncargPrefab: {fileID: 0}
-  moncargHealthUI: {fileID: 0}
+--- !u!114 &2235280704622220614
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1909571526152986902}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c5650710273514946a78c54f1a615509, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::StoredMoncarg
+  Details: {fileID: 11400000, guid: 89c8c53e020881a449c47b11c2a09ff1, type: 2}
