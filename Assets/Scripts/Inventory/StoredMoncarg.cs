@@ -20,44 +20,57 @@ public class StoredMoncarg : MonoBehaviour //MoncargInventoryItem
             moncargComponent.LoadMoncargData(Details.moncargData);
         }
     }
-    /*
-        // Method to add this Moncarg to inventory
-        public void AddToInventory()
+
+    // Method to add this Moncarg to inventory
+    public void AddToInventory()
+    {
+        if (PlayerInventory.Instance != null && Details != null)
         {
-            if (PlayerInventory.Instance != null && MoncargItem != null)
+            // Check if already in inventory by comparing ItemDefinition
+            bool alreadyInInventory = PlayerInventory.Instance.StoredMoncargs
+                .Exists(item => item.Details == Details);
+
+            if (!alreadyInInventory)
             {
-                // Create a StoredItem for the inventory system
-                StoredItem storedItem = new StoredItem
+                // Create a StoredMoncargData (data container, not MonoBehaviour)
+                StoredMoncargData storedMoncarg = new StoredMoncargData
                 {
-                    Details = MoncargItem,
-                    RootVisual = null // This will be created by the inventory system
+                    Details = Details, // This is the ScriptableObject
+                    RootVisual = null,
+                    IsEquipped = false
                 };
 
-                PlayerInventory.Instance.StoredItems.Add(storedItem);
+                PlayerInventory.Instance.StoredMoncargs.Add(storedMoncarg);
+                Debug.Log($"Added {Details.FriendlyName} to inventory");
 
-                // Optional: Hide or disable the Moncarg in the world
+                // Hide the GameObject in the scene
                 gameObject.SetActive(false);
             }
-        }
-
-        // Method to remove from inventory and spawn in world
-        public void RemoveFromInventory(Vector3 position)
-        {
-            if (PlayerInventory.Instance != null && MoncargItem != null)
+            else
             {
-                // Find and remove from inventory
-                StoredItem itemToRemove = PlayerInventory.Instance.StoredItems
-                    .Find(item => item.Details == MoncargItem);
-
-                if (itemToRemove != null)
-                {
-                    PlayerInventory.Instance.StoredItems.Remove(itemToRemove);
-
-                    // Spawn in world
-                    transform.position = position;
-                    gameObject.SetActive(true);
-                }
+                Debug.LogWarning($"{Details.FriendlyName} is already in inventory");
             }
         }
-        */
+    }
+    /*
+           // Method to remove from inventory and spawn in world
+           public void RemoveFromInventory(Vector3 position)
+           {
+               if (PlayerInventory.Instance != null && MoncargItem != null)
+               {
+                   // Find and remove from inventory
+                   StoredItem itemToRemove = PlayerInventory.Instance.StoredItems
+                       .Find(item => item.Details == MoncargItem);
+
+                   if (itemToRemove != null)
+                   {
+                       PlayerInventory.Instance.StoredItems.Remove(itemToRemove);
+
+                       // Spawn in world
+                       transform.position = position;
+                       gameObject.SetActive(true);
+                   }
+               }
+           }
+           */
 }

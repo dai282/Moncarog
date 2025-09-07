@@ -13,8 +13,8 @@ public sealed class PlayerInventory : MonoBehaviour
     #region Inventory Data
     [Header("Inventory Content")]
     public List<StoredItem> StoredItems = new List<StoredItem>();
-    public List<StoredMoncarg> StoredMoncargs = new List<StoredMoncarg>();
-    
+    public List<StoredMoncargData> StoredMoncargs = new List<StoredMoncargData>();
+
     [Header("Grid Settings")]
     public Dimensions InventoryDimensions = new Dimensions { Width = 8, Height = 8 };
     
@@ -257,20 +257,25 @@ public sealed class PlayerInventory : MonoBehaviour
         }
         else if (m_CurrentMode == InventoryMode.Moncargs && m_CurrentSelectedMoncarg != null)
         {
-            // Check if we can equip (max 3)
-            int currentEquipped = StoredMoncargs.Count(m => m?.Details != null && m.Details.IsEquipped);
-            
-            if (!m_CurrentSelectedMoncarg.IsEquipped && currentEquipped >= 3)
+            // Find the stored moncarg data
+            var storedMoncarg = StoredMoncargs.FirstOrDefault(m => m.Details == m_CurrentSelectedMoncarg);
+            if (storedMoncarg != null)
             {
-                Debug.Log("Cannot equip - maximum 3 Moncargs allowed");
-                return;
+                // Check if we can equip (max 3)
+                int currentEquipped = StoredMoncargs.Count(m => m?.Details != null && m.IsEquipped);
+
+                if (!storedMoncarg.IsEquipped && currentEquipped >= 3)
+                {
+                    Debug.Log("Cannot equip - maximum 3 Moncargs allowed");
+                    return;
+                }
+
+                storedMoncarg.IsEquipped = !storedMoncarg.IsEquipped;
+                UpdateMoncargEquippedCount();
+
+                string action = storedMoncarg.IsEquipped ? "Equipped" : "Unequipped";
+                Debug.Log($"{action} Moncarg: {m_CurrentSelectedMoncarg.FriendlyName}");
             }
-            
-            m_CurrentSelectedMoncarg.IsEquipped = !m_CurrentSelectedMoncarg.IsEquipped;
-            UpdateMoncargEquippedCount();
-            
-            string action = m_CurrentSelectedMoncarg.IsEquipped ? "Equipped" : "Unequipped";
-            Debug.Log($"{action} Moncarg: {m_CurrentSelectedMoncarg.FriendlyName}");
         }
     }
 
@@ -592,7 +597,7 @@ public sealed class PlayerInventory : MonoBehaviour
     #region Moncarg Management
     private void UpdateMoncargEquippedCount()
     {
-        int equippedCount = StoredMoncargs.Count(m => m?.Details != null && m.Details.IsEquipped);
+        int equippedCount = StoredMoncargs.Count(m => m?.Details != null && m.IsEquipped);
         if (m_MoncargEquippedLabel != null)
         {
             m_MoncargEquippedLabel.text = $"{equippedCount}/3";

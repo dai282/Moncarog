@@ -49,6 +49,13 @@ public class GameManager : MonoBehaviour
         Moncarg startingMoncarg = playerObj.GetComponent<Moncarg>();
         startingMoncarg.InitStats();
 
+        // Get the StoredMoncarg component from the Moncarg GameObject, and add to inventory
+        StoredMoncarg storedMoncarg = playerObj.GetComponent<StoredMoncarg>();
+        if (storedMoncarg != null)
+        {
+            storedMoncarg.AddToInventory();
+        }
+
         // Spawn enemy Moncarg
         GameObject enemyObj = Instantiate(enemyMoncargPrefab);
         Moncarg enemy = enemyObj.GetComponent<Moncarg>();
