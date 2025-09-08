@@ -12,24 +12,25 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9136e7c2ddf01784f8652093b3035372, type: 3}
   m_Name: Bulbasour
   m_EditorClassIdentifier: Assembly-CSharp::MoncargInventoryAdapter
-  FriendlyName: 
-  Icon: {fileID: 0}
+  FriendlyName: Bulbasour
+  Icon: {fileID: -8576927913760934702, guid: ee1b26e7dc8f24746a9bd69d947391a8, type: 3}
   moncargData:
-    moncargName: 
-    maxHealth: 0
-    health: 0
-    attack: 0
-    defense: 0
-    speed: 0
+    moncargName: Bulbasour
+    maxHealth: 500
+    health: 490
+    attack: 500
+    defense: 10
+    speed: 3
     exp: 0
-    level: 0
-    mana: 0
-    maxMana: 0
-    catchChance: 0
-    dodgeChance: 0
+    level: 1
+    mana: 500
+    maxMana: 500
+    catchChance: 0.1
+    dodgeChance: 0.1
     type: 0
-    active: 0
+    active: 1
   SlotDimension:
     Height: 1
     Width: 1
   IsEquipped: 0
+  linkedPrefab: {fileID: 5930417885874421365, guid: e87966ac96a446847a74b0890160612f, type: 3}

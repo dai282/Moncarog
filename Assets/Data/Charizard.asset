@@ -33,3 +33,4 @@ MonoBehaviour:
     Height: 1
     Width: 1
   IsEquipped: 0
+  linkedPrefab: {fileID: 1909571526152986902, guid: 28ea6eec80dcb2f40980d8ed37d09abd, type: 3}

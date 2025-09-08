@@ -78,9 +78,6 @@ public class Moncarg : MonoBehaviour
         skillset[2] = skillList.skills[4];
         skillset[3] = skillList.skills[7];
 
-        //mock enemy for testing combat system
-        //TestMockEncounter();
-
     }
 
     public void SetHealthLabel(Label label)
@@ -111,9 +108,6 @@ public class Moncarg : MonoBehaviour
             m_MoncargManaLabel.text = $"{moncargName} MP: {mana}";
         }
     }
-
-
-
     // New method to get data for inventory
     public MoncargData GetMoncargData()
     {

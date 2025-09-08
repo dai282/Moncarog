@@ -17,13 +17,13 @@ MonoBehaviour:
   moncargData:
     moncargName: Firezard
     maxHealth: 300
-    health: 200
+    health: 300
     attack: 50
     defense: 80
     speed: 50
     exp: 200
     level: 5
-    mana: 200
+    mana: 500
     maxMana: 500
     catchChance: 5
     dodgeChance: 5
@@ -33,3 +33,4 @@ MonoBehaviour:
     Height: 1
     Width: 1
   IsEquipped: 1
+  linkedPrefab: {fileID: 4959577150352375591, guid: 49c8737ffb4c0124e8d386575dfbc8e6, type: 3}

@@ -43,7 +43,7 @@ public sealed class PlayerInventory : MonoBehaviour
     #region State Management
     private enum InventoryMode { Items, Moncargs }
     private InventoryMode m_CurrentMode = InventoryMode.Items;
-    private bool m_IsInventoryReady = false;
+    public bool m_IsInventoryReady = false;
     
     private ItemDefinition m_CurrentSelectedItem;
     private MoncargInventoryAdapter m_CurrentSelectedMoncarg;
@@ -94,6 +94,9 @@ public sealed class PlayerInventory : MonoBehaviour
     {
         // Get root UI element
         m_Root = GetComponentInChildren<UIDocument>().rootVisualElement;
+
+        //HideInventory(); // Start hidden
+
         if (m_Root == null)
         {
             Debug.LogError("No UIDocument found!");
@@ -346,7 +349,7 @@ public sealed class PlayerInventory : MonoBehaviour
         ClearSelection();
     }
 
-    private void SwitchToMoncargMode()
+    public void SwitchToMoncargMode()
     {
         Debug.Log("Switching to Moncargs mode");
         m_CurrentMode = InventoryMode.Moncargs;
@@ -595,7 +598,7 @@ public sealed class PlayerInventory : MonoBehaviour
     #endregion
 
     #region Moncarg Management
-    private void UpdateMoncargEquippedCount()
+    public void UpdateMoncargEquippedCount()
     {
         int equippedCount = StoredMoncargs.Count(m => m?.Details != null && m.IsEquipped);
         if (m_MoncargEquippedLabel != null)

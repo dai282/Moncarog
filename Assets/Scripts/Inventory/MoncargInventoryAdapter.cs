@@ -14,7 +14,10 @@ public class MoncargInventoryAdapter : ScriptableObject //MoncargItemDefinition
 
     [Header("Inventory Settings")]
     public Dimensions SlotDimension = new Dimensions { Width = 1, Height = 1 };
-    public bool IsEquipped = false;
+    public bool IsEquipped = true;
+
+    //prefab reference
+    public GameObject linkedPrefab;
 
     // Convert to description string for inventory display
     public string Description
@@ -32,26 +35,58 @@ public class MoncargInventoryAdapter : ScriptableObject //MoncargItemDefinition
     // Create a Moncarg GameObject from this data || THIS IS ALSO DONE IN StoredMoncarg Awake()
     public GameObject CreateMoncargGameObject()
     {
-        GameObject moncargGO = new GameObject(FriendlyName);
-        Moncarg moncargComponent = moncargGO.AddComponent<Moncarg>();
+        if (linkedPrefab != null)
+        {
+            // Instantiate the linked prefab
+            GameObject moncargGO = Instantiate(linkedPrefab);
+            Moncarg moncargComponent = moncargGO.GetComponent<Moncarg>();
 
-        // Copy data from MoncargData to Moncarg component
-        moncargComponent.moncargName = moncargData.moncargName;
-        moncargComponent.maxHealth = moncargData.maxHealth;
-        moncargComponent.health = moncargData.health;
-        moncargComponent.attack = moncargData.attack;
-        moncargComponent.defense = moncargData.defense;
-        moncargComponent.speed = moncargData.speed;
-        moncargComponent.exp = moncargData.exp;
-        moncargComponent.level = moncargData.level;
-        moncargComponent.mana = moncargData.mana;
-        moncargComponent.maxMana = moncargData.maxMana;
-        moncargComponent.catchChance = moncargData.catchChance;
-        moncargComponent.dodgeChance = moncargData.dodgeChance;
-        moncargComponent.type = moncargData.type;
-        moncargComponent.active = moncargData.active;
-        moncargComponent.role = Moncarg.moncargRole.PlayerOwned;
+            if (moncargComponent != null)
+            {
+                // Update the component with current data (in case stats changed)
+                moncargComponent.moncargName = moncargData.moncargName;
+                moncargComponent.maxHealth = moncargData.maxHealth;
+                moncargComponent.health = moncargData.health;
+                moncargComponent.attack = moncargData.attack;
+                moncargComponent.defense = moncargData.defense;
+                moncargComponent.speed = moncargData.speed;
+                moncargComponent.exp = moncargData.exp;
+                moncargComponent.level = moncargData.level;
+                moncargComponent.mana = moncargData.mana;
+                moncargComponent.maxMana = moncargData.maxMana;
+                moncargComponent.catchChance = moncargData.catchChance;
+                moncargComponent.dodgeChance = moncargData.dodgeChance;
+                moncargComponent.type = moncargData.type;
+                moncargComponent.active = moncargData.active;
+                moncargComponent.role = Moncarg.moncargRole.PlayerOwned;
+            }
 
-        return moncargGO;
+            return moncargGO;
+        }
+        else
+        {
+            // Fallback to creating from scratch (your existing code)
+            GameObject moncargGO = new GameObject(FriendlyName);
+            Moncarg moncargComponent = moncargGO.AddComponent<Moncarg>();
+
+            // Copy data from MoncargData to Moncarg component
+            moncargComponent.moncargName = moncargData.moncargName;
+            moncargComponent.maxHealth = moncargData.maxHealth;
+            moncargComponent.health = moncargData.health;
+            moncargComponent.attack = moncargData.attack;
+            moncargComponent.defense = moncargData.defense;
+            moncargComponent.speed = moncargData.speed;
+            moncargComponent.exp = moncargData.exp;
+            moncargComponent.level = moncargData.level;
+            moncargComponent.mana = moncargData.mana;
+            moncargComponent.maxMana = moncargData.maxMana;
+            moncargComponent.catchChance = moncargData.catchChance;
+            moncargComponent.dodgeChance = moncargData.dodgeChance;
+            moncargComponent.type = moncargData.type;
+            moncargComponent.active = moncargData.active;
+            moncargComponent.role = Moncarg.moncargRole.PlayerOwned;
+
+            return moncargGO;
+        }
     }
 }

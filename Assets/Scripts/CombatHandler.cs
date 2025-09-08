@@ -44,6 +44,9 @@ public class CombatHandler
 
         var combatRoot = combatUI.rootVisualElement;
 
+        //do not display until combat starts
+        combatRoot.style.display = DisplayStyle.None;
+
         optionsContainer = combatRoot.Q<VisualElement>("OptionsContainer");
         fightContainer = combatRoot.Q<VisualElement>("FightContainer");
 
@@ -106,6 +109,7 @@ public class CombatHandler
     //START EVENT DRIVEN BEGIN ENCOUNTER
     public void BeginEncounter(Moncarg ours, Moncarg enemyMoncarg)
     {
+        combatUI.rootVisualElement.style.display = DisplayStyle.Flex;
         player = ours;
         enemy = enemyMoncarg;
 

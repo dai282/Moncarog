@@ -13,17 +13,17 @@ MonoBehaviour:
   m_Name: Pikachu
   m_EditorClassIdentifier: Assembly-CSharp::MoncargInventoryAdapter
   FriendlyName: Pikachu
-  Icon: {fileID: -3478766669378677403, guid: 5ca5306ca483e8c4693fedd6186cb2ea, type: 3}
+  Icon: {fileID: -2352454442900668151, guid: a3cb934982599394192a27c1920d2b20, type: 3}
   moncargData:
     moncargName: Pikachu
     maxHealth: 300
-    health: 280
+    health: 300
     attack: 50
     defense: 10
     speed: 10
     exp: 200
     level: 5
-    mana: 420
+    mana: 500
     maxMana: 500
     catchChance: 0.2
     dodgeChance: 0.2
@@ -33,3 +33,4 @@ MonoBehaviour:
     Height: 1
     Width: 1
   IsEquipped: 1
+  linkedPrefab: {fileID: 4959577150352375591, guid: 7d1d0317d5fe01847954bdc7f098e54c, type: 3}

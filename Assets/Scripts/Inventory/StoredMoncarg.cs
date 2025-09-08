@@ -3,7 +3,7 @@ using UnityEngine.UIElements;
 using UnityEngine;
 
 [Serializable]
-public class StoredMoncarg : MonoBehaviour //MoncargInventoryItem
+public class StoredMoncarg : MonoBehaviour //MoncargInventoryItem (but MonoBehaviour to attach to GameObject)
 {
     public MoncargInventoryAdapter Details;
     public VisualElement RootVisual;
@@ -43,8 +43,6 @@ public class StoredMoncarg : MonoBehaviour //MoncargInventoryItem
                 PlayerInventory.Instance.StoredMoncargs.Add(storedMoncarg);
                 Debug.Log($"Added {Details.FriendlyName} to inventory");
 
-                // Hide the GameObject in the scene
-                gameObject.SetActive(false);
             }
             else
             {
