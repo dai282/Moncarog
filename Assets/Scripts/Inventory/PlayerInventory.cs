@@ -87,15 +87,16 @@ public sealed class PlayerInventory : MonoBehaviour
         UpdateWeightDisplay();
         ClearSelection();
         
-        Debug.Log("Inventory initialization complete");
+        // Hide inventory after initialization
+        HideInventory();
+        
+        Debug.Log("Inventory initialization complete - starting hidden");
     }
 
     private IEnumerator SetupUIElements()
     {
         // Get root UI element
         m_Root = GetComponentInChildren<UIDocument>().rootVisualElement;
-
-        //HideInventory(); // Start hidden
 
         if (m_Root == null)
         {
@@ -300,24 +301,25 @@ public sealed class PlayerInventory : MonoBehaviour
         }
         else if (m_CurrentMode == InventoryMode.Moncargs && m_CurrentSelectedMoncarg != null)
         {
-            if (m_CurrentSelectedMoncarg.IsEquipped)
+            // Find the stored moncarg data
+            var storedMoncarg = StoredMoncargs.FirstOrDefault(m => m.Details == m_CurrentSelectedMoncarg);
+            if (storedMoncarg != null)
             {
-                // If equipped, just unequip it
-                m_CurrentSelectedMoncarg.IsEquipped = false;
-                UpdateMoncargEquippedCount();
-                Debug.Log($"Unequipped Moncarg: {m_CurrentSelectedMoncarg.FriendlyName}");
-            }
-            else
-            {
-                // If not equipped, remove it completely
-                var moncargToRemove = StoredMoncargs.FirstOrDefault(x => x.Details == m_CurrentSelectedMoncarg);
-                if (moncargToRemove != null)
+                if (storedMoncarg.IsEquipped)
                 {
-                    if (moncargToRemove.RootVisual != null)
+                    // If equipped, just unequip it
+                    storedMoncarg.IsEquipped = false;
+                    UpdateMoncargEquippedCount();
+                    Debug.Log($"Unequipped Moncarg: {m_CurrentSelectedMoncarg.FriendlyName}");
+                }
+                else
+                {
+                    // If not equipped, remove it completely
+                    if (storedMoncarg.RootVisual != null)
                     {
-                        moncargToRemove.RootVisual.RemoveFromHierarchy();
+                        storedMoncarg.RootVisual.RemoveFromHierarchy();
                     }
-                    StoredMoncargs.Remove(moncargToRemove);
+                    StoredMoncargs.Remove(storedMoncarg);
                     UpdateWeightDisplay();
                     Debug.Log($"Released Moncarg: {m_CurrentSelectedMoncarg.FriendlyName}");
                 }
@@ -616,5 +618,67 @@ public sealed class PlayerInventory : MonoBehaviour
     #region Utility Methods
     private void AddItemToInventoryGrid(VisualElement item) => m_InventoryGrid.Add(item);
     private void RemoveItemFromInventoryGrid(VisualElement item) => m_InventoryGrid.Remove(item);
+    
+    // Helper methods for adding items/moncargs to inventory
+    public void AddItemToInventory(ItemDefinition item)
+    {
+        if (item == null) return;
+        
+        var storedItem = new StoredItem { Details = item };
+        StoredItems.Add(storedItem);
+        
+        if (m_IsInventoryReady && m_CurrentMode == InventoryMode.Items && IsInventoryVisible())
+        {
+            RefreshInventoryDisplay();
+        }
+        
+        Debug.Log($"Added item to inventory: {item.FriendlyName}");
+    }
+    
+    public void AddMoncargToInventory(MoncargInventoryAdapter moncarg, bool autoEquip = false)
+    {
+        if (moncarg == null) return;
+        
+        var storedMoncarg = new StoredMoncargData 
+        { 
+            Details = moncarg,
+            IsEquipped = false
+        };
+        
+        // Auto-equip if requested and we have room
+        if (autoEquip)
+        {
+            int currentEquipped = StoredMoncargs.Count(m => m?.Details != null && m.IsEquipped);
+            if (currentEquipped < 3)
+            {
+                storedMoncarg.IsEquipped = true;
+            }
+        }
+        
+        StoredMoncargs.Add(storedMoncarg);
+        
+        if (m_IsInventoryReady && m_CurrentMode == InventoryMode.Moncargs && IsInventoryVisible())
+        {
+            RefreshInventoryDisplay();
+        }
+        
+        UpdateMoncargEquippedCount();
+        Debug.Log($"Added moncarg to inventory: {moncarg.FriendlyName} (Equipped: {storedMoncarg.IsEquipped})");
+    }
+    
+    // Check if player has any equipped moncargs
+    public bool HasEquippedMoncargs()
+    {
+        return StoredMoncargs.Any(m => m?.Details != null && m.IsEquipped);
+    }
+    
+    // Get all equipped moncargs
+    public List<MoncargInventoryAdapter> GetEquippedMoncargs()
+    {
+        return StoredMoncargs
+            .Where(m => m?.Details != null && m.IsEquipped)
+            .Select(m => m.Details)
+            .ToList();
+    }
     #endregion
 }
