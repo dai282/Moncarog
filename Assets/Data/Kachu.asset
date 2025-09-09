@@ -10,27 +10,27 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9136e7c2ddf01784f8652093b3035372, type: 3}
-  m_Name: Charizard
-  m_EditorClassIdentifier: Assembly-CSharp::MoncargItemDefinition
-  FriendlyName: Charizard
-  Icon: {fileID: 6363573771445966535, guid: 89eab50d2e0da374782ec54cc07885a6, type: 3}
+  m_Name: Kachu
+  m_EditorClassIdentifier: Assembly-CSharp::MoncargInventoryAdapter
+  FriendlyName: Kachu
+  Icon: {fileID: -2352454442900668151, guid: a3cb934982599394192a27c1920d2b20, type: 3}
   moncargData:
-    moncargName: Charizard
-    maxHealth: 500
-    health: 306
-    attack: 10
+    moncargName: Kachu
+    maxHealth: 300
+    health: 300
+    attack: 50
     defense: 10
-    speed: 5
-    exp: 5
-    level: 1
-    mana: 80
-    maxMana: 100
+    speed: 10
+    exp: 200
+    level: 5
+    mana: 500
+    maxMana: 500
     catchChance: 0.2
     dodgeChance: 0.2
-    type: 2
+    type: 0
     active: 1
   SlotDimension:
     Height: 1
     Width: 1
-  IsEquipped: 0
-  linkedPrefab: {fileID: 1909571526152986902, guid: 28ea6eec80dcb2f40980d8ed37d09abd, type: 3}
+  IsEquipped: 1
+  linkedPrefab: {fileID: 4959577150352375591, guid: 7d1d0317d5fe01847954bdc7f098e54c, type: 3}
