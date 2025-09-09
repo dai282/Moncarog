@@ -10,27 +10,27 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9136e7c2ddf01784f8652093b3035372, type: 3}
-  m_Name: Firezard
+  m_Name: Grassmancer
   m_EditorClassIdentifier: Assembly-CSharp::MoncargInventoryAdapter
-  FriendlyName: Firezard
-  Icon: {fileID: -3478766669378677403, guid: 5ca5306ca483e8c4693fedd6186cb2ea, type: 3}
+  FriendlyName: Grassmancer
+  Icon: {fileID: 7935518174836657070, guid: b879dd6ea62cf6640910dc9e748b28a9, type: 3}
   moncargData:
-    moncargName: Firezard
+    moncargName: Grassmancer
     maxHealth: 500
     health: 500
-    attack: 50
-    defense: 80
-    speed: 50
-    exp: 200
-    level: 5
-    mana: 500
-    maxMana: 500
-    catchChance: 5
-    dodgeChance: 5
-    type: 0
-    active: 1
+    attack: 80
+    defense: 60
+    speed: 20
+    exp: 0
+    level: 1
+    mana: 200
+    maxMana: 200
+    catchChance: 0
+    dodgeChance: 0.3
+    type: 2
+    active: 0
   SlotDimension:
     Height: 1
     Width: 1
   IsEquipped: 1
-  linkedPrefab: {fileID: 4959577150352375591, guid: 49c8737ffb4c0124e8d386575dfbc8e6, type: 3}
+  linkedPrefab: {fileID: 6470595564411063485, guid: 6a479609911b50e4c9342c9cd7570936, type: 3}
