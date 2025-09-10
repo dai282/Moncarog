@@ -193,11 +193,12 @@ public class GameManager : MonoBehaviour
         // Spawn the selected moncarg for battle
         GameObject playerMoncargObj = selectedMoncarg.CreateMoncargGameObject();
         Moncarg playerMoncarg = playerMoncargObj.GetComponent<Moncarg>();
+        playerMoncarg.InitStats();
 
         // Spawn enemy Moncarg
         GameObject enemyObj = Instantiate(enemyMoncargPrefab);
         Moncarg enemy = enemyObj.GetComponent<Moncarg>();
-        //enemy.InitStats();
+        enemy.InitStats();
 
         // Begin encounter
         combatHandler.BeginEncounter(playerMoncarg, enemy);

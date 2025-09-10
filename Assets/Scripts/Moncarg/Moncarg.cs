@@ -52,7 +52,7 @@ public class Moncarg : MonoBehaviour
     public moncargRole role;
 
     
-    public void Awake()
+    public void InitStats()
     {
         if (maxHealth <= 0)
         {
