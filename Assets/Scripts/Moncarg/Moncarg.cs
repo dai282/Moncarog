@@ -8,7 +8,6 @@ public class Moncarg : MonoBehaviour
     //moncarg stats are now stored in MoncargData ScriptableObject
     public MoncargData data;
 
-
     public string moncargName { get => data.moncargName; set => data.moncargName = value; }
     public float maxHealth { get => data.maxHealth; set => data.maxHealth = value; }
     public float health { get => data.health; set => data.health = value; }
@@ -23,6 +22,7 @@ public class Moncarg : MonoBehaviour
     public float dodgeChance { get => data.dodgeChance; set => data.dodgeChance = value; }
     public bool active { get => data.active; set => data.active = value; }
     public ElementalType type { get => data.type; set => data.type = value; }
+    public SkillDefinition[] skillset { get => data.skillset; set => data.skillset = value; }
 
     /*
     public string moncargName;
@@ -40,8 +40,8 @@ public class Moncarg : MonoBehaviour
     public bool active;
     public ElementalType type;*/
 
-    public Skill[] skillset;
-    private SkillList skillList;
+    //public Skill[] skillset;
+    //private SkillList skillList;
 
     public enum moncargRole
     {
@@ -49,12 +49,10 @@ public class Moncarg : MonoBehaviour
         Wild
     }
 
-    private Label m_MoncargHealthLabel;
-    private Label m_MoncargManaLabel;
-
     public moncargRole role;
 
-    public void InitStats()
+    
+    public void Awake()
     {
         if (maxHealth <= 0)
         {
@@ -68,45 +66,8 @@ public class Moncarg : MonoBehaviour
         health = maxHealth;
         mana = maxMana;
 
-        skillList = new SkillList();
+        Debug.Log("Moncarg Initialized");
 
-        Debug.Log($"InitStats for {moncargName}, skillList.skills length = {skillList.skills?.Length}");
-
-        skillset = new Skill[4];
-        skillset[0] = skillList.skills[0];
-        skillset[1] = skillList.skills[1];
-        skillset[2] = skillList.skills[4];
-        skillset[3] = skillList.skills[7];
-
-    }
-
-    public void SetHealthLabel(Label label)
-    {
-        m_MoncargHealthLabel = label;
-        UpdateHealthLabel(); // Initialize
-    }
-
-    public void UpdateHealthLabel()
-    {
-        if (m_MoncargHealthLabel != null)
-        {
-            m_MoncargHealthLabel.text = $"{moncargName} HP: {health}";
-        }
-
-    }
-
-    public void SetManaLabel(Label label)
-    {
-        m_MoncargManaLabel = label;
-        UpdateManaLabel(); // Initialize
-    }
-
-    public void UpdateManaLabel()
-    {
-        if (m_MoncargManaLabel != null)
-        {
-            m_MoncargManaLabel.text = $"{moncargName} MP: {mana}";
-        }
     }
     // New method to get data for inventory
     public MoncargData GetMoncargData()
@@ -118,7 +79,7 @@ public class Moncarg : MonoBehaviour
     public void LoadMoncargData(MoncargData newData)
     {
         data = newData;
-        InitStats(); // Reinitialize with loaded data
+        //InitStats(); // Reinitialize with loaded data
     }
 
 

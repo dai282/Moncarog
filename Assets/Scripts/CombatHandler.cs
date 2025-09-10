@@ -5,7 +5,6 @@ using UnityEngine.UIElements;
 public class CombatHandler
 {
     private CombatHandlerUI combatUI;
-    private bool isCombatActive = false;
 
     private Moncarg player;
     private Moncarg enemy;
@@ -33,7 +32,6 @@ public class CombatHandler
     {
         player = ours;
         enemy = enemyMoncarg;
-        isCombatActive = true;
 
         combatUI.ShowCombatUI(true);
         combatUI.UpdateMoncargStats(player, enemy);
@@ -90,7 +88,7 @@ public class CombatHandler
 
         Debug.Log("Player chose Attack!");
 
-        Skill attackChoice = player.skillset[attackOption - 1];
+        SkillDefinition attackChoice = player.skillset[attackOption - 1];
 
         if (attackChoice.name == "Rest")
         {
@@ -150,7 +148,7 @@ public class CombatHandler
     //END EVENT DRIVEN BEGIN ENCOUNTER
 
     #region Attack Execution
-    public void ExecuteAttack(Moncarg attacker, Moncarg defender, Skill attackChoice)
+    public void ExecuteAttack(Moncarg attacker, Moncarg defender, SkillDefinition attackChoice)
     {
         if (attacker.mana < attackChoice.manaCost)
         {
@@ -197,7 +195,7 @@ public class CombatHandler
         return roll < defender.dodgeChance;
     }
 
-    public float checkElemental(Moncarg attacker, Moncarg defender, Skill attackChoice, float damage)
+    public float checkElemental(Moncarg attacker, Moncarg defender, SkillDefinition attackChoice, float damage)
     {
         //Check for elemental effectiveness | REFACTOR THIS INTO ANOTHER METHOD LATER
         if (attackChoice.type == ElementalType.Fire && defender.type == ElementalType.Plant)
@@ -333,7 +331,6 @@ public class CombatHandler
 
     private void Cleanup()
     {
-        isCombatActive = false;
         combatUI.Cleanup();
         combatUI.ShowCombatUI(false);
 

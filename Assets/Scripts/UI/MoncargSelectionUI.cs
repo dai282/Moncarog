@@ -51,7 +51,7 @@ public class MoncargSelectionUI : MonoBehaviour
                 }
             };
 
-            moncargList.onSelectionChange += OnSelectionChanged;
+            moncargList.selectionChanged += OnSelectionChanged;
         }
     }
 

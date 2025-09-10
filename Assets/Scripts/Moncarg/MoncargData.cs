@@ -18,4 +18,5 @@ public class MoncargData
     public float dodgeChance;
     public ElementalType type;
     public bool active;
+    public SkillDefinition[] skillset = new SkillDefinition[4];
 }

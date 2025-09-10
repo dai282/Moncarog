@@ -1,7 +1,7 @@
 using UnityEngine;
 using Elementals;
 
-[CreateAssetMenu(fileName = "New Moncarg Item", menuName = "Inventory/Moncarg Item")]
+[CreateAssetMenu(fileName = "New Moncarg Item", menuName = "Data/Moncarg Item")]
 public class MoncargInventoryAdapter : ScriptableObject //MoncargItemDefinition
 {
     [Header("Display Info")]
@@ -35,41 +35,13 @@ public class MoncargInventoryAdapter : ScriptableObject //MoncargItemDefinition
     // Create a Moncarg GameObject from this data || THIS IS ALSO DONE IN StoredMoncarg Awake()
     public GameObject CreateMoncargGameObject()
     {
-        if (linkedPrefab != null)
+        // Instantiate the linked prefab
+        GameObject moncargGO = Instantiate(linkedPrefab);
+        Moncarg moncargComponent = moncargGO.GetComponent<Moncarg>();
+
+        if (moncargComponent != null)
         {
-            // Instantiate the linked prefab
-            GameObject moncargGO = Instantiate(linkedPrefab);
-            Moncarg moncargComponent = moncargGO.GetComponent<Moncarg>();
-
-            if (moncargComponent != null)
-            {
-                // Update the component with current data (in case stats changed)
-                moncargComponent.moncargName = moncargData.moncargName;
-                moncargComponent.maxHealth = moncargData.maxHealth;
-                moncargComponent.health = moncargData.health;
-                moncargComponent.attack = moncargData.attack;
-                moncargComponent.defense = moncargData.defense;
-                moncargComponent.speed = moncargData.speed;
-                moncargComponent.exp = moncargData.exp;
-                moncargComponent.level = moncargData.level;
-                moncargComponent.mana = moncargData.mana;
-                moncargComponent.maxMana = moncargData.maxMana;
-                moncargComponent.catchChance = moncargData.catchChance;
-                moncargComponent.dodgeChance = moncargData.dodgeChance;
-                moncargComponent.type = moncargData.type;
-                moncargComponent.active = moncargData.active;
-                moncargComponent.role = Moncarg.moncargRole.PlayerOwned;
-            }
-
-            return moncargGO;
-        }
-        else
-        {
-            // Fallback to creating from scratch (your existing code)
-            GameObject moncargGO = new GameObject(FriendlyName);
-            Moncarg moncargComponent = moncargGO.AddComponent<Moncarg>();
-
-            // Copy data from MoncargData to Moncarg component
+            // Update the component with current data (in case stats changed)
             moncargComponent.moncargName = moncargData.moncargName;
             moncargComponent.maxHealth = moncargData.maxHealth;
             moncargComponent.health = moncargData.health;
@@ -85,8 +57,8 @@ public class MoncargInventoryAdapter : ScriptableObject //MoncargItemDefinition
             moncargComponent.type = moncargData.type;
             moncargComponent.active = moncargData.active;
             moncargComponent.role = Moncarg.moncargRole.PlayerOwned;
-
-            return moncargGO;
         }
+
+        return moncargGO;
     }
 }

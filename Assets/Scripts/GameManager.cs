@@ -65,8 +65,7 @@ public class GameManager : MonoBehaviour
         StartCoroutine(StartGameWithMoncargSelection());
 
 
-        //initialize the board (BoardManager.Init())
-
+        //initialize the board (BoardManager.Init()
 
         //spawn the player (does he already have a moncarg with him?)
         //the moncarog encounter trigger code should be within the board manager script, not here?
@@ -198,7 +197,7 @@ public class GameManager : MonoBehaviour
         // Spawn enemy Moncarg
         GameObject enemyObj = Instantiate(enemyMoncargPrefab);
         Moncarg enemy = enemyObj.GetComponent<Moncarg>();
-        enemy.InitStats();
+        //enemy.InitStats();
 
         // Begin encounter
         combatHandler.BeginEncounter(playerMoncarg, enemy);
