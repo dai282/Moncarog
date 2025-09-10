@@ -18,12 +18,12 @@ MonoBehaviour:
     moncargName: Bulbasour
     maxHealth: 500
     health: 490
-    attack: 500
+    attack: 10
     defense: 10
     speed: 3
     exp: 0
     level: 1
-    mana: 500
+    mana: 430
     maxMana: 500
     catchChance: 0.1
     dodgeChance: 0.1

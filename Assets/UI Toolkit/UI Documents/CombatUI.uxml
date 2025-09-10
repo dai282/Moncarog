@@ -16,4 +16,8 @@
         <ui:Button text="Switch" name="SwitchButton" style="height: 17%; width: 45%; top: auto; left: auto; right: auto; bottom: auto; min-width: auto; font-size: 30%; position: relative;" />
         <ui:Button text="Flee" name="FleeButton" style="height: 17%; width: 45%; top: auto; left: auto; right: auto; bottom: auto; min-width: auto; font-size: 30%; position: relative;" />
     </ui:VisualElement>
+    <ui:VisualElement name="CatchContainer" style="flex-grow: 1; flex-direction: row; display: none; flex-wrap: wrap; align-items: flex-end; justify-content: flex-end; align-self: flex-end; align-content: flex-end; width: 45%; height: 40%;">
+        <ui:Button text="Catch" name="CatchButton" style="height: 17%; width: 45%; top: auto; left: auto; right: auto; bottom: auto; min-width: auto; font-size: 30%; position: relative;" />
+        <ui:Button text="Cancel" name="CancelCatchButton" parse-escape-sequences="false" style="height: 17%; width: 45%; top: auto; left: auto; right: auto; bottom: auto; min-width: auto; font-size: 20%; position: relative;" />
+    </ui:VisualElement>
 </ui:UXML>

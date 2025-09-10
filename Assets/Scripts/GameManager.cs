@@ -16,10 +16,10 @@ public class GameManager : MonoBehaviour
     public static GameManager Instance { get; private set; }
 
     //create UI document and combat handler variables  here
-    [SerializeField] private UIDocument CombatUI;
+    [SerializeField] private CombatHandlerUI combatHandlerUI;
     [SerializeField] private MoncargSelectionUI moncargSelectionUI;
     [SerializeField] private ForceEquipPromptUI forceEquipPrompt;
-    private CombatHandler combatHandler = new CombatHandler();
+    private CombatHandler combatHandler;
 
     private bool waitingForPlayerToEquip = false;
 
@@ -46,9 +46,8 @@ public class GameManager : MonoBehaviour
         //initialize player
         player.Init();
 
-        //initialize UI elements
-        combatHandler.SetUI(CombatUI, player);
-
+        //initialize UI elements | Combat UI Document should be part of the CombatHandlerUI (but we have not made it yet), make it the same as MoncargSelectionUI and ForceEquipPromptUI
+        combatHandler = new CombatHandler(combatHandlerUI);
 
         //initialize starting Moncarg and test encounter
 
@@ -74,6 +73,8 @@ public class GameManager : MonoBehaviour
 
 
     }
+
+    #region Moncarg Selection
 
     private void AutoEquipMoncargs()
     {
@@ -237,4 +238,6 @@ public class GameManager : MonoBehaviour
     {
         waitingForPlayerToEquip = false;
     }
+
+    #endregion
 }

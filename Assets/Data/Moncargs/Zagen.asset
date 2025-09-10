@@ -17,18 +17,18 @@ MonoBehaviour:
   moncargData:
     moncargName: Zagen
     maxHealth: 500
-    health: 306
+    health: 0
     attack: 10
     defense: 10
     speed: 5
     exp: 5
     level: 1
-    mana: 80
+    mana: 70
     maxMana: 100
-    catchChance: 0.2
+    catchChance: 1
     dodgeChance: 0.2
     type: 2
-    active: 1
+    active: 0
   SlotDimension:
     Height: 1
     Width: 1
