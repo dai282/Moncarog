@@ -1,23 +1,26 @@
-using System;
 using UnityEngine;
+using System;
 
-[CreateAssetMenu(fileName ="New Item", menuName ="Data/Item")]
+[CreateAssetMenu(fileName = "New Item", menuName = "Item")]
 public class ItemDefinition : ScriptableObject
 {
-    public string ID = Guid.NewGuid().ToString();
+    [Header("Basic Info")]
     public string FriendlyName;
     public string Description;
-    public string affectedStat;
-    public int effectValue;
     public Sprite Icon;
     public Dimensions SlotDimension;
-
-    [Header("Powerup Properties")]
+    
+    [Header("Item Type")]
     public bool isPowerup = false;
-    [Header("Stat Multipliers (1.0 = no change, 1.5 = +50%)")]
-    public float healthMultiplier = 1.0f;
+    public bool isConsumable = false; // Use once then delete
+    
+    [Header("Equipment Status")]
+    public bool isEquipped = false;
+    
+    [Header("Powerup Multipliers (only if isPowerup = true)")]
     public float attackMultiplier = 1.0f;
     public float defenseMultiplier = 1.0f;
+    public float healthMultiplier = 1.0f;
     public float speedMultiplier = 1.0f;
     public float manaMultiplier = 1.0f;
 }
