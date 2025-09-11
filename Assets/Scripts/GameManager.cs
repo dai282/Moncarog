@@ -99,6 +99,7 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    //hello world
     private IEnumerator StartGameWithMoncargSelection()
     {
         // Wait for inventory to be initialized
