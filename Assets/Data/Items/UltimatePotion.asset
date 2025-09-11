@@ -12,18 +12,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: def703097d228ff4eb0ba14083b4b4ae, type: 3}
   m_Name: UltimatePotion
   m_EditorClassIdentifier: Assembly-CSharp::ItemDefinition
-  ID: 8b923706-4604-4f16-a1d8-cff29eeae9a7
-  FriendlyName: 
-  Description: 
-  affectedStat: 
-  effectValue: 0
-  Icon: {fileID: 0}
+  FriendlyName: Ultimate Potion
+  Description: This will enhance your equipped Moncarg's abilites.
+  Icon: {fileID: 5888315422345105727, guid: 756ecde76fa5a304db7c7cc8dac7703a, type: 3}
   SlotDimension:
-    Height: 0
-    Width: 0
-  isPowerup: 0
-  healthMultiplier: 1
-  attackMultiplier: 1
-  defenseMultiplier: 1
-  speedMultiplier: 1
-  manaMultiplier: 1
+    Height: 1
+    Width: 1
+  isPowerup: 1
+  isConsumable: 1
+  isEquipped: 0
+  attackMultiplier: 1.5
+  defenseMultiplier: 1.5
+  healthMultiplier: 1.5
+  speedMultiplier: 1.5
+  manaMultiplier: 1.5

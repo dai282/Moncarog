@@ -12,10 +12,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: def703097d228ff4eb0ba14083b4b4ae, type: 3}
   m_Name: SPEEDP
   m_EditorClassIdentifier: Assembly-CSharp::ItemDefinition
-  ID: 9e3a9012-d056-4324-b19d-3bf3ab87f7a6
   FriendlyName: POWERUP
   Description: This will enhance your equipped Moncarg's abilites.
   Icon: {fileID: -5575374936625819304, guid: 09319140922a7a14a82df7dd16d388ed, type: 3}
   SlotDimension:
     Height: 1
     Width: 1
+  isPowerup: 1
+  isConsumable: 1
+  isEquipped: 0
+  attackMultiplier: 1
+  defenseMultiplier: 1
+  healthMultiplier: 1
+  speedMultiplier: 1
+  manaMultiplier: 1
