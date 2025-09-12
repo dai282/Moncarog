@@ -54,17 +54,7 @@ public class Moncarg : MonoBehaviour
     
     public void InitStats()
     {
-        if (maxHealth <= 0)
-        {
-            maxHealth = health;
-        }
-        if (maxMana <= 0)
-        {
-            maxMana = mana;
-        }
-        active = true;
-        health = maxHealth;
-        mana = maxMana;
+        data.reset();
 
         Debug.Log("Moncarg Initialized");
 

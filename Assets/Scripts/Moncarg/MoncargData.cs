@@ -19,4 +19,11 @@ public class MoncargData
     public ElementalType type;
     public bool active;
     public SkillDefinition[] skillset = new SkillDefinition[4];
+
+    public void reset()
+    {
+        health = maxHealth;
+        mana = maxMana;
+        active = true;
+    }
 }

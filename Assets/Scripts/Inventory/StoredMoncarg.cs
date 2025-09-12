@@ -50,25 +50,4 @@ public class StoredMoncarg : MonoBehaviour //MoncargInventoryItem (but MonoBehav
             }
         }
     }
-    /*
-           // Method to remove from inventory and spawn in world
-           public void RemoveFromInventory(Vector3 position)
-           {
-               if (PlayerInventory.Instance != null && MoncargItem != null)
-               {
-                   // Find and remove from inventory
-                   StoredItem itemToRemove = PlayerInventory.Instance.StoredItems
-                       .Find(item => item.Details == MoncargItem);
-
-                   if (itemToRemove != null)
-                   {
-                       PlayerInventory.Instance.StoredItems.Remove(itemToRemove);
-
-                       // Spawn in world
-                       transform.position = position;
-                       gameObject.SetActive(true);
-                   }
-               }
-           }
-           */
 }

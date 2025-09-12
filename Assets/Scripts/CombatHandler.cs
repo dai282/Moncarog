@@ -1,6 +1,7 @@
 using UnityEngine;
 using Elementals; //for elemental types
 using UnityEngine.UIElements;
+using System.Collections.Generic;
 
 public class CombatHandler
 {
@@ -97,14 +98,7 @@ public class CombatHandler
         }
         else
         {
-            if (TryDodge(enemy))
-            {
-                Debug.Log($"{enemy.moncargName} dodged the attack!");
-            }
-            else
-            {
-                ExecuteAttack(player, enemy, attackChoice);
-            }
+            ExecuteAttack(player, enemy, attackChoice);
         }
         EndTurn();
     }
@@ -122,15 +116,55 @@ public class CombatHandler
 
     private void EnemyTurn()
     {
-        if (enemy.mana <= 0)
+        // List of moves with weights
+        List<(SkillDefinition skill, float weight)> movePool = new List<(SkillDefinition, float)>();
+
+        // Add Ultimate if available
+        if (enemy.mana >= enemy.skillset[3].manaCost)
+            movePool.Add((enemy.skillset[3], 0.2f)); // 20%
+
+        // Add Elemental if available
+        if (enemy.mana >= enemy.skillset[2].manaCost)
+            movePool.Add((enemy.skillset[2], 0.6f)); // 60%
+
+        // Add Basic (always available, fallback)
+        movePool.Add((enemy.skillset[1], 0.2f)); // 20%
+
+        // If no mana at all for any move except basic chance to rest
+        if (enemy.mana < enemy.skillset[2].manaCost && enemy.mana < enemy.skillset[3].manaCost)
         {
-            Debug.Log(enemy.moncargName + " ran out of mana! Automatic resting...");
-            Rest(enemy);
-            return;
+            float restRoll = Random.value;
+            if (restRoll < 0.3f) // 30% chance to rest early
+            {
+                Debug.Log(enemy.moncargName + " is low on mana and decides to Rest...");
+                Rest(enemy);
+                return;
+            }
         }
 
-        // For now, enemy always uses basic attack
-        ExecuteAttack(enemy, player, enemy.skillset[1]);
+        // Roll weighted random choice
+        float totalWeight = 0f;
+        foreach (var move in movePool)
+            totalWeight += move.weight;
+
+        float roll = Random.value * totalWeight;
+        float cumulative = 0f;
+        SkillDefinition chosenSkill = movePool[0].skill; // fallback to first
+
+        foreach (var move in movePool)
+        {
+            cumulative += move.weight;
+            if (roll <= cumulative)
+            {
+                chosenSkill = move.skill;
+                break;
+            }
+        }
+
+        // Execute chosen move
+        Debug.Log(enemy.moncargName + " chose " + chosenSkill.name);
+        ExecuteAttack(enemy, player, chosenSkill);
+
         EndTurn();
     }
 
@@ -150,9 +184,9 @@ public class CombatHandler
     #region Attack Execution
     public void ExecuteAttack(Moncarg attacker, Moncarg defender, SkillDefinition attackChoice)
     {
-        if (attacker.mana < attackChoice.manaCost)
+        if (TryDodge(defender))
         {
-            Debug.Log(attacker.moncargName + " does not have enough mana to use " + attackChoice.name + "!");
+            Debug.Log($"{defender.moncargName} dodged the attack!");
             return;
         }
 
@@ -315,6 +349,7 @@ public class CombatHandler
         //Retrieve enemy moncarg game object and StoredMoncarg component
         GameObject enemyGO = enemy.gameObject;
         StoredMoncarg enemyStoredMoncarg = enemyGO.GetComponent<StoredMoncarg>();
+        enemyStoredMoncarg.Details.moncargData.reset(); //reset health, mana and status
 
         //Add to inventory
         enemyStoredMoncarg.AddToInventory();
