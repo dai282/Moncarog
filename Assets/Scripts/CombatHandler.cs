@@ -7,7 +7,7 @@ using System.Linq;
 public class CombatHandler
 {
     private CombatHandlerUI combatUI;
-    private MoncargSelectionUI switchUI;
+    private MoncargSelectionUI moncargSelectionUI;
 
     private Moncarg player;
     private Moncarg enemy;
@@ -18,8 +18,8 @@ public class CombatHandler
     public CombatHandler(CombatHandlerUI uiHandler, MoncargSelectionUI selectionUI)
     {
         combatUI = uiHandler;
-        switchUI = selectionUI;
-        switchUI.Hide();
+        moncargSelectionUI = selectionUI;
+        moncargSelectionUI.Hide();
 
         SubscribeToUIEvents();
     }
@@ -33,7 +33,8 @@ public class CombatHandler
         combatUI.OnInventoryClicked += OnInventoryClicked;
         combatUI.OnSwitchClicked += OnSwitchClicked;
 
-        switchUI.OnMoncargSelected += OnMoncargSelected;
+        moncargSelectionUI.OnSelectionCancelled += OnSelectionCancelled;
+        moncargSelectionUI.OnMoncargSelected += OnMoncargSelected;
     }
 
     //START EVENT DRIVEN BEGIN ENCOUNTER
@@ -305,16 +306,9 @@ public class CombatHandler
             .ToList();
 
         // Show selection UI for multiple equipped moncargs
-        switchUI.Show(equippedMoncargs);
+        moncargSelectionUI.Show(equippedMoncargs);
     }
 
-    private void OnMoncargSelected(MoncargInventoryAdapter selectedMoncarg)
-    {
-        //Object.Destroy(player);
-        //Debug.Log("this ran");
-        //GameObject playerMoncargObj = selectedMoncarg.CreateMoncargGameObject();
-        //player = playerMoncargObj.GetComponent<Moncarg>();
-    }
 
 
     private void OnEnemyDefeated()
