@@ -15,4 +15,4 @@ MonoBehaviour:
   skillName: Bite
   type: 3
   damage: 10
-  manaCost: 10
+  manaCost: 0
