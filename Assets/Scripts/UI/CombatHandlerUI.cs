@@ -25,6 +25,10 @@ public class CombatHandlerUI : MonoBehaviour
     private ProgressBar enemyHealth;
     private ProgressBar enemyMana;
 
+    // Store current moncargs for refreshing
+    private Moncarg currentPlayer;
+    private Moncarg currentEnemy;
+
     // Events for UI interactions
     public System.Action<int> OnAttackClicked;
     public System.Action OnFleeClicked;
@@ -117,6 +121,10 @@ public class CombatHandlerUI : MonoBehaviour
 
     public void UpdateMoncargStats(Moncarg player, Moncarg enemy)
     {
+        // Store references for refreshing
+        currentPlayer = player;
+        currentEnemy = enemy;
+
         // Update health bars
         playerHealth.highValue = player.maxHealth;
         playerHealth.value = player.health;
@@ -143,6 +151,15 @@ public class CombatHandlerUI : MonoBehaviour
                 skillButtons[i].text = player.skillset[i].name;
                 skillButtons[i].SetEnabled(player.mana >= player.skillset[i].manaCost);
             }
+        }
+    }
+
+    // New method to refresh UI after powerup changes
+    public void RefreshUI()
+    {
+        if (currentPlayer != null && currentEnemy != null)
+        {
+            UpdateMoncargStats(currentPlayer, currentEnemy);
         }
     }
 

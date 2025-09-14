@@ -256,8 +256,15 @@ public sealed class PlayerInventory : MonoBehaviour
     {
         if (m_CurrentMode == InventoryMode.Items && m_CurrentSelectedItem != null)
         {
-            Debug.Log($"Equipping item: {m_CurrentSelectedItem.FriendlyName}");
-            // Add your item equipping logic here
+            if (m_CurrentSelectedItem.isPowerup)
+            {
+                ApplyPowerupToMoncarg(m_CurrentSelectedItem);
+            }
+            else
+            {
+                Debug.Log($"Using item: {m_CurrentSelectedItem.FriendlyName}");
+                // Handle regular items here
+            }
         }
         else if (m_CurrentMode == InventoryMode.Moncargs && m_CurrentSelectedMoncarg != null)
         {
@@ -281,6 +288,76 @@ public sealed class PlayerInventory : MonoBehaviour
                 Debug.Log($"{action} Moncarg: {m_CurrentSelectedMoncarg.FriendlyName}");
             }
         }
+    }
+
+    // New method - minimal powerup functionality
+    private void ApplyPowerupToMoncarg(ItemDefinition powerup)
+    {
+        // Get the first equipped moncarg
+        var targetMoncarg = StoredMoncargs.FirstOrDefault(m => m?.Details != null && m.IsEquipped);
+        if (targetMoncarg == null)
+        {
+            Debug.Log("No equipped Moncarg to apply powerup to");
+            return;
+        }
+
+        var moncargData = targetMoncarg.Details.moncargData;
+        var storedItem = StoredItems.FirstOrDefault(x => x.Details == powerup);
+
+        // Store old stats for comparison
+        float oldAttack = moncargData.attack;
+        float oldDefense = moncargData.defense;
+        float oldMaxHealth = moncargData.maxHealth;
+        int oldSpeed = moncargData.speed;
+        int oldMaxMana = moncargData.maxMana;
+
+        // Apply multipliers directly to stats
+        moncargData.attack *= powerup.attackMultiplier;
+        moncargData.defense *= powerup.defenseMultiplier;
+        moncargData.maxHealth *= powerup.healthMultiplier;
+        moncargData.speed = Mathf.RoundToInt(moncargData.speed * powerup.speedMultiplier);
+        moncargData.maxMana = Mathf.RoundToInt(moncargData.maxMana * powerup.manaMultiplier);
+
+        // Update current health/mana if they increased
+        if (moncargData.health < moncargData.maxHealth) moncargData.health = moncargData.maxHealth;
+        if (moncargData.mana < moncargData.maxMana) moncargData.mana = moncargData.maxMana;
+
+        // Debug stat changes
+        Debug.Log($"=== POWERUP APPLIED: {powerup.FriendlyName} to {moncargData.moncargName} ===");
+        Debug.Log($"Multipliers - Attack: x{powerup.attackMultiplier}, Defense: x{powerup.defenseMultiplier}, Health: x{powerup.healthMultiplier}, Speed: x{powerup.speedMultiplier}, Mana: x{powerup.manaMultiplier}");
+
+        if (oldAttack != moncargData.attack)
+            Debug.Log($"Attack: {oldAttack} → {moncargData.attack} (+{moncargData.attack - oldAttack:F1})");
+        if (oldDefense != moncargData.defense)
+            Debug.Log($"Defense: {oldDefense} → {moncargData.defense} (+{moncargData.defense - oldDefense:F1})");
+        if (oldMaxHealth != moncargData.maxHealth)
+            Debug.Log($"Max Health: {oldMaxHealth} → {moncargData.maxHealth} (+{moncargData.maxHealth - oldMaxHealth:F1})");
+        if (oldSpeed != moncargData.speed)
+            Debug.Log($"Speed: {oldSpeed} → {moncargData.speed} (+{moncargData.speed - oldSpeed})");
+        if (oldMaxMana != moncargData.maxMana)
+            Debug.Log($"Max Mana: {oldMaxMana} → {moncargData.maxMana} (+{moncargData.maxMana - oldMaxMana})");
+
+        // Remove item if consumable
+        if (powerup.isConsumable && storedItem != null)
+        {
+            if (storedItem.RootVisual != null)
+            {
+                storedItem.RootVisual.RemoveFromHierarchy();
+            }
+            StoredItems.Remove(storedItem);
+            UpdateWeightDisplay();
+            Debug.Log($"Consumed {powerup.FriendlyName} - removed from inventory");
+            ClearSelection();
+        }
+        else if (!powerup.isConsumable)
+        {
+            Debug.Log($"Powerup {powerup.FriendlyName} applied permanently to {moncargData.moncargName}");
+        }
+        var combatUI = FindFirstObjectByType<CombatHandlerUI>();
+if (combatUI != null)
+{
+    combatUI.RefreshUI();
+}
     }
 
     private void OnDropButtonClicked()
@@ -672,7 +749,7 @@ public sealed class PlayerInventory : MonoBehaviour
         return StoredMoncargs.Any(m => m?.Details != null && m.IsEquipped);
     }
     
-    // Get all equipped moncargs
+    // Get all equipped moncargs    
     public List<MoncargInventoryAdapter> GetEquippedMoncargs()
     {
         return StoredMoncargs

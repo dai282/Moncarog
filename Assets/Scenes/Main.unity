@@ -204,6 +204,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MoncargSelectionUI
   selectionUI: {fileID: 500144455}
+  selectionUIStyleSheet: {fileID: 7433441132597879392, guid: a9b85aaa1c8d2be4090ddb59bd370f8f, type: 3}
 --- !u!4 &462797781
 Transform:
   m_ObjectHideFlags: 0
