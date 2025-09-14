@@ -29,6 +29,11 @@ MonoBehaviour:
     dodgeChance: 0.3
     type: 2
     active: 0
+    skillset:
+    - {fileID: 11400000, guid: 411e2c1d2e0c3e847a9c8fa5794f907d, type: 2}
+    - {fileID: 11400000, guid: 8985b594bd5f82844bc91de01609dd50, type: 2}
+    - {fileID: 11400000, guid: 97604302c55309e478b18f815634f918, type: 2}
+    - {fileID: 11400000, guid: 6c1ec54f72e173949affb398c260b4aa, type: 2}
   SlotDimension:
     Height: 1
     Width: 1
