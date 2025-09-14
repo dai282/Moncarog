@@ -47,7 +47,7 @@ public class GameManager : MonoBehaviour
         player.Init();
 
         //initialize UI elements | Combat UI Document should be part of the CombatHandlerUI (but we have not made it yet), make it the same as MoncargSelectionUI and ForceEquipPromptUI
-        combatHandler = new CombatHandler(combatHandlerUI);
+        combatHandler = new CombatHandler(combatHandlerUI, moncargSelectionUI);
 
         //initialize starting Moncarg and test encounter
 

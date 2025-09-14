@@ -2,20 +2,25 @@ using UnityEngine;
 using Elementals; //for elemental types
 using UnityEngine.UIElements;
 using System.Collections.Generic;
+using System.Linq;
 
 public class CombatHandler
 {
     private CombatHandlerUI combatUI;
+    private MoncargSelectionUI switchUI;
 
     private Moncarg player;
     private Moncarg enemy;
     private Moncarg currentTurn;
     private Moncarg other;
 
-    //pass in UI document from GameManager
-    public CombatHandler(CombatHandlerUI uiHandler)
+    //pass in UI document from GameManager. Also passing in MoncargSelectionUI for the switch function
+    public CombatHandler(CombatHandlerUI uiHandler, MoncargSelectionUI selectionUI)
     {
         combatUI = uiHandler;
+        switchUI = selectionUI;
+        switchUI.Hide();
+
         SubscribeToUIEvents();
     }
 
@@ -26,6 +31,9 @@ public class CombatHandler
         combatUI.OnCatchClicked += OnCatchClicked;
         combatUI.OnCancelCatchClicked += OnCancelCatchClicked;
         combatUI.OnInventoryClicked += OnInventoryClicked;
+        combatUI.OnSwitchClicked += OnSwitchClicked;
+
+        switchUI.OnMoncargSelected += OnMoncargSelected;
     }
 
     //START EVENT DRIVEN BEGIN ENCOUNTER
@@ -288,6 +296,26 @@ public class CombatHandler
     {
         PlayerInventory.Instance.ShowInventory();
     }
+
+    private void OnSwitchClicked()
+    {
+        var equippedMoncargs = PlayerInventory.Instance.StoredMoncargs
+            .Where(m => m.IsEquipped)
+            .Select(m => m.Details)
+            .ToList();
+
+        // Show selection UI for multiple equipped moncargs
+        switchUI.Show(equippedMoncargs);
+    }
+
+    private void OnMoncargSelected(MoncargInventoryAdapter selectedMoncarg)
+    {
+        //Object.Destroy(player);
+        //Debug.Log("this ran");
+        //GameObject playerMoncargObj = selectedMoncarg.CreateMoncargGameObject();
+        //player = playerMoncargObj.GetComponent<Moncarg>();
+    }
+
 
     private void OnEnemyDefeated()
     {
