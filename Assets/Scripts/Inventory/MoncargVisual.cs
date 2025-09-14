@@ -7,6 +7,8 @@ public class MoncargVisual : VisualElement
     private readonly MoncargInventoryAdapter m_MoncargAdapter;
     private Vector2 m_OriginalPosition;
     private bool m_IsDragging;
+    private bool m_IsMouseDown;
+    private Vector2 m_MouseDownPosition;
     private (bool canPlace, Vector2 position) m_PlacementResults;
 
     public MoncargVisual(MoncargInventoryAdapter moncargAdapter)
@@ -30,6 +32,7 @@ public class MoncargVisual : VisualElement
         AddToClassList("visual-icon-container");
 
         // Register mouse events for drag and drop
+        RegisterCallback<MouseDownEvent>(OnMouseDownEvent);
         RegisterCallback<MouseUpEvent>(OnMouseUpEvent);
         RegisterCallback<MouseMoveEvent>(OnMouseMoveEvent);
     }
@@ -38,6 +41,7 @@ public class MoncargVisual : VisualElement
     {
         UnregisterCallback<MouseMoveEvent>(OnMouseMoveEvent);
         UnregisterCallback<MouseUpEvent>(OnMouseUpEvent);
+        UnregisterCallback<MouseDownEvent>(OnMouseDownEvent);
     }
 
     public void SetPosition(Vector2 pos)
@@ -46,42 +50,70 @@ public class MoncargVisual : VisualElement
         style.top = pos.y;
     }
 
+    private void OnMouseDownEvent(MouseDownEvent mouseEvent)
+    {
+        if (mouseEvent.button == 0) // Left mouse button
+        {
+            m_IsMouseDown = true;
+            m_MouseDownPosition = mouseEvent.localMousePosition;
+            
+            // Show moncarg details on mouse down
+            PlayerInventory.UpdateMoncargDetails(m_MoncargAdapter);
+        }
+    }
+
     private void OnMouseUpEvent(MouseUpEvent mouseEvent)
     {
-        if (!m_IsDragging)
+        if (mouseEvent.button == 0) // Left mouse button
         {
-            StartDrag();
-            PlayerInventory.UpdateMoncargDetails(m_MoncargAdapter);
-            return;
-        }
-
-        m_IsDragging = false;
+            if (m_IsDragging)
+            {
+                // End drag
+                m_IsDragging = false;
                 
-        if (m_PlacementResults.canPlace)
+                if (m_PlacementResults.canPlace)
+                {
+                    SetPosition(new Vector2(
+                        m_PlacementResults.position.x - parent.worldBound.position.x,
+                        m_PlacementResults.position.y - parent.worldBound.position.y));
+                }
+                else
+                {
+                    SetPosition(new Vector2(m_OriginalPosition.x, m_OriginalPosition.y));
+                }
+            }
+            
+            m_IsMouseDown = false;
+        }
+    }
+
+    private void OnMouseMoveEvent(MouseMoveEvent mouseEvent)
+    {
+        if (m_IsMouseDown && !m_IsDragging)
         {
-            SetPosition(new Vector2(
-                m_PlacementResults.position.x - parent.worldBound.position.x,
-                m_PlacementResults.position.y - parent.worldBound.position.y));
-            return;
+            // Check if mouse has moved enough to start dragging
+            float dragThreshold = 5f;
+            Vector2 currentMousePos = mouseEvent.localMousePosition;
+            float distance = Vector2.Distance(m_MouseDownPosition, currentMousePos);
+            
+            if (distance > dragThreshold)
+            {
+                StartDrag();
+            }
         }
 
-        SetPosition(new Vector2(m_OriginalPosition.x, m_OriginalPosition.y));
+        if (m_IsDragging)
+        {
+            SetPosition(GetMousePosition(mouseEvent.mousePosition));
+            m_PlacementResults = PlayerInventory.Instance.ShowPlacementTarget(this);
+        }
     }
 
     public void StartDrag()
     {
         m_IsDragging = true;
-
         m_OriginalPosition = worldBound.position - parent.worldBound.position;
         BringToFront();
-    }
-
-    private void OnMouseMoveEvent(MouseMoveEvent mouseEvent)
-    {
-        if (!m_IsDragging) { return; }
-
-        SetPosition(GetMousePosition(mouseEvent.mousePosition));
-        m_PlacementResults = PlayerInventory.Instance.ShowPlacementTarget(this);
     }
 
     public Vector2 GetMousePosition(Vector2 mousePosition) => 

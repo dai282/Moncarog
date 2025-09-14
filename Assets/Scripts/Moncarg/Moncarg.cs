@@ -4,7 +4,6 @@ using UnityEngine.UIElements;
 
 public class Moncarg : MonoBehaviour
 {
-
     //moncarg stats are now stored in MoncargData ScriptableObject
     public MoncargData data;
 
@@ -51,19 +50,42 @@ public class Moncarg : MonoBehaviour
 
     public moncargRole role;
 
-    
-    public void InitStats()
+    public void Awake()
     {
-        data.reset();
+        if (maxHealth <= 0)
+        {
+            maxHealth = health;
+        }
+        if (maxMana <= 0)
+        {
+            maxMana = mana;
+        }
+        active = true;
+        health = maxHealth;
+        mana = maxMana;
 
         Debug.Log("Moncarg Initialized");
-
     }
+
     // New method to get data for inventory
     public MoncargData GetMoncargData()
     {
         return data;
     }
+    public void InitStats()
+{
+    if (maxHealth <= 0)
+    {
+        maxHealth = health;
+    }
+    if (maxMana <= 0)
+    {
+        maxMana = mana;
+    }
+    active = true;
+    health = maxHealth;
+    mana = maxMana;
+}
 
     // New method to load data from inventory
     public void LoadMoncargData(MoncargData newData)
@@ -71,6 +93,4 @@ public class Moncarg : MonoBehaviour
         data = newData;
         //InitStats(); // Reinitialize with loaded data
     }
-
-
 }
