@@ -22,8 +22,10 @@ public class MapManager : MonoBehaviour
     // The MapGenerator instance.
     private MapGenerator mapGenerator;
 
+    public MapTraversalOverlay traversalOverlay;
+
     // Spacing between rooms for visual layout.
-    private const float xSpacing = 4f;
+    private const float xSpacing = 2f;
     private const float ySpacing = 2f;
 
     // Tracks visited nodes to prevent infinite loops on a non-tree graph.
@@ -46,14 +48,22 @@ public class MapManager : MonoBehaviour
 
         Debug.Log("Map generation complete! Now displaying the map in the scene.");
 
-        // Start the recursive process of displaying the map.
-        // The map starts at the specified origin point.
+
         DisplayMap(startNode, new Vector3(0, -15, 0));
+
+        if (traversalOverlay != null)
+        {
+            Vector3 mapOffset = new Vector3(0, -15, 0);
+
+            traversalOverlay.Initialize(startNode, mapOffset);
+        }
+        else
+        {
+            Debug.LogError("TraversalOverlay reference is missing in MapManager!");
+        }
     }
 
     // Recursively displays the map by instantiating GameObjects for each room.
-    // <param name="node">The current map node to display.
-    // <param name="position">The position to place the current room.
     private void DisplayMap(MapGenerator.MapNode node, Vector3 origin)
     {
         if (visitedNodes.Contains(node))
