@@ -15,13 +15,9 @@ public class GameManager : MonoBehaviour
     //static instance that stores reference to the GameManager. public get and private set
     public static GameManager Instance { get; private set; }
 
-    //create UI document and combat handler variables  here
-    [SerializeField] private CombatHandlerUI combatHandlerUI;
-    [SerializeField] private MoncargSelectionUI moncargSelectionUI;
-    [SerializeField] private ForceEquipPromptUI forceEquipPrompt;
-    private CombatHandler combatHandler;
+    [SerializeField] private CombatHandler combatHandler;
 
-    private bool waitingForPlayerToEquip = false;
+    //private bool waitingForPlayerToEquip = false;
 
 
     //Awakeis called before Start when the GameObject is created
@@ -46,23 +42,12 @@ public class GameManager : MonoBehaviour
         //initialize player
         player.Init();
 
-        //initialize UI elements | Combat UI Document should be part of the CombatHandlerUI (but we have not made it yet), make it the same as MoncargSelectionUI and ForceEquipPromptUI
-        combatHandler = new CombatHandler(combatHandlerUI, moncargSelectionUI);
+        //initialize UI elements
+        //combatHandler = new CombatHandler(combatHandlerUI, moncargSelectionUI, forceEquipPromptUI);
 
-        //initialize starting Moncarg and test encounter
-
-        // Subscribe moncargSelectionUI to events
-        if (moncargSelectionUI != null)
-        {
-            moncargSelectionUI.OnMoncargSelected += OnMoncargSelected;
-            moncargSelectionUI.OnSelectionCancelled += OnSelectionCancelled;
-        }
-
-        //auto equip moncargs if none are equipped
-        //AutoEquipMoncargs();
-
-        //Start moncarg selection process
-        StartCoroutine(StartGameWithMoncargSelection());
+        //Start moncarg selection process to fight against enemy
+        //we're passing in the enemy moncarg prefab here, after merge, this should be called inside BoardManager when player encounters a moncarg
+        combatHandler.BeginEncounter(enemyMoncargPrefab);
 
 
         //initialize the board (BoardManager.Init()
@@ -73,172 +58,5 @@ public class GameManager : MonoBehaviour
 
     }
 
-    #region Moncarg Selection
-
-    private void AutoEquipMoncargs()
-    {
-        if (PlayerInventory.Instance != null)
-        {
-            // Equip first 3 moncargs by default (or all if less than 3)
-            int equippedCount = 0;
-            foreach (var storedMoncarg in PlayerInventory.Instance.StoredMoncargs)
-            {
-                if (equippedCount < 3)
-                {
-                    storedMoncarg.IsEquipped = true;
-                    equippedCount++;
-                    Debug.Log($"Auto-equipped: {storedMoncarg.Details.FriendlyName}");
-                }
-                else
-                {
-                    break;
-                }
-            }
-
-            PlayerInventory.Instance.UpdateMoncargEquippedCount();
-        }
-    }
-
-    //hello world
-    private IEnumerator StartGameWithMoncargSelection()
-    {
-        // Wait for inventory to be initialized
-        yield return new WaitUntil(() => PlayerInventory.Instance != null && PlayerInventory.Instance.m_IsInventoryReady);
-
-        // Get equipped moncargs
-        var equippedMoncargs = PlayerInventory.Instance.StoredMoncargs
-            .Where(m => m.IsEquipped)
-            .Select(m => m.Details)
-            .ToList();
-
-        if (equippedMoncargs.Count == 0)
-        {
-            Debug.LogWarning("No equipped Moncargs found! Opening Inventory to equip one");
-            ForcePlayerToEquipMoncarg();
-        }
-        else if (equippedMoncargs.Count == 1)
-        {
-            // If only one equipped, use it automatically
-            OnMoncargSelected(equippedMoncargs[0]);
-        }
-        else
-        {
-            // Show selection UI for multiple equipped moncargs
-            moncargSelectionUI.Show(equippedMoncargs);
-        }
-    }
-
-    private void ForcePlayerToEquipMoncarg()
-    {
-        waitingForPlayerToEquip = true;
-
-        forceEquipPrompt.ShowPrompt("Please equip at least one Moncarg from your inventory to continue!");
-
-        // Show inventory and prompt player to equip a moncarg
-        if (PlayerInventory.Instance != null)
-        {
-            PlayerInventory.Instance.ShowInventory();
-            PlayerInventory.Instance.SwitchToMoncargMode();
-
-            // You might want to show a message to the player here
-            Debug.Log("Please equip at least one Moncarg to continue!");
-
-            // Start checking for equipped moncargs
-            StartCoroutine(WaitForPlayerToEquip());
-        }
-    }
-
-    private IEnumerator WaitForPlayerToEquip()
-    {
-        // Wait until player equips at least one moncarg
-        yield return new WaitUntil(() =>
-            PlayerInventory.Instance.StoredMoncargs.Any(m => m.IsEquipped) ||
-            !waitingForPlayerToEquip);
-
-        if (waitingForPlayerToEquip)
-        {
-            // Player equipped a moncarg, continue with selection
-            var equippedMoncargs = PlayerInventory.Instance.StoredMoncargs
-                .Where(m => m.IsEquipped)
-                .Select(m => m.Details)
-                .ToList();
-
-            if (equippedMoncargs.Count == 1)
-            {
-                OnMoncargSelected(equippedMoncargs[0]);
-            }
-            else
-            {
-                moncargSelectionUI.Show(equippedMoncargs);
-            }
-
-            waitingForPlayerToEquip = false;
-        }
-    }
-
-    private void OnMoncargSelected(MoncargInventoryAdapter selectedMoncarg)
-    {
-        Debug.Log($"Selected Moncarg: {selectedMoncarg.FriendlyName}");
-
-        // Hide inventory if it's open
-        if (PlayerInventory.Instance != null && PlayerInventory.Instance.IsInventoryVisible())
-        {
-            PlayerInventory.Instance.HideInventory();
-        }
-
-        if (forceEquipPrompt != null)
-        {
-            forceEquipPrompt.HidePrompt();
-        }
-
-        // Spawn the selected moncarg for battle
-        GameObject playerMoncargObj = selectedMoncarg.CreateMoncargGameObject();
-        Moncarg playerMoncarg = playerMoncargObj.GetComponent<Moncarg>();
-        playerMoncarg.InitStats();
-
-        // Spawn enemy Moncarg
-        GameObject enemyObj = Instantiate(enemyMoncargPrefab);
-        Moncarg enemy = enemyObj.GetComponent<Moncarg>();
-        enemy.InitStats();
-
-        // Begin encounter
-        combatHandler.BeginEncounter(playerMoncarg, enemy);
-    }
-
-    private void OnSelectionCancelled()
-    {
-        // If selection was cancelled but we have equipped moncargs, use the first one
-        var equippedMoncargs = PlayerInventory.Instance.StoredMoncargs
-            .Where(m => m.IsEquipped)
-            .Select(m => m.Details)
-            .ToList();
-
-        if (equippedMoncargs.Count > 0)
-        {
-            Debug.Log("Selection cancelled, but equipped Moncargs found. Using the first one.");
-            OnMoncargSelected(equippedMoncargs[0]);
-        }
-        else
-        {
-            // If no equipped moncargs after cancellation, force equip
-            ForcePlayerToEquipMoncarg();
-        }
-    }
-
-    private void OnDestroy()
-    {
-        if (moncargSelectionUI != null)
-        {
-            moncargSelectionUI.OnMoncargSelected -= OnMoncargSelected;
-            moncargSelectionUI.OnSelectionCancelled -= OnSelectionCancelled;
-        }
-    }
-
-    // Public method to cancel the equip waiting (if player closes inventory without equipping)
-    public void CancelEquipWaiting()
-    {
-        waitingForPlayerToEquip = false;
-    }
-
-    #endregion
+    
 }
