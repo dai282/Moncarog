@@ -1,0 +1,41 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9136e7c2ddf01784f8652093b3035372, type: 3}
+  m_Name: Balina
+  m_EditorClassIdentifier: Assembly-CSharp::MoncargInventoryAdapter
+  FriendlyName: Balina
+  Icon: {fileID: 3452168198074896549, guid: 7145733a38795a441abba920af3fa4f4, type: 3}
+  moncargData:
+    moncargName: Balina
+    maxHealth: 130
+    health: 130
+    attack: 20
+    defense: 50
+    speed: 5
+    exp: 0
+    level: 1
+    mana: 100
+    maxMana: 100
+    catchChance: 0.3
+    dodgeChance: 0.1
+    type: 2
+    active: 0
+    skillset:
+    - {fileID: 11400000, guid: 411e2c1d2e0c3e847a9c8fa5794f907d, type: 2}
+    - {fileID: 11400000, guid: 720ea51bd46724e479a4139bfe6d8b36, type: 2}
+    - {fileID: 11400000, guid: 97604302c55309e478b18f815634f918, type: 2}
+    - {fileID: 11400000, guid: 6c1ec54f72e173949affb398c260b4aa, type: 2}
+  SlotDimension:
+    Height: 1
+    Width: 1
+  IsEquipped: 1
+  linkedPrefab: {fileID: 5146393331625118865, guid: 9141941f6232ee147971c823723ccf53, type: 3}

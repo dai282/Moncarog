@@ -1,0 +1,10 @@
+<ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <ui:VisualElement name="SelectionPanel" style="flex-grow: 1; position: absolute; width: auto; height: auto; background-color: rgba(0, 0, 0, 0.31); top: 50%; left: 50%; translate: -50% -50%; padding-top: 20px; padding-right: 20px; padding-bottom: 20px; padding-left: 20px; scale: 2 2 1.2;">
+        <ui:Label text="Select Your Moncarg" name="Label" style="font-size: 20px; color: rgb(255, 255, 255); margin-bottom: 20px;" />
+        <ui:ListView name="MoncargList" class="moncarg-list" />
+        <ui:VisualElement style="flex-grow: 1; flex-direction: row; justify-content: space-between;">
+            <ui:Button text="Confirm" name="ConfirmButton" emoji-fallback-support="true" enabled="false" style="width: 100px;" />
+            <ui:Button text="Cancel" name="CancelButton" emoji-fallback-support="true" enabled="true" style="width: 100px;" />
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

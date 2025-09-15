@@ -1,0 +1,41 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9136e7c2ddf01784f8652093b3035372, type: 3}
+  m_Name: Aquaster
+  m_EditorClassIdentifier: Assembly-CSharp::MoncargInventoryAdapter
+  FriendlyName: Aquaster
+  Icon: {fileID: 5726396820227772254, guid: a41cd386782ca1e4386e6da46034a4c7, type: 3}
+  moncargData:
+    moncargName: Aquaster
+    maxHealth: 700
+    health: 700
+    attack: 50
+    defense: 40
+    speed: 20
+    exp: 0
+    level: 1
+    mana: 250
+    maxMana: 250
+    catchChance: 0
+    dodgeChance: 0.5
+    type: 1
+    active: 0
+    skillset:
+    - {fileID: 11400000, guid: 411e2c1d2e0c3e847a9c8fa5794f907d, type: 2}
+    - {fileID: 11400000, guid: 8985b594bd5f82844bc91de01609dd50, type: 2}
+    - {fileID: 11400000, guid: a2fbcbfc5258abd4c9bdef3930b5f0b9, type: 2}
+    - {fileID: 11400000, guid: 8e2369e9803aa844cb6493fee4c23d99, type: 2}
+  SlotDimension:
+    Height: 1
+    Width: 1
+  IsEquipped: 1
+  linkedPrefab: {fileID: 5151491239075499767, guid: f1123696930af1940a2d02320c339b77, type: 3}

@@ -1,0 +1,41 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9136e7c2ddf01784f8652093b3035372, type: 3}
+  m_Name: Pleco
+  m_EditorClassIdentifier: Assembly-CSharp::MoncargInventoryAdapter
+  FriendlyName: Pleco
+  Icon: {fileID: -6793295171761606206, guid: 728ea7b58eebdc849927600f8198ea9d, type: 3}
+  moncargData:
+    moncargName: Pleco
+    maxHealth: 100
+    health: 100
+    attack: 30
+    defense: 10
+    speed: 10
+    exp: 0
+    level: 1
+    mana: 100
+    maxMana: 100
+    catchChance: 0.5
+    dodgeChance: 0.5
+    type: 1
+    active: 1
+    skillset:
+    - {fileID: 11400000, guid: 411e2c1d2e0c3e847a9c8fa5794f907d, type: 2}
+    - {fileID: 11400000, guid: 720ea51bd46724e479a4139bfe6d8b36, type: 2}
+    - {fileID: 11400000, guid: a2fbcbfc5258abd4c9bdef3930b5f0b9, type: 2}
+    - {fileID: 11400000, guid: 8e2369e9803aa844cb6493fee4c23d99, type: 2}
+  SlotDimension:
+    Height: 1
+    Width: 1
+  IsEquipped: 0
+  linkedPrefab: {fileID: 948127656398091485, guid: c5e9fb2468e0d0f4bad8a1c527883799, type: 3}

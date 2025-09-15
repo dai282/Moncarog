@@ -1,0 +1,41 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9136e7c2ddf01784f8652093b3035372, type: 3}
+  m_Name: Bulbasour
+  m_EditorClassIdentifier: Assembly-CSharp::MoncargInventoryAdapter
+  FriendlyName: Bulbasour
+  Icon: {fileID: -8576927913760934702, guid: ee1b26e7dc8f24746a9bd69d947391a8, type: 3}
+  moncargData:
+    moncargName: Bulbasour
+    maxHealth: 500
+    health: 460
+    attack: 10
+    defense: 10
+    speed: 3
+    exp: 0
+    level: 1
+    mana: 350
+    maxMana: 500
+    catchChance: 0.1
+    dodgeChance: 0.1
+    type: 0
+    active: 1
+    skillset:
+    - {fileID: 11400000, guid: 411e2c1d2e0c3e847a9c8fa5794f907d, type: 2}
+    - {fileID: 11400000, guid: 720ea51bd46724e479a4139bfe6d8b36, type: 2}
+    - {fileID: 11400000, guid: a2fbcbfc5258abd4c9bdef3930b5f0b9, type: 2}
+    - {fileID: 11400000, guid: 8e2369e9803aa844cb6493fee4c23d99, type: 2}
+  SlotDimension:
+    Height: 1
+    Width: 1
+  IsEquipped: 0
+  linkedPrefab: {fileID: 5930417885874421365, guid: e87966ac96a446847a74b0890160612f, type: 3}
