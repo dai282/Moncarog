@@ -676,10 +676,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Assets.Scripts.PlayerInventory
   StoredItems:
-  - Details: {fileID: 11400000, guid: 1d94ae96f3bf1c54e92b4996a1332437, type: 2}
-  - Details: {fileID: 11400000, guid: 1d94ae96f3bf1c54e92b4996a1332437, type: 2}
-  - Details: {fileID: 11400000, guid: 1d94ae96f3bf1c54e92b4996a1332437, type: 2}
-  - Details: {fileID: 11400000, guid: 1d94ae96f3bf1c54e92b4996a1332437, type: 2}
+  - Details: {fileID: 11400000, guid: f1a851ecf17d7b2458032872d9de7e17, type: 2}
+  - Details: {fileID: 11400000, guid: 8d09827b02946224289d63e99ee7b9b8, type: 2}
+  - Details: {fileID: 11400000, guid: 0d6e3e8c54c86c041a6173e4c1054230, type: 2}
+  - Details: {fileID: 11400000, guid: 0c11d71b8c6ccaa4ea0781c21a3621a9, type: 2}
   StoredMoncargs:
   - Details: {fileID: 11400000, guid: 91b31b2502215794ea031592367f0f67, type: 2}
     IsEquipped: 1

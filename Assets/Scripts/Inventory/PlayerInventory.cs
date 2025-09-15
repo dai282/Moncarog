@@ -314,13 +314,13 @@ public sealed class PlayerInventory : MonoBehaviour
         // Apply multipliers directly to stats
         moncargData.attack *= powerup.attackMultiplier;
         moncargData.defense *= powerup.defenseMultiplier;
-        moncargData.maxHealth *= powerup.healthMultiplier;
+        moncargData.health *= powerup.healthMultiplier;
         moncargData.speed = Mathf.RoundToInt(moncargData.speed * powerup.speedMultiplier);
-        moncargData.maxMana = Mathf.RoundToInt(moncargData.maxMana * powerup.manaMultiplier);
+        moncargData.mana = Mathf.RoundToInt(moncargData.maxMana * powerup.manaMultiplier);
 
-        // Update current health/mana if they increased
-        if (moncargData.health < moncargData.maxHealth) moncargData.health = moncargData.maxHealth;
-        if (moncargData.mana < moncargData.maxMana) moncargData.mana = moncargData.maxMana;
+        // Update current health/mana if they increased. Cap the current health and mana to their max health and mana
+        if (moncargData.health > moncargData.maxHealth) moncargData.health = moncargData.maxHealth;
+        if (moncargData.mana > moncargData.maxMana) moncargData.mana = moncargData.maxMana;
 
         // Debug stat changes
         Debug.Log($"=== POWERUP APPLIED: {powerup.FriendlyName} to {moncargData.moncargName} ===");

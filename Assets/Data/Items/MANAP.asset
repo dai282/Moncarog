@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: def703097d228ff4eb0ba14083b4b4ae, type: 3}
   m_Name: MANAP
   m_EditorClassIdentifier: Assembly-CSharp::ItemDefinition
-  FriendlyName: Health Potion
+  FriendlyName: Mana Potion
   Description: This will enhance your equipped Moncarg's abilites.
   Icon: {fileID: -5575374936625819304, guid: 09319140922a7a14a82df7dd16d388ed, type: 3}
   SlotDimension:
