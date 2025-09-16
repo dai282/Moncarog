@@ -72,6 +72,7 @@ public class Moncarg : MonoBehaviour
     {
         return data;
     }
+
     public void InitStats()
 {
     if (maxHealth <= 0)
@@ -83,8 +84,8 @@ public class Moncarg : MonoBehaviour
         maxMana = mana;
     }
     active = true;
-    health = maxHealth;
-    mana = maxMana;
+    //health = maxHealth;
+    //mana = maxMana;
 }
 
     // New method to load data from inventory
