@@ -1,6 +1,5 @@
 using UnityEngine;
 using System.Collections.Generic;
-using System.Linq;
 
 public class MapManager : MonoBehaviour
 {
@@ -27,7 +26,7 @@ public class MapManager : MonoBehaviour
     private HashSet<MapGenerator.MapNode> visitedNodes = new HashSet<MapGenerator.MapNode>();
     private Dictionary<MapGenerator.MapNode, Vector3> nodePositions = new Dictionary<MapGenerator.MapNode, Vector3>();
 
-    void Start()
+    public void Start()
     {
         if (normalPrefab == null || grassPrefab == null || waterPrefab == null ||
             firePrefab == null || miniBossPrefab == null || finalBossPrefab == null ||
