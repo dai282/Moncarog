@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ItemDefinition
   FriendlyName: Ultimate Potion
   Description: This will enhance your equipped Moncarg's abilites.
-  Icon: {fileID: 5888315422345105727, guid: 756ecde76fa5a304db7c7cc8dac7703a, type: 3}
+  Icon: {fileID: -2050263760638059449, guid: efef09f1db5af774e85ae767f19b01db, type: 3}
   SlotDimension:
     Height: 1
     Width: 1

@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ItemDefinition
   FriendlyName: Mana Potion
   Description: This will enhance your equipped Moncarg's abilites.
-  Icon: {fileID: -5575374936625819304, guid: 09319140922a7a14a82df7dd16d388ed, type: 3}
+  Icon: {fileID: 4991566288259375989, guid: 8daa16e45055d3b44902735b17f60073, type: 3}
   SlotDimension:
     Height: 1
     Width: 1
