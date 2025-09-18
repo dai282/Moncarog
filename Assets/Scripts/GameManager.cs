@@ -12,7 +12,7 @@ public class GameManager : MonoBehaviour
     public GameObject startingMoncargPrefab;
     public GameObject enemyMoncargPrefab;
 
-    [SerializeField] public MapManager mapManager;
+    //[SerializeField] public MapManager mapManager;
 
 
     //static instance that stores reference to the GameManager. public get and private set
@@ -50,7 +50,7 @@ public class GameManager : MonoBehaviour
 
         //Start moncarg selection process to fight against enemy
         //we're passing in the enemy moncarg prefab here, after merge, this should be called inside BoardManager when player encounters a moncarg
-        mapManager.Start();
+        //mapManager.Start();
 
         combatHandler.BeginEncounter(enemyMoncargPrefab);
 
