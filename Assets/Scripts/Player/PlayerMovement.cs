@@ -41,6 +41,19 @@ public class PlayerMovement : MonoBehaviour
 
     bool IsPositionWalkable(Vector2 position)
     {
+        // Convert to cell position
+        Vector3Int cellPos = roomGrid.collisionTilemap.WorldToCell(position);
+
+        DoorDetector door = roomGrid.GetDoorAtCell(cellPos);
+        if (door != null)
+        {
+            // trigger the door teleport
+            door.OnPlayerEnter(gameObject);
+
+            // Return false so the player doesn’t "walk into" the door tile physically
+            return false;
+        }
+
         // Check center point
         if (!roomGrid.IsWalkable(position))
             return false;
@@ -68,6 +81,7 @@ public class PlayerMovement : MonoBehaviour
                 return false;
         }
 
+        //Debug.Log($"Player entered cell {cellPos}");
         return true;
     }
 

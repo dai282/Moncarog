@@ -88,6 +88,7 @@ public class RoomGrid : MonoBehaviour
     {
         cellData[cellPos] = CellType.Door;
         doors[cellPos] = door;
+        Debug.Log($"Registered door at cell {cellPos} (world {collisionTilemap.GetCellCenterWorld(cellPos)})");
     }
 
     public DoorDetector GetDoorAtCell(Vector3Int cellPos)

@@ -55,9 +55,9 @@ public class RoomDoorManager : MonoBehaviour
 
                 Vector3Int doorPos = roomGrid.collisionTilemap.WorldToCell(slotMiddle.position);
 
-                Vector3Int bottomMiddleLeft  = doorPos + new Vector3Int(1, 0, 0);
-                Vector3Int bottomMiddle      = doorPos + new Vector3Int(2, 0, 0);
-                Vector3Int bottomMiddleRight = doorPos + new Vector3Int(3, 0, 0);
+                Vector3Int bottomMiddleLeft  = doorPos + new Vector3Int(10, -8, 0);
+                Vector3Int bottomMiddle      = doorPos + new Vector3Int(9, -8, 0);
+                Vector3Int bottomMiddleRight = doorPos + new Vector3Int(8, -8, 0);
 
                 DoorDetector doorDetector = door.GetComponent<DoorDetector>();
 
