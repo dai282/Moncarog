@@ -1,6 +1,0 @@
-<ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
-    <ui:Button text="Up" name="UpButton" style="position: absolute; top: 21px; left: 40%; width: 50px; right: 50%;" />
-    <ui:Button text="Right" name="RightButton" parse-escape-sequences="false" style="position: absolute; top: 87px; left: 202px; width: 50px;" />
-    <ui:Button text="Left" name="LeftButton" parse-escape-sequences="false" style="position: absolute; top: 95px; left: 78px; width: 50px;" />
-    <ui:Button text="Down" name="DownButton" parse-escape-sequences="false" style="position: relative; top: 165px; left: 144px; width: 50px; -unity-text-align: middle-center; align-items: stretch;" />
-</ui:UXML>
