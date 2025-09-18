@@ -321,13 +321,16 @@ public class CombatHandler: MonoBehaviour
 
     private void OnSwitchClicked()
     {
-        //var equippedMoncargs = PlayerInventory.Instance.StoredMoncargs
-        //    .Where(m => m.IsEquipped)
-        //    .Select(m => m.Details)
-        //    .ToList();
+        var equippedMoncargs = PlayerInventory.Instance.StoredMoncargs
+           .Where(m => m.IsEquipped)
+           .Select(m => m.Details)
+           .ToList();
 
-        //// Show selection UI for multiple equipped moncargs
-        //moncargSelectionUI.Show(equippedMoncargs);
+        // Show selection UI for multiple equipped moncargs
+        selectionUI.Show(equippedMoncargs);
+
+        GameObject.Destroy(player.gameObject);
+
     }
 
     private void OnEnemyDefeated()
