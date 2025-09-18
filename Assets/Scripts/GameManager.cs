@@ -70,6 +70,13 @@ public class GameManager : MonoBehaviour
 
 
     }
+    void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.E))
+        {
+            combatHandler.BeginEncounter(enemyMoncargPrefab);
+        }
+    }
 
-    
+
 }
