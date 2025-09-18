@@ -36,6 +36,14 @@ public class GameManager : MonoBehaviour
         Instance = this;
     }
 
+    void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.E))
+        {
+            combatHandler.BeginEncounter(enemyMoncargPrefab);
+        }
+    }
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -52,7 +60,7 @@ public class GameManager : MonoBehaviour
         //we're passing in the enemy moncarg prefab here, after merge, this should be called inside BoardManager when player encounters a moncarg
         //mapManager.Start();
 
-        combatHandler.BeginEncounter(enemyMoncargPrefab);
+        //combatHandler.BeginEncounter(enemyMoncargPrefab);
 
 
         //initialize the board (BoardManager.Init()
