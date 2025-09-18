@@ -86,4 +86,10 @@ public class MapTraversalOverlay : MonoBehaviour
                 sr.color = defaultColor;
         }
     }
+
+    // Add this to MapTraversalOverlay.cs
+    public MapGenerator.MapNode GetCurrentNode()
+    {
+        return currentNode;
+    }
 }

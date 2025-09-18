@@ -12,8 +12,9 @@ public class GameManager : MonoBehaviour
     public GameObject startingMoncargPrefab;
     public GameObject enemyMoncargPrefab;
 
-    //[SerializeField] public MapManager mapManager;
+    public MapManager mapManager;
 
+    public RoomDoorManager[] rooms;
 
     //static instance that stores reference to the GameManager. public get and private set
     public static GameManager Instance { get; private set; }
@@ -51,9 +52,16 @@ public class GameManager : MonoBehaviour
         //Start moncarg selection process to fight against enemy
         //we're passing in the enemy moncarg prefab here, after merge, this should be called inside BoardManager when player encounters a moncarg
         //mapManager.Start();
+        var (currentRoom, nextRooms) = mapManager.GetCurrentRoomInfo();
 
-        combatHandler.BeginEncounter(enemyMoncargPrefab);
+        Debug.Log($"Current Room: {currentRoom.roomName} ({currentRoom.numDoors} doors),");
 
+        foreach (var nextRoom in nextRooms)
+        {
+            Debug.Log($"Next Room(s): {nextRoom.roomName}");
+        }
+
+        //combatHandler.BeginEncounter(enemyMoncargPrefab);
 
         //initialize the board (BoardManager.Init()
 

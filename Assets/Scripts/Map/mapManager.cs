@@ -33,7 +33,7 @@ public class MapManager : MonoBehaviour
             linePrefab == null)
         {
             Debug.LogError("One or more prefabs are not assigned in MapManager!");
-            return;
+            //return;
         }
 
         mapGenerator = new MapGenerator();
@@ -42,7 +42,7 @@ public class MapManager : MonoBehaviour
         Debug.Log("Map generation complete! Now displaying the map in the scene.");
 
         // Draw map
-        DisplayMap(startNode, new Vector3(0, -15, 0));
+        //DisplayMap(startNode, new Vector3(0, -15, 0));
 
         // Initialize traversalOverlay AFTER map is displayed
         if (traversalOverlay != null)
@@ -107,5 +107,90 @@ public class MapManager : MonoBehaviour
             case MapGenerator.RoomType.FinalBoss: return finalBossPrefab;
             default: return normalPrefab;
         }
+    }
+
+    // Add this to MapManager.cs
+
+    public (RoomInfo currentRoom, List<RoomInfo> nextRooms) GetCurrentRoomInfo()
+    {
+        if (traversalOverlay == null)
+        {
+            Debug.LogError("TraversalOverlay not initialized!");
+            return (null, null);
+        }
+
+        // Get current node from traversal overlay
+        var currentNode = traversalOverlay.GetCurrentNode();
+
+        // Create RoomInfo for current room
+        RoomInfo currentRoomInfo = new RoomInfo();
+        currentRoomInfo.roomName = currentNode.Room.Name.ToString();
+        currentRoomInfo.numDoors = currentNode.Exits.Count;
+
+        if (currentNode.Exits.Count == 1)
+        {
+            currentRoomInfo.doorSingle = (int)currentNode.Exits[0].Room.Type;
+            currentRoomInfo.doorLeft = 0;
+            currentRoomInfo.doorRight = 0;
+        }
+        else if (currentNode.Exits.Count == 2)
+        {
+            // left is first exit, right is second exit
+            currentRoomInfo.doorLeft = (int)currentNode.Exits[0].Room.Type;
+            currentRoomInfo.doorRight = (int)currentNode.Exits[1].Room.Type;
+            currentRoomInfo.doorSingle = 0;
+        }
+        else
+        {
+            currentRoomInfo.doorSingle = 0;
+            currentRoomInfo.doorLeft = 0;
+            currentRoomInfo.doorRight = 0;
+        }
+
+        // Create list of next available rooms
+        List<RoomInfo> nextRooms = new List<RoomInfo>();
+        foreach (var exit in currentNode.Exits)
+        {
+            RoomInfo nextRoom = new RoomInfo();
+            nextRoom.roomName = exit.Room.Name.ToString();
+            nextRoom.numDoors = exit.Exits.Count;
+
+            if (exit.Exits.Count == 1)
+            {
+                nextRoom.doorSingle = (int)exit.Exits[0].Room.Type;
+                nextRoom.doorLeft = 0;
+                nextRoom.doorRight = 0;
+            }
+            else if (exit.Exits.Count == 2)
+            {
+                // left is first exit, right is second exit
+                nextRoom.doorLeft = (int)exit.Exits[0].Room.Type;
+                nextRoom.doorRight = (int)exit.Exits[1].Room.Type;
+                nextRoom.doorSingle = 0;
+            }
+            else
+            {
+                nextRoom.doorSingle = 0;
+                nextRoom.doorLeft = 0;
+                nextRoom.doorRight = 0;
+            }
+
+            nextRooms.Add(nextRoom);
+
+        }
+
+        return (currentRoomInfo, nextRooms);
+    }
+
+    // Add this class definition outside of MapManager class but in the same file
+    [System.Serializable]
+    public class RoomInfo
+    {
+        public string roomName;
+        public int numDoors;
+        //the ID of room specifies what room type they are
+        public int doorSingle;
+        public int doorLeft;
+        public int doorRight;
     }
 }
