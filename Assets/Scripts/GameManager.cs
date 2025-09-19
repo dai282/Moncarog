@@ -14,7 +14,7 @@ public class GameManager : MonoBehaviour
 
     public MapManager mapManager;
 
-    public RoomDoorManager[] rooms;
+    public GameObject[] rooms;
 
     //static instance that stores reference to the GameManager. public get and private set
     public static GameManager Instance { get; private set; }
