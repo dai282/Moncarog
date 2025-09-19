@@ -37,19 +37,19 @@ public class RoomDoorManager : MonoBehaviour
 
     void Start()
     {
-        SpawnDoors();
+        //SpawnDoors(1, 0, 0, 0);
         //roomGrid.PrintDoorTiles();
     }
 
-    void SpawnDoors()
+    public void SpawnDoors(int numDoors, int doorSingle, int doorLeft, int doorRight)
     {
-        switch (setup)
+        switch (numDoors)
         {
 
-            case DoorSetup.Single:
+            case 1:
                 Instantiate(fillerLeft, slotLeft.position, Quaternion.identity, slotLeft);
 
-                GameObject door = Instantiate(doorPrefabs[chosenDoorIndex], slotMiddle.position, Quaternion.identity, slotMiddle);
+                GameObject door = Instantiate(doorPrefabs[doorSingle], slotMiddle.position, Quaternion.identity, slotMiddle);
 
                 Instantiate(fillerRight, slotRight.position, Quaternion.identity, slotRight);
 
@@ -66,15 +66,15 @@ public class RoomDoorManager : MonoBehaviour
                 roomGrid.RegisterDoor(bottomMiddleRight, doorDetector);
                 break;
 
-            case DoorSetup.Double:
-                GameObject leftDoor = Instantiate(doorPrefabs[chosenDoorIndexLeft], slotLeft.position, Quaternion.identity, slotLeft);
+            case 2:
+                GameObject leftDoor = Instantiate(doorPrefabs[doorLeft], slotLeft.position, Quaternion.identity, slotLeft);
                 Vector3Int leftDoorPos = roomGrid.collisionTilemap.WorldToCell(slotLeft.position);
                 DoorDetector leftDetector = leftDoor.GetComponent<DoorDetector>();
                 roomGrid.RegisterDoor(leftDoorPos + new Vector3Int(10, -8, 0), leftDetector);
                 roomGrid.RegisterDoor(leftDoorPos + new Vector3Int(9, -8, 0), leftDetector);
                 roomGrid.RegisterDoor(leftDoorPos + new Vector3Int(8, -8, 0), leftDetector);
 
-                GameObject rightDoor = Instantiate(doorPrefabs[chosenDoorIndexRight], slotRight.position, Quaternion.identity, slotRight);
+                GameObject rightDoor = Instantiate(doorPrefabs[doorRight], slotRight.position, Quaternion.identity, slotRight);
                 Vector3Int rightDoorPos = roomGrid.collisionTilemap.WorldToCell(slotRight.position);
                 DoorDetector rightDetector = rightDoor.GetComponent<DoorDetector>();
                 roomGrid.RegisterDoor(rightDoorPos + new Vector3Int(10, -8, 0), rightDetector);

@@ -17,18 +17,18 @@ MonoBehaviour:
   moncargData:
     moncargName: Zagen
     maxHealth: 500
-    health: 0
+    health: 500
     attack: 10
     defense: 10
     speed: 5
     exp: 5
     level: 1
-    mana: 60
+    mana: 15
     maxMana: 100
     catchChance: 1
     dodgeChance: 0.2
     type: 2
-    active: 0
+    active: 1
     skillset:
     - {fileID: 11400000, guid: 411e2c1d2e0c3e847a9c8fa5794f907d, type: 2}
     - {fileID: 11400000, guid: 720ea51bd46724e479a4139bfe6d8b36, type: 2}

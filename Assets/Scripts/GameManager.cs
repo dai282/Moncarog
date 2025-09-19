@@ -16,6 +16,8 @@ public class GameManager : MonoBehaviour
 
     public RoomDoorManager[] rooms;
 
+    public BoardManager board;
+
     //static instance that stores reference to the GameManager. public get and private set
     public static GameManager Instance { get; private set; }
 
@@ -60,10 +62,15 @@ public class GameManager : MonoBehaviour
         {
             Debug.Log($"Next Room(s): {nextRoom.roomName}");
         }
+        //initialize the board (BoardManager.Init()
+
+        RoomGrid roomGrid = board.GenerateRoom(currentRoom);
+        player.GetComponent<PlayerMovement>().roomGrid = roomGrid;
+
 
         //combatHandler.BeginEncounter(enemyMoncargPrefab);
 
-        //initialize the board (BoardManager.Init()
+        
 
         //spawn the player (does he already have a moncarg with him?)
         //the moncarog encounter trigger code should be within the board manager script, not here?
