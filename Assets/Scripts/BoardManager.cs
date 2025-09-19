@@ -4,6 +4,7 @@ using System;
 public class BoardManager : MonoBehaviour
 {
     public GameObject[] roomPrefabs;
+    private GameObject currentRoom;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -19,7 +20,7 @@ public class BoardManager : MonoBehaviour
 
     public RoomGrid GenerateRoom(MapManager.RoomInfo room)
     {
-        GameObject currentRoom = Instantiate(roomPrefabs[Int32.Parse(room.roomName)], Vector3.zero, Quaternion.identity);
+        currentRoom = Instantiate(roomPrefabs[Int32.Parse(room.roomName)], Vector3.zero, Quaternion.identity);
         RoomDoorManager roomDoorManager = currentRoom.GetComponent<RoomDoorManager>();
         roomDoorManager.SpawnDoors(room.numDoors, room.doorSingle, room.doorLeft, room.doorRight);
 

@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.UIElements;
 using System.Collections;
 using System.Linq;
+using System.Collections.Generic;
 
 public class GameManager : MonoBehaviour
 {
@@ -14,9 +15,11 @@ public class GameManager : MonoBehaviour
 
     public MapManager mapManager;
 
-    public RoomDoorManager[] rooms;
-
     public BoardManager board;
+
+    private MapManager.RoomInfo currentRoom;
+    private List<MapManager.RoomInfo> nextRooms;
+    private RoomGrid currentRoomGrid;
 
     //static instance that stores reference to the GameManager. public get and private set
     public static GameManager Instance { get; private set; }
@@ -48,13 +51,8 @@ public class GameManager : MonoBehaviour
         //initialize player
         player.Init();
 
-        //initialize UI elements
-        //combatHandler = new CombatHandler(combatHandlerUI, moncargSelectionUI, forceEquipPromptUI);
-
-        //Start moncarg selection process to fight against enemy
-        //we're passing in the enemy moncarg prefab here, after merge, this should be called inside BoardManager when player encounters a moncarg
-        //mapManager.Start();
-        var (currentRoom, nextRooms) = mapManager.GetCurrentRoomInfo();
+        
+        (currentRoom, nextRooms) = mapManager.GetCurrentRoomInfo();
 
         Debug.Log($"Current Room: {currentRoom.roomName} ({currentRoom.numDoors} doors),");
 
@@ -62,15 +60,15 @@ public class GameManager : MonoBehaviour
         {
             Debug.Log($"Next Room(s): {nextRoom.roomName}");
         }
-        //initialize the board (BoardManager.Init()
 
-        RoomGrid roomGrid = board.GenerateRoom(currentRoom);
-        player.GetComponent<PlayerMovement>().roomGrid = roomGrid;
+        //Generate the room based on current room info
+        currentRoomGrid = board.GenerateRoom(currentRoom);
+        //assign the room grid to the player so that they can move around
+        player.GetComponent<PlayerMovement>().roomGrid = currentRoomGrid;
 
-
+        //Start moncarg selection process to fight against enemy
+        //we're passing in the enemy moncarg prefab here, after merge, this should be called inside BoardManager when player encounters a moncarg
         //combatHandler.BeginEncounter(enemyMoncargPrefab);
-
-        
 
         //spawn the player (does he already have a moncarg with him?)
         //the moncarog encounter trigger code should be within the board manager script, not here?
@@ -83,7 +81,60 @@ public class GameManager : MonoBehaviour
         {
             combatHandler.BeginEncounter(enemyMoncargPrefab);
         }
+        if (Input.GetKeyDown(KeyCode.M))
+        {
+            Debug.Log($"Current Room: {currentRoom.roomName} ({currentRoom.numDoors} doors),");
+            foreach (var nextRoom in nextRooms)
+            {
+                Debug.Log($"Next Room(s): {nextRoom.roomName}");
+            }
+        }
+
     }
 
+    public void PlayerEnteredDoor(DoorDetector door)
+    {
+        Debug.Log($"PlayerEnteredDoor Called!");
 
+        int doorIndex = door.doorIndex;
+
+        // Get the next room based on which door was entered
+        if (nextRooms != null && doorIndex < nextRooms.Count)
+        {
+            MapManager.RoomInfo nextRoom = nextRooms[doorIndex];
+            //move to next node in maptraversal overlay
+            mapManager.traversalOverlay.Move(doorIndex);
+            //load new room
+            LoadNextRoom(nextRoom);
+        }
+    }
+
+    private void LoadNextRoom(MapManager.RoomInfo nextRoom)
+    {
+        // Destroy current room
+        if (currentRoomGrid != null)
+        {
+            Destroy(currentRoomGrid.gameObject);
+        }
+
+        // Generate new room
+        currentRoomGrid = board.GenerateRoom(nextRoom);
+
+        // Update player's room grid reference
+        player.GetComponent<PlayerMovement>().roomGrid = currentRoomGrid;
+
+        // Position player at entrance of new room
+        Vector3 spawnPosition = GetSpawnPositionForDoor(); // You'll need to implement this
+        player.transform.position = spawnPosition;
+
+        Debug.Log($"Updating current room and next rooms!");
+        // Update current room info for next transition
+        (currentRoom, nextRooms) = mapManager.GetCurrentRoomInfo();
+    }
+
+    private Vector3 GetSpawnPositionForDoor()
+    {
+        // This depends on the room layout, to be implemented
+        return Vector3.zero; // Replace with actual spawn position
+    }
 }

@@ -47,13 +47,13 @@ public class MapTraversalOverlay : MonoBehaviour
 #else
         // If using old Input Manager
         if (Input.GetKeyDown(KeyCode.A))
-            Move(-1);
+            Move(0);
         else if (Input.GetKeyDown(KeyCode.D))
             Move(1);
 #endif
     }
 
-    private void Move(int direction)
+    public void Move(int direction)
     {
         if (currentNode.Exits.Count == 0) return;
 
@@ -63,7 +63,7 @@ public class MapTraversalOverlay : MonoBehaviour
         if (sortedExits.Count == 1)
             nextNode = sortedExits[0];
         else
-            nextNode = (direction == -1) ? sortedExits[0] : sortedExits[sortedExits.Count - 1];
+            nextNode = (direction == 0) ? sortedExits[0] : sortedExits[sortedExits.Count - 1];
 
         currentNode = nextNode;
         visitedNodes.Add(currentNode);
