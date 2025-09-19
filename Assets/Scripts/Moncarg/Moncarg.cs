@@ -83,8 +83,8 @@ public class Moncarg : MonoBehaviour
         maxMana = mana;
     }
     active = true;
-    health = maxHealth;
-    mana = maxMana;
+    // health = maxHealth;
+    // mana = maxMana;
 }
 
     // New method to load data from inventory

@@ -3,17 +3,14 @@ using UnityEngine;
 public class DoorDetector : MonoBehaviour
 {
     [Header("Optional Settings")]
-    public string doorID;
-    public Transform destination;
+    public int doorIndex; // 0 for left, 1 for right (or single door)
+    //public Transform destination;
 
-    public void OnPlayerEnter(GameObject player)
+    public void OnPlayerEnter()
     {
-        Debug.Log($"Player entered door {doorID}");
+        Debug.Log($"Player entered door ");
 
-        if (destination != null)
-        {
-            player.transform.position = destination.position;
-        }
+        GameManager.Instance.PlayerEnteredDoor(this);
 
     }
 }

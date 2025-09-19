@@ -48,7 +48,7 @@ public class PlayerMovement : MonoBehaviour
         if (door != null)
         {
             // trigger the door teleport
-            door.OnPlayerEnter(gameObject);
+            door.OnPlayerEnter();
 
             // Return false so the player doesn’t "walk into" the door tile physically
             return false;
