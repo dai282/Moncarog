@@ -134,7 +134,6 @@ public class GameManager : MonoBehaviour
 
     private Vector3 GetSpawnPositionForDoor()
     {
-        // This depends on the room layout, to be implemented
-        return Vector3.zero; // Replace with actual spawn position
+        return new Vector3(4, -15, -2); 
     }
 }
