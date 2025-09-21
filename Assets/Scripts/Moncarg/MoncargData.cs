@@ -19,6 +19,8 @@ public class MoncargData
     public ElementalType type;
     public bool active;
     public SkillDefinition[] skillset = new SkillDefinition[4];
+    public bool isBoss;
+    public bool isMiniBoss;
 
     public void reset()
     {

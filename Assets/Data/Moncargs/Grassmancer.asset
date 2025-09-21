@@ -34,6 +34,8 @@ MonoBehaviour:
     - {fileID: 11400000, guid: 8985b594bd5f82844bc91de01609dd50, type: 2}
     - {fileID: 11400000, guid: 97604302c55309e478b18f815634f918, type: 2}
     - {fileID: 11400000, guid: 6c1ec54f72e173949affb398c260b4aa, type: 2}
+    isBoss: 0
+    isMiniBoss: 1
   SlotDimension:
     Height: 1
     Width: 1
