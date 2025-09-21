@@ -11,6 +11,15 @@ public class CombatHandler: MonoBehaviour
     [SerializeField] private MoncargSelectionUI selectionUI;
     [SerializeField] private ForceEquipPromptUI forceEquipUI;
 
+    // ADDED: Item drop system fields
+    [Header("Item Drop System")]
+    [SerializeField] private ItemDefinition[] commonDrops;
+    [SerializeField] private ItemDefinition[] rareDrops;
+    [SerializeField] private ItemDefinition[] legendaryDrops;
+    [SerializeField] [Range(0f, 1f)] private float dropChance = 0.7f; // 70% chance to drop something
+    [SerializeField] [Range(0f, 1f)] private float rareDropChance = 0.15f; // 15% chance for rare
+    [SerializeField] [Range(0f, 1f)] private float legendaryDropChance = 0.05f; // 5% chance for legendary
+
     private Moncarg player;
     private Moncarg enemy;
     private Moncarg currentTurn;
@@ -340,6 +349,9 @@ public class CombatHandler: MonoBehaviour
 
     private void OnEnemyDefeated()
     {
+        // ADDED: Generate item drops when enemy is defeated
+        GenerateItemDrops();
+        
         combatUI.ShowCatchPanel();
 
         //Experience gaining logic
@@ -371,6 +383,65 @@ public class CombatHandler: MonoBehaviour
         // Return to map or previous state
         */
     }
+
+    // ADDED: Item drop system methods
+    #region Item Drop System
+    private void GenerateItemDrops()
+    {
+        // Check if anything drops at all
+        float dropRoll = Random.value;
+        if (dropRoll > dropChance)
+        {
+            Debug.Log($"No items dropped from {enemy.moncargName}");
+            return;
+        }
+
+        // Determine rarity
+        ItemDefinition droppedItem = null;
+        float rarityRoll = Random.value;
+
+        if (rarityRoll <= legendaryDropChance && legendaryDrops != null && legendaryDrops.Length > 0)
+        {
+            // Legendary drop
+            droppedItem = legendaryDrops[Random.Range(0, legendaryDrops.Length)];
+            Debug.Log($"LEGENDARY DROP! {enemy.moncargName} dropped {droppedItem.FriendlyName}!");
+        }
+        else if (rarityRoll <= legendaryDropChance + rareDropChance && rareDrops != null && rareDrops.Length > 0)
+        {
+            // Rare drop
+            droppedItem = rareDrops[Random.Range(0, rareDrops.Length)];
+            Debug.Log($"Rare drop! {enemy.moncargName} dropped {droppedItem.FriendlyName}!");
+        }
+        else if (commonDrops != null && commonDrops.Length > 0)
+        {
+            // Common drop
+            droppedItem = commonDrops[Random.Range(0, commonDrops.Length)];
+            Debug.Log($"{enemy.moncargName} dropped {droppedItem.FriendlyName}");
+        }
+
+        // Add item to inventory if we got something
+        if (droppedItem != null && PlayerInventory.Instance != null)
+        {
+            PlayerInventory.Instance.AddItemToInventory(droppedItem);
+        }
+    }
+
+    // Optional: Method to set custom drop tables for specific enemies
+    public void SetCustomDropTable(ItemDefinition[] commons, ItemDefinition[] rares, ItemDefinition[] legendaries)
+    {
+        commonDrops = commons;
+        rareDrops = rares;
+        legendaryDrops = legendaries;
+    }
+
+    // Optional: Method to modify drop chances dynamically
+    public void SetDropChances(float baseChance, float rareChance, float legendaryChance)
+    {
+        dropChance = Mathf.Clamp01(baseChance);
+        rareDropChance = Mathf.Clamp01(rareChance);
+        legendaryDropChance = Mathf.Clamp01(legendaryChance);
+    }
+    #endregion
 
     private void OnCatchClicked()
     {
