@@ -7088,6 +7088,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: '::'
   collisionTilemap: {fileID: 3887283334654385345}
+  decorations: {fileID: 1247073850806134414}
+  floor: {fileID: 8285451073506177213}
 --- !u!114 &4004448042440219848
 MonoBehaviour:
   m_ObjectHideFlags: 0

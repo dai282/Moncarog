@@ -5,17 +5,20 @@ using System.Collections.Generic;
 public class RoomGrid : MonoBehaviour
 {
     public Tilemap collisionTilemap;
+    public Tilemap decorations;
+    public Tilemap floor;
 
     public enum CellType
     {
         Walkable,
         Unwalkable,
-        Door
+        Door,
+        Encounter
     }
 
     private Dictionary<Vector3Int, CellType> cellData = new Dictionary<Vector3Int, CellType>();
-
     private Dictionary<Vector3Int, DoorDetector> doors = new Dictionary<Vector3Int, DoorDetector>();
+    private HashSet<Vector3Int> encounterTiles = new HashSet<Vector3Int>();
 
     void Awake()
     {
@@ -36,11 +39,44 @@ public class RoomGrid : MonoBehaviour
                 {
                     cellData[pos] = CellType.Unwalkable;
                 }
-                else
+                else if (decorations.HasTile(pos))
                 {
                     cellData[pos] = CellType.Walkable;
                 }
+                else if (floor.HasTile(pos))
+                {
+                    cellData[pos] = CellType.Walkable;
+                }
+                else
+                {
+                    cellData[pos] = CellType.Unwalkable;
+                }
             }
+        }
+        PlaceEncounterTiles();
+    }
+
+    void PlaceEncounterTiles()
+    {
+        // Collect all walkable cells
+        List<Vector3Int> walkableCells = new List<Vector3Int>();
+        foreach (var kvp in cellData)
+        {
+            if (kvp.Value == CellType.Walkable)
+                walkableCells.Add(kvp.Key);
+        }
+
+        // Randomly pick encounter tiles
+        for (int i = 0; i < 10 && walkableCells.Count > 0; i++)
+        {
+            int randIndex = Random.Range(0, walkableCells.Count);
+            Vector3Int chosen = walkableCells[randIndex];
+            walkableCells.RemoveAt(randIndex);
+
+            cellData[chosen] = CellType.Encounter;
+            encounterTiles.Add(chosen);
+
+            Debug.Log($"Encounter tile placed at {chosen}");
         }
     }
 
@@ -54,6 +90,22 @@ public class RoomGrid : MonoBehaviour
         }
 
         return true;
+    }
+
+    public bool IsEncounterTile(Vector3 worldPos, out Vector3Int cellPos)
+    {
+        cellPos = collisionTilemap.WorldToCell(worldPos);
+        return encounterTiles.Contains(cellPos);
+    }
+
+    public void ResetEncounterTile(Vector3Int cellPos)
+    {
+        if (encounterTiles.Contains(cellPos))
+        {
+            cellData[cellPos] = CellType.Walkable;
+            encounterTiles.Remove(cellPos);
+            Debug.Log($"Encounter tile at {cellPos} reset to Walkable");
+        }
     }
 
     void PrintUnwalkableTiles()

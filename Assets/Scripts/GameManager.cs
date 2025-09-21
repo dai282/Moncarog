@@ -11,8 +11,6 @@ public class GameManager : MonoBehaviour
     public Player player;
     //public BoardManager boardManager;
     public GameObject startingMoncargPrefab;
-    public GameObject enemyMoncargPrefab;
-
     public MapManager mapManager;
 
     public BoardManager board;
@@ -79,7 +77,7 @@ public class GameManager : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.E))
         {
-            combatHandler.BeginEncounter(enemyMoncargPrefab);
+            combatHandler.BeginEncounter();
         }
         if (Input.GetKeyDown(KeyCode.M))
         {

@@ -441,7 +441,7 @@ Tilemap:
     second:
       serializedVersion: 2
       m_TileIndex: 12
-      m_TileSpriteIndex: 12
+      m_TileSpriteIndex: 17
       m_TileMatrixIndex: 0
       m_TileColorIndex: 0
       m_TileObjectToInstantiateIndex: 65535
@@ -451,7 +451,7 @@ Tilemap:
     second:
       serializedVersion: 2
       m_TileIndex: 11
-      m_TileSpriteIndex: 11
+      m_TileSpriteIndex: 12
       m_TileMatrixIndex: 0
       m_TileColorIndex: 0
       m_TileObjectToInstantiateIndex: 65535
@@ -581,7 +581,7 @@ Tilemap:
     second:
       serializedVersion: 2
       m_TileIndex: 0
-      m_TileSpriteIndex: 0
+      m_TileSpriteIndex: 11
       m_TileMatrixIndex: 0
       m_TileColorIndex: 0
       m_TileObjectToInstantiateIndex: 65535
@@ -1030,8 +1030,8 @@ Tilemap:
   - m_RefCount: 2
     m_Data: {fileID: 11400000, guid: dc1b1f207393247f39d42915a3c9e65d, type: 2}
   m_TileSpriteArray:
-  - m_RefCount: 1
-    m_Data: {fileID: 6821593713133419594, guid: eedffa53898d345e58a08f01c35d9e4c, type: 3}
+  - m_RefCount: 0
+    m_Data: {fileID: 0}
   - m_RefCount: 5
     m_Data: {fileID: -8941226998409759926, guid: eedffa53898d345e58a08f01c35d9e4c, type: 3}
   - m_RefCount: 5
@@ -1053,9 +1053,9 @@ Tilemap:
   - m_RefCount: 1
     m_Data: {fileID: 782440611, guid: eedffa53898d345e58a08f01c35d9e4c, type: 3}
   - m_RefCount: 1
-    m_Data: {fileID: -1782734715, guid: eedffa53898d345e58a08f01c35d9e4c, type: 3}
+    m_Data: {fileID: 6821593713133419594, guid: eedffa53898d345e58a08f01c35d9e4c, type: 3}
   - m_RefCount: 1
-    m_Data: {fileID: -1870842533, guid: eedffa53898d345e58a08f01c35d9e4c, type: 3}
+    m_Data: {fileID: -1782734715, guid: eedffa53898d345e58a08f01c35d9e4c, type: 3}
   - m_RefCount: 1
     m_Data: {fileID: -373042204, guid: eedffa53898d345e58a08f01c35d9e4c, type: 3}
   - m_RefCount: 1
@@ -1064,8 +1064,8 @@ Tilemap:
     m_Data: {fileID: -851785302, guid: eedffa53898d345e58a08f01c35d9e4c, type: 3}
   - m_RefCount: 1
     m_Data: {fileID: -1435597180, guid: eedffa53898d345e58a08f01c35d9e4c, type: 3}
-  - m_RefCount: 0
-    m_Data: {fileID: 0}
+  - m_RefCount: 1
+    m_Data: {fileID: -1870842533, guid: eedffa53898d345e58a08f01c35d9e4c, type: 3}
   - m_RefCount: 4
     m_Data: {fileID: -1106331387, guid: eedffa53898d345e58a08f01c35d9e4c, type: 3}
   - m_RefCount: 4
@@ -2798,6 +2798,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: '::'
   collisionTilemap: {fileID: 3887283334654385345}
+  decorations: {fileID: 8285451073506177213}
+  floor: {fileID: 1247073850806134414}
 --- !u!114 &4004448042440219848
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -15,6 +15,7 @@ public class CombatHandler: MonoBehaviour
     private Moncarg enemy;
     private Moncarg currentTurn;
     private Moncarg other;
+    public GameObject[] enemyPrefabs;
 
     private GameObject enemyObj;
 
@@ -40,16 +41,20 @@ public class CombatHandler: MonoBehaviour
             selectionUI.OnSelectionCancelled += OnSelectionCancelled;
         }
     }
+    
 
     //START EVENT DRIVEN BEGIN ENCOUNTER
-    public void BeginEncounter(GameObject enemyMoncargPrefab)
+    public void BeginEncounter()
     {
         //Create enemy Moncarg instance for battle
-        enemyObj = Instantiate(enemyMoncargPrefab);
+        int randIndex = Random.Range(0, enemyPrefabs.Length);
+        enemyObj = Instantiate(enemyPrefabs[randIndex]);
+        enemyObj.transform.localScale = new Vector3(5f, 5f, 5f);
         enemy = enemyObj.GetComponent<Moncarg>();
         enemy.InitStats();
         //hide until combat starts
         enemyObj.SetActive(false);
+
 
         //auto equip moncargs if none are equipped
         //AutoEquipMoncargs();

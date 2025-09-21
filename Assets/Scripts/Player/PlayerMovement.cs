@@ -56,7 +56,20 @@ public class PlayerMovement : MonoBehaviour
 
         // Check center point
         if (!roomGrid.IsWalkable(position))
+        {
             return false;
+        }
+
+        if (roomGrid.IsEncounterTile(position, out Vector3Int encounterCell))
+        {
+            Debug.Log($"Encounter triggered at {encounterCell}");
+
+            // Trigger combat
+            FindObjectOfType<CombatHandler>().BeginEncounter();
+
+            // Reset tile to walkable after use
+            roomGrid.ResetEncounterTile(encounterCell);
+        }
 
         // Check edges based on movement direction
         if (movementDirection.x > 0) // Moving right
