@@ -20,7 +20,35 @@ public class BoardManager : MonoBehaviour
 
     public RoomGrid GenerateRoom(MapManager.RoomInfo room)
     {
-        currentRoom = Instantiate(roomPrefabs[Int32.Parse(room.roomName)], Vector3.zero, Quaternion.identity);
+        int roomID = Int32.Parse(room.roomName);
+
+        if (roomID > 0) {
+            currentRoom = Instantiate(roomPrefabs[roomID], Vector3.zero, Quaternion.identity);
+        }
+        else
+        {
+            //boss room
+            if (roomID == -99)
+            {
+                currentRoom = Instantiate(roomPrefabs[roomPrefabs.Length - 1], Vector3.zero, Quaternion.identity);
+            }
+            //mini boss room 1 (grass)
+            if (roomID == -1)
+            {
+                currentRoom = Instantiate(roomPrefabs[roomPrefabs.Length - 4], Vector3.zero, Quaternion.identity);
+            }
+            // mini boss room 2 (water)
+            if (roomID == -2)
+            {
+                currentRoom = Instantiate(roomPrefabs[roomPrefabs.Length - 3], Vector3.zero, Quaternion.identity);
+            }
+            // mini boss room 2 (fire)
+            if (roomID == -3)
+            {
+                currentRoom = Instantiate(roomPrefabs[roomPrefabs.Length - 2], Vector3.zero, Quaternion.identity);
+            }
+        }
+
         RoomDoorManager roomDoorManager = currentRoom.GetComponent<RoomDoorManager>();
         roomDoorManager.SpawnDoors(room.numDoors, room.doorSingle, room.doorLeft, room.doorRight);
 
