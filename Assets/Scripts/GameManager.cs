@@ -102,6 +102,10 @@ public class GameManager : MonoBehaviour
         //assign the room grid to the player so that they can move around
         player.GetComponent<PlayerMovement>().roomGrid = currentRoomGrid;
 
+        // ADDED: Reset player position to starting position
+        Vector3 startPosition = GetSpawnPositionForDoor();
+        player.transform.position = startPosition;
+
         // Enable movement UI
         if (moveUI != null)
         {
