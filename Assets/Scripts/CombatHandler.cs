@@ -24,7 +24,8 @@ public class CombatHandler: MonoBehaviour
     private Moncarg enemy;
     private Moncarg currentTurn;
     private Moncarg other;
-    public GameObject[] enemyPrefabs;
+
+    private MoncargDatabase moncargDatabase;
 
     private GameObject enemyObj;
 
@@ -59,8 +60,9 @@ public class CombatHandler: MonoBehaviour
         GameManager.Instance.moveUI.DisableAllButtons();
 
         //Create enemy Moncarg instance for battle
-        int randIndex = Random.Range(0, enemyPrefabs.Length);
-        enemyObj = Instantiate(enemyPrefabs[randIndex]);
+        moncargDatabase = GameManager.Instance.moncargDatabase;
+        int randIndex = Random.Range(0, moncargDatabase.moncargs.Length);
+        enemyObj = Instantiate(moncargDatabase.moncargs[randIndex]);
         enemyObj.transform.localScale = new Vector3(5f, 5f, 5f);
         enemy = enemyObj.GetComponent<Moncarg>();
         enemy.InitStats();
@@ -492,12 +494,23 @@ public class CombatHandler: MonoBehaviour
         combatUI.Cleanup();
         combatUI.ShowCombatUI(false);
 
+        //reset enemy stats
+        resetEnemy();
+
         //Destroy moncarg game objects to prevent duplicates
         GameObject.Destroy(player.gameObject);
         GameObject.Destroy(enemy.gameObject);
 
         //reenable move buttons
         GameManager.Instance.moveUI.EnableAllButtons();
+    }
+
+    private void resetEnemy()
+    {
+        //Retrieve enemy moncarg game object and StoredMoncarg component
+        GameObject enemyGO = enemy.gameObject;
+        StoredMoncarg enemyStoredMoncarg = enemyGO.GetComponent<StoredMoncarg>();
+        enemyStoredMoncarg.Details.moncargData.reset(); //reset health, mana and status
     }
 
     #region Moncarg Selection

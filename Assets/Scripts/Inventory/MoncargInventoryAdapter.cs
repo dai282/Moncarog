@@ -61,4 +61,9 @@ public class MoncargInventoryAdapter : ScriptableObject //MoncargItemDefinition
 
         return moncargGO;
     }
+
+    public void resetData()
+    {
+        moncargData.reset();
+    }
 }

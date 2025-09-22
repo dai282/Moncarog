@@ -20,6 +20,8 @@ public class GameManager : MonoBehaviour
     private List<MapManager.RoomInfo> nextRooms;
     private RoomGrid currentRoomGrid;
 
+    public MoncargDatabase moncargDatabase;
+
     //static instance that stores reference to the GameManager. public get and private set
     public static GameManager Instance { get; private set; }
 
@@ -46,6 +48,9 @@ public class GameManager : MonoBehaviour
     {
 
         //initialize the game components here
+
+        //reset moncarg database
+        moncargDatabase.resetMoncargDatabase();
 
         //initialize player
         player.Init();
