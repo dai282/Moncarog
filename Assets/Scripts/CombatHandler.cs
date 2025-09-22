@@ -55,6 +55,9 @@ public class CombatHandler: MonoBehaviour
     //START EVENT DRIVEN BEGIN ENCOUNTER
     public void BeginEncounter()
     {
+        //disable move buttons
+        GameManager.Instance.moveUI.DisableAllButtons();
+
         //Create enemy Moncarg instance for battle
         int randIndex = Random.Range(0, enemyPrefabs.Length);
         enemyObj = Instantiate(enemyPrefabs[randIndex]);
@@ -492,6 +495,9 @@ public class CombatHandler: MonoBehaviour
         //Destroy moncarg game objects to prevent duplicates
         GameObject.Destroy(player.gameObject);
         GameObject.Destroy(enemy.gameObject);
+
+        //reenable move buttons
+        GameManager.Instance.moveUI.EnableAllButtons();
     }
 
     #region Moncarg Selection

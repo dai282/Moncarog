@@ -9,11 +9,12 @@ public class GameManager : MonoBehaviour
     //Instance of PlayerController, BoardManager, and Moncarog here
     //remember to assign instances of these classes in the inspector window (once we combine scenes)
     public Player player;
-    //public BoardManager boardManager;
     public GameObject startingMoncargPrefab;
     public MapManager mapManager;
 
     public BoardManager board;
+
+    public MovementUI moveUI;
 
     private MapManager.RoomInfo currentRoom;
     private List<MapManager.RoomInfo> nextRooms;
