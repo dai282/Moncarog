@@ -133,7 +133,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3885076182341754132, guid: b6b01367aca586a42bec43c5aca99ecc, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -656.18524
+      value: -696
       objectReference: {fileID: 0}
     - target: {fileID: 3885076182341754132, guid: b6b01367aca586a42bec43c5aca99ecc, type: 3}
       propertyPath: m_LocalPosition.y
@@ -311,7 +311,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -361, y: -270}
+  m_AnchoredPosition: {x: -500, y: -270}
   m_SizeDelta: {x: 160, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &125879807
@@ -1169,7 +1169,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4369864743852138868, guid: 97647a4195e8b3242ad16f6bd119eb9d, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -684.65784
+      value: -696
       objectReference: {fileID: 0}
     - target: {fileID: 4369864743852138868, guid: 97647a4195e8b3242ad16f6bd119eb9d, type: 3}
       propertyPath: m_LocalPosition.y
@@ -1886,7 +1886,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4551626399789657854, guid: 3a405cffcdf010e4d9e2cd1d083f088c, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -684.65784
+      value: -696
       objectReference: {fileID: 0}
     - target: {fileID: 4551626399789657854, guid: 3a405cffcdf010e4d9e2cd1d083f088c, type: 3}
       propertyPath: m_LocalPosition.y
@@ -1951,7 +1951,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 431418635752197103, guid: d5dd2fbb26e07034d97330a4745746a6, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -684.65784
+      value: -696
       objectReference: {fileID: 0}
     - target: {fileID: 431418635752197103, guid: d5dd2fbb26e07034d97330a4745746a6, type: 3}
       propertyPath: m_LocalPosition.y
@@ -2012,7 +2012,7 @@ GameObject:
   - component: {fileID: 630510527}
   - component: {fileID: 630510526}
   m_Layer: 5
-  m_Name: Button
+  m_Name: Inventory Button
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2291,7 +2291,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3879224325586866447, guid: 3d9efe8294dd8034d82a4835c21dacee, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -684.65784
+      value: -696
       objectReference: {fileID: 0}
     - target: {fileID: 3879224325586866447, guid: 3d9efe8294dd8034d82a4835c21dacee, type: 3}
       propertyPath: m_LocalPosition.y
@@ -2619,8 +2619,8 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 2016109639}
-  - {fileID: 1048330053}
   - {fileID: 986445523}
+  - {fileID: 1048330053}
   - {fileID: 162843770}
   - {fileID: 209280273}
   - {fileID: 1465543987}
@@ -3480,7 +3480,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bef12c93784aceb48b52658fc40975cf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MapTraversal
-  visitedColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
+  visitedColor: {r: 0.4627451, g: 0, b: 0.9843137, a: 1}
   currentColor: {r: 0, g: 1, b: 0, a: 1}
   defaultColor: {r: 1, g: 1, b: 1, a: 1}
   mapRoot: {fileID: 748411390}
@@ -3842,7 +3842,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -679.5578, y: -176.71571}
+  m_AnchoredPosition: {x: -691, y: -176.71571}
   m_SizeDelta: {x: 1.6152, y: 1.597}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1048330054
@@ -4467,7 +4467,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -287.5, y: 191.5}
+  m_AnchoredPosition: {x: -500, y: 270}
   m_SizeDelta: {x: 160, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1304238526
@@ -5464,7 +5464,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2562067168411785016, guid: eecd6f1a1d91502438a33d43bec2e664, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -684.65784
+      value: -696
       objectReference: {fileID: 0}
     - target: {fileID: 2562067168411785016, guid: eecd6f1a1d91502438a33d43bec2e664, type: 3}
       propertyPath: m_LocalPosition.y
