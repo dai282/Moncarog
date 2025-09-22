@@ -14,6 +14,7 @@ public class MapTraversalOverlay : MonoBehaviour
     [SerializeField] private Color defaultColor = Color.white;
 
     private MapGenerator.MapNode currentNode;
+    public GameObject mapRoot;
 
     // Tracks all visited nodes
     private HashSet<MapGenerator.MapNode> visitedNodes = new HashSet<MapGenerator.MapNode>();
@@ -31,45 +32,49 @@ public class MapTraversalOverlay : MonoBehaviour
         visitedNodes.Add(currentNode);
 
         UpdateNodeColors();
+        mapRoot.SetActive(!mapRoot.activeSelf);
     }
 
     private void Update()
     {
-        if (currentNode == null || currentNode.Exits.Count == 0)
-            return;
-
-#if ENABLE_INPUT_SYSTEM
-        // If using the new Input System
+        #if ENABLE_INPUT_SYSTEM
         if (UnityEngine.InputSystem.Keyboard.current.aKey.wasPressedThisFrame)
-            Move(-1);
+            Move(0);
         else if (UnityEngine.InputSystem.Keyboard.current.dKey.wasPressedThisFrame)
             Move(1);
-#else
-        // If using old Input Manager
+        #else
         if (Input.GetKeyDown(KeyCode.A))
             Move(0);
         else if (Input.GetKeyDown(KeyCode.D))
             Move(1);
-#endif
+        #endif
     }
 
     public void Move(int direction)
     {
         if (currentNode.Exits.Count == 0) return;
 
-        var sortedExits = currentNode.Exits.OrderBy(e => e.Position.x).ToList();
+        MapGenerator.MapNode nextNode = null;
 
-        MapGenerator.MapNode nextNode;
-        if (sortedExits.Count == 1)
-            nextNode = sortedExits[0];
-        else
-            nextNode = (direction == 0) ? sortedExits[0] : sortedExits[sortedExits.Count - 1];
+        if (currentNode.Exits.Count == 1)
+        {
+            // Only one exit → always go there
+            nextNode = currentNode.Exits[0];
+        }
+        else if (currentNode.Exits.Count == 2)
+        {
+            // Two exits → A = index 0, D = index 1
+            nextNode = (direction == 0) ? currentNode.Exits[0] : currentNode.Exits[1];
+        }
 
-        currentNode = nextNode;
-        visitedNodes.Add(currentNode);
-
-        UpdateNodeColors();
+        if (nextNode != null)
+        {
+            currentNode = nextNode;
+            visitedNodes.Add(currentNode);
+            UpdateNodeColors();
+        }
     }
+
 
     private void UpdateNodeColors()
     {

@@ -42,7 +42,7 @@ public class MapManager : MonoBehaviour
         Debug.Log("Map generation complete! Now displaying the map in the scene.");
 
         // Draw map
-        //DisplayMap(startNode, new Vector3(0, -15, 0));
+        DisplayMap(startNode, new Vector3(0, -15, 0));
 
         // Initialize traversalOverlay AFTER map is displayed
         if (traversalOverlay != null)
@@ -55,6 +55,7 @@ public class MapManager : MonoBehaviour
         }
     }
 
+    // Inside MapManager.cs
     private void DisplayMap(MapGenerator.MapNode node, Vector3 origin)
     {
         if (visitedNodes.Contains(node)) return;
@@ -64,7 +65,8 @@ public class MapManager : MonoBehaviour
         nodePositions[node] = position;
 
         GameObject selectedPrefab = GetPrefabForRoomType(node.Room.Type);
-        GameObject roomObj = Instantiate(selectedPrefab, position, Quaternion.identity);
+        // Instantiate the room object as a child of the traversal overlay
+        GameObject roomObj = Instantiate(selectedPrefab, position, Quaternion.identity, traversalOverlay.transform);
         roomObj.name = $"Room {node.Room.Name} ({node.Room.Type})";
 
         // Save reference for traversalOverlay
@@ -85,7 +87,8 @@ public class MapManager : MonoBehaviour
 
     private void DrawLine(Vector3 start, Vector3 end)
     {
-        GameObject lineObj = Instantiate(linePrefab, transform);
+        // Pass the traversal overlay transform as the parent
+        GameObject lineObj = Instantiate(linePrefab, traversalOverlay.transform);
         LineRenderer lineRenderer = lineObj.GetComponent<LineRenderer>();
         if (lineRenderer != null)
         {
