@@ -61,8 +61,8 @@ public class CombatHandler: MonoBehaviour
 
         //Create enemy Moncarg instance for battle
         moncargDatabase = GameManager.Instance.moncargDatabase;
-        int randIndex = Random.Range(0, moncargDatabase.moncargs.Length);
-        enemyObj = Instantiate(moncargDatabase.moncargs[randIndex]);
+        int randIndex = Random.Range(0, moncargDatabase.availableEnemyMoncargs.Count);
+        enemyObj = Instantiate(moncargDatabase.availableEnemyMoncargs[randIndex]);
         enemyObj.transform.localScale = new Vector3(5f, 5f, 5f);
         enemy = enemyObj.GetComponent<Moncarg>();
         enemy.InitStats();

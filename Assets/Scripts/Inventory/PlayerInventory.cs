@@ -354,10 +354,10 @@ public sealed class PlayerInventory : MonoBehaviour
             Debug.Log($"Powerup {powerup.FriendlyName} applied permanently to {moncargData.moncargName}");
         }
         var combatUI = FindFirstObjectByType<CombatHandlerUI>();
-if (combatUI != null)
-{
-    combatUI.RefreshUI();
-}
+        if (combatUI != null)
+        {
+            combatUI.RefreshUI();
+        }
     }
 
     private void OnDropButtonClicked()
@@ -402,7 +402,10 @@ if (combatUI != null)
                 }
             }
         }
-        
+
+        //update enemy moncarg database
+        MoncargDatabase.Instance.UpdateEnemyDatabase();
+
         // Clear selection and hide details
         ClearSelection();
     }

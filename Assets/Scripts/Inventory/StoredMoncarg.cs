@@ -49,5 +49,8 @@ public class StoredMoncarg : MonoBehaviour //MoncargInventoryItem (but MonoBehav
                 Debug.LogWarning($"{Details.FriendlyName} is already in inventory");
             }
         }
+
+        //update enemy moncarg database
+        MoncargDatabase.Instance.UpdateEnemyDatabase();
     }
 }

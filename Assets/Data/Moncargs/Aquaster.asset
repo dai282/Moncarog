@@ -28,7 +28,7 @@ MonoBehaviour:
     catchChance: 0
     dodgeChance: 0.5
     type: 1
-    active: 0
+    active: 1
     skillset:
     - {fileID: 11400000, guid: 411e2c1d2e0c3e847a9c8fa5794f907d, type: 2}
     - {fileID: 11400000, guid: 8985b594bd5f82844bc91de01609dd50, type: 2}

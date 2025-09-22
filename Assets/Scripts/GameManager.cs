@@ -49,11 +49,11 @@ public class GameManager : MonoBehaviour
 
         //initialize the game components here
 
-        //reset moncarg database
-        moncargDatabase.resetMoncargDatabase();
-
         //initialize player
         player.Init();
+
+        //reset moncarg database
+        moncargDatabase.resetMoncargDatabase();
 
         mapManager.Init();
 
