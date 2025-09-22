@@ -28,8 +28,58 @@ public class MapManager : MonoBehaviour
 
     public bool isReady { get; private set; }
 
+    public void CleanupMap()
+    {
+        Debug.Log("Cleaning up existing map data");
+        
+        // Clear all tracking collections
+        visitedNodes.Clear();
+        nodeToGameObjectMap.Clear();
+        nodePositions.Clear();
+        
+        // Destroy all existing map objects
+        if (traversalOverlay != null)
+        {
+            // Destroy all children of the traversal overlay (rooms and lines)
+            for (int i = traversalOverlay.transform.childCount - 1; i >= 0; i--)
+            {
+                GameObject child = traversalOverlay.transform.GetChild(i).gameObject;
+                if (Application.isPlaying)
+                {
+                    Destroy(child);
+                }
+                else
+                {
+                    DestroyImmediate(child);
+                }
+            }
+        }
+        
+        // Find any objects with "Room" in the name (fallback cleanup)
+        GameObject[] allObjects = FindObjectsByType<GameObject>(FindObjectsSortMode.None);
+        foreach (GameObject obj in allObjects)
+        {
+            if (obj.name.Contains("Room") && obj.name.Contains("("))
+            {
+                if (Application.isPlaying)
+                {
+                    Destroy(obj);
+                }
+                else
+                {
+                    DestroyImmediate(obj);
+                }
+            }
+        }
+        
+        isReady = false;
+    }
+
     public void Init()
     {
+        // Clean up any existing map data first
+        CleanupMap();
+
         if (normalPrefab == null || grassPrefab == null || waterPrefab == null ||
             firePrefab == null || miniBossPrefab == null || finalBossPrefab == null ||
             linePrefab == null)
@@ -115,7 +165,6 @@ public class MapManager : MonoBehaviour
         }
     }
 
-    // Add this to MapManager.cs
 
     public (RoomInfo currentRoom, List<RoomInfo> nextRooms) GetCurrentRoomInfo()
     {

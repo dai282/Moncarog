@@ -92,6 +92,12 @@ public class CombatHandler: MonoBehaviour
         if (!player.active)
         {
             Debug.Log("You need to switch Moncargs!");
+            // ADDED: Check if all player Moncargs are dead
+            if (!HasAnyAliveMoncargs())
+            {
+                OnAllMoncargsDefeated();
+                return;
+            }
             return;
         }
         if (!enemy.active)
@@ -304,6 +310,64 @@ public class CombatHandler: MonoBehaviour
     }
     #endregion
 
+    // ADDED: Game Over System Methods
+    #region Game Over System
+    private bool HasAnyAliveMoncargs()
+    {
+        // Check if any equipped Moncargs are still alive (health > 0)
+        var equippedMoncargs = PlayerInventory.Instance.StoredMoncargs
+            .Where(m => m.IsEquipped && m?.Details != null)
+            .ToList();
+
+        foreach (var storedMoncarg in equippedMoncargs)
+        {
+            if (storedMoncarg.Details.moncargData.health > 0)
+            {
+                return true; // Found at least one alive Moncarg
+            }
+        }
+
+        Debug.Log("All equipped Moncargs are defeated!");
+        return false; // All Moncargs are dead
+    }
+
+    private void OnAllMoncargsDefeated()
+    {
+        Debug.Log("OnAllMoncargsDefeated() called!");
+        
+        // Hide combat UI
+        combatUI.ShowCombatUI(false);
+        
+        // Trigger game over through GameManager
+        if (GameManager.Instance != null)
+        {
+            Debug.Log("Calling GameManager.TriggerGameOver()");
+            GameManager.Instance.TriggerGameOver();
+        }
+        else
+        {
+            Debug.LogError("GameManager.Instance is null!");
+        }
+        
+        // Clean up combat objects
+        CleanupForGameOver();
+    }
+
+    private void CleanupForGameOver()
+    {
+        // Destroy game objects but don't re-enable move buttons
+        // since we're going to game over screen
+        if (player != null && player.gameObject != null)
+        {
+            GameObject.Destroy(player.gameObject);
+        }
+        if (enemy != null && enemy.gameObject != null)
+        {
+            GameObject.Destroy(enemy.gameObject);
+        }
+    }
+    #endregion
+
     private void Rest(Moncarg moncarg)
     {
         int manaRecovered = moncarg.maxMana / 4; // Recover 25% of max mana
@@ -474,6 +538,16 @@ public class CombatHandler: MonoBehaviour
     private void OnCatchSussess()
     {
         Debug.Log("Successfully caught " + enemy.moncargName + "!");
+        
+        // ADDED: Check if Moncarg inventory is full before adding
+        if (PlayerInventory.Instance.IsMoncargInventoryFull())
+        {
+            Debug.Log($"Cannot store {enemy.moncargName} - Moncarg inventory is full! Consider releasing some Moncargs first.");
+            // You could show a UI message here instead of just logging
+            Cleanup();
+            return;
+        }
+        
         enemy.role = Moncarg.moncargRole.PlayerOwned;
 
         //Retrieve enemy moncarg game object and StoredMoncarg component

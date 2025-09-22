@@ -8,6 +8,15 @@ public sealed class PlayerInventory : MonoBehaviour
 {
     #region Static Instance
     public static PlayerInventory Instance;
+    // ADDED: Public method to refresh UI after clearing inventory
+    public void RefreshAfterClear()
+    {
+        RefreshInventoryDisplay();
+        UpdateMoncargEquippedCount();
+        UpdateWeightDisplay();
+        ClearSelection();
+    }
+
     #endregion
 
     #region Inventory Data
@@ -20,6 +29,10 @@ public sealed class PlayerInventory : MonoBehaviour
     
     [Header("Weight Settings")]
     public int MaxWeight = 54;
+    
+    // ADDED: Max Moncarg limit
+    [Header("Moncarg Limits")]
+    public int MaxMoncargs = 6; // Maximum 6 Moncargs allowed
     
     public static Dimensions SlotDimension { get; private set; }
     #endregion
@@ -693,6 +706,24 @@ public sealed class PlayerInventory : MonoBehaviour
     {
         return adapter?.CreateMoncargGameObject();
     }
+
+    // ADDED: Check if inventory is full for Moncargs
+    public bool IsMoncargInventoryFull()
+    {
+        return StoredMoncargs.Count >= MaxMoncargs;
+    }
+
+    // ADDED: Get current Moncarg count
+    public int GetCurrentMoncargCount()
+    {
+        return StoredMoncargs.Count(m => m?.Details != null);
+    }
+
+    // ADDED: Get remaining Moncarg slots
+    public int GetRemainingMoncargSlots()
+    {
+        return MaxMoncargs - GetCurrentMoncargCount();
+    }
     #endregion
 
     #region Utility Methods
@@ -715,9 +746,17 @@ public sealed class PlayerInventory : MonoBehaviour
         Debug.Log($"Added item to inventory: {item.FriendlyName}");
     }
     
+    // MODIFIED: Add check for max Moncarg limit
     public void AddMoncargToInventory(MoncargInventoryAdapter moncarg, bool autoEquip = false)
     {
         if (moncarg == null) return;
+        
+        // ADDED: Check if Moncarg inventory is full
+        if (IsMoncargInventoryFull())
+        {
+            Debug.LogWarning($"Cannot add {moncarg.FriendlyName} - Moncarg inventory is full ({StoredMoncargs.Count}/{MaxMoncargs})");
+            return;
+        }
         
         var storedMoncarg = new StoredMoncargData 
         { 
@@ -743,7 +782,7 @@ public sealed class PlayerInventory : MonoBehaviour
         }
         
         UpdateMoncargEquippedCount();
-        Debug.Log($"Added moncarg to inventory: {moncarg.FriendlyName} (Equipped: {storedMoncarg.IsEquipped})");
+        Debug.Log($"Added moncarg to inventory: {moncarg.FriendlyName} (Equipped: {storedMoncarg.IsEquipped}) [{GetCurrentMoncargCount()}/{MaxMoncargs}]");
     }
     
     // Check if player has any equipped moncargs
