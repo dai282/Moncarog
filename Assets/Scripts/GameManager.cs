@@ -71,21 +71,10 @@ public class GameManager : MonoBehaviour
         //assign the room grid to the player so that they can move around
         player.GetComponent<PlayerMovement>().roomGrid = currentRoomGrid;
 
-        //Start moncarg selection process to fight against enemy
-        //we're passing in the enemy moncarg prefab here, after merge, this should be called inside BoardManager when player encounters a moncarg
-        //combatHandler.BeginEncounter(enemyMoncargPrefab);
-
-        //spawn the player (does he already have a moncarg with him?)
-        //the moncarog encounter trigger code should be within the board manager script, not here?
-
 
     }
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.E))
-        {
-            combatHandler.BeginEncounter();
-        }
         if (Input.GetKeyDown(KeyCode.M))
         {
             Debug.Log($"Current Room: {currentRoom.roomName} ({currentRoom.numDoors} doors),");
