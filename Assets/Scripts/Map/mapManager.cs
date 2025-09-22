@@ -26,7 +26,9 @@ public class MapManager : MonoBehaviour
     private HashSet<MapGenerator.MapNode> visitedNodes = new HashSet<MapGenerator.MapNode>();
     private Dictionary<MapGenerator.MapNode, Vector3> nodePositions = new Dictionary<MapGenerator.MapNode, Vector3>();
 
-    public void Start()
+    public bool isReady { get; private set; }
+
+    public void Init()
     {
         if (normalPrefab == null || grassPrefab == null || waterPrefab == null ||
             firePrefab == null || miniBossPrefab == null || finalBossPrefab == null ||
@@ -53,6 +55,7 @@ public class MapManager : MonoBehaviour
         {
             Debug.LogError("TraversalOverlay reference is missing in MapManager!");
         }
+        isReady = true;
     }
 
     // Inside MapManager.cs

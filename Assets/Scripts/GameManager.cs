@@ -49,7 +49,8 @@ public class GameManager : MonoBehaviour
         //initialize player
         player.Init();
 
-        
+        mapManager.Init();
+
         (currentRoom, nextRooms) = mapManager.GetCurrentRoomInfo();
 
         Debug.Log($"Current Room: {currentRoom.roomName} ({currentRoom.numDoors} doors),");

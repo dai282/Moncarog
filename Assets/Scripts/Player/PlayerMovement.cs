@@ -65,7 +65,7 @@ public class PlayerMovement : MonoBehaviour
             Debug.Log($"Encounter triggered at {encounterCell}");
 
             // Trigger combat
-            FindObjectOfType<CombatHandler>().BeginEncounter();
+            FindFirstObjectByType<CombatHandler>().BeginEncounter();
 
             // Reset tile to walkable after use
             roomGrid.ResetEncounterTile(encounterCell);
