@@ -167,12 +167,14 @@ public class CombatHandlerUI : MonoBehaviour
     {
         optionsContainer.style.display = DisplayStyle.None;
         fightContainer.style.display = DisplayStyle.Flex;
+        catchContainer.style.display = DisplayStyle.None;
     }
 
     public void ShowOptionsPanel()
     {
         fightContainer.style.display = DisplayStyle.None;
         optionsContainer.style.display = DisplayStyle.Flex;
+        catchContainer.style.display = DisplayStyle.None;
     }
 
     public void ShowCatchPanel()
@@ -184,6 +186,9 @@ public class CombatHandlerUI : MonoBehaviour
 
     public void Cleanup()
     {
+        //moves back to default panel
+        ShowOptionsPanel();
+
         // Unregister all callbacks to prevent memory leaks
         fightButton.clicked -= () => ShowFightPanel();
         backButton.clicked -= () => ShowOptionsPanel();
