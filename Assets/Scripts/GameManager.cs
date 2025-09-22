@@ -55,16 +55,10 @@ public class GameManager : MonoBehaviour
         //reset moncarg database
         moncargDatabase.resetMoncargDatabase();
 
+        //initalize the map and get current room
         mapManager.Init();
 
         (currentRoom, nextRooms) = mapManager.GetCurrentRoomInfo();
-
-        Debug.Log($"Current Room: {currentRoom.roomName} ({currentRoom.numDoors} doors),");
-
-        foreach (var nextRoom in nextRooms)
-        {
-            Debug.Log($"Next Room(s): {nextRoom.roomName}");
-        }
 
         //Generate the room based on current room info
         currentRoomGrid = board.GenerateRoom(currentRoom);
