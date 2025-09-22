@@ -6,7 +6,6 @@ using System.Linq;
 
 public class CombatHandler: MonoBehaviour
 {
-
     [SerializeField] private CombatHandlerUI combatUI;
     [SerializeField] private MoncargSelectionUI selectionUI;
     [SerializeField] private ForceEquipPromptUI forceEquipUI;
@@ -24,11 +23,8 @@ public class CombatHandler: MonoBehaviour
     private Moncarg enemy;
     private Moncarg currentTurn;
     private Moncarg other;
-
     private MoncargDatabase moncargDatabase;
-
     private GameObject enemyObj;
-
     private bool waitingForPlayerToEquip = false;
 
     private void Awake()
@@ -52,7 +48,6 @@ public class CombatHandler: MonoBehaviour
         }
     }
     
-
     //START EVENT DRIVEN BEGIN ENCOUNTER
     public void BeginEncounter()
     {
@@ -69,13 +64,11 @@ public class CombatHandler: MonoBehaviour
         //hide until combat starts
         enemyObj.SetActive(false);
 
-
         //auto equip moncargs if none are equipped
         //AutoEquipMoncargs();
 
         //start moncarg selection
         StartCoroutine(StartMoncargSelection());
-
     }
 
     public void BeginBattle()
@@ -112,7 +105,6 @@ public class CombatHandler: MonoBehaviour
 
         if (currentTurn == player)
         {
-
             //automatic resting
             if (player.mana <=0 )
             {
@@ -227,7 +219,6 @@ public class CombatHandler: MonoBehaviour
         NextTurn();
     }
 
-
     //END EVENT DRIVEN BEGIN ENCOUNTER
 
     #region Attack Execution
@@ -258,8 +249,6 @@ public class CombatHandler: MonoBehaviour
 
         Debug.Log(attacker.moncargName + " used " + attackChoice.name + " on " + defender.moncargName + " for " + damage + " damage!");
 
-
-
         // Check if defender is defeated
         if (defender.health <= 0)
         {
@@ -269,7 +258,6 @@ public class CombatHandler: MonoBehaviour
         }
 
         combatUI.UpdateMoncargStats(player, enemy);
-
     }
 
     public bool TryDodge(Moncarg defender)
@@ -314,7 +302,6 @@ public class CombatHandler: MonoBehaviour
 
         return damage;
     }
-
     #endregion
 
     private void Rest(Moncarg moncarg)
@@ -349,7 +336,6 @@ public class CombatHandler: MonoBehaviour
         selectionUI.Show(equippedMoncargs);
 
         GameObject.Destroy(player.gameObject);
-
     }
 
     private void OnEnemyDefeated()
@@ -393,6 +379,13 @@ public class CombatHandler: MonoBehaviour
     #region Item Drop System
     private void GenerateItemDrops()
     {
+        // ADDED: Check if enemy is a boss or miniboss only
+        if (!IsBossOrMiniboss(enemy))
+        {
+            Debug.Log($"{enemy.moncargName} is not a boss/miniboss - no item drops");
+            return;
+        }
+
         // Check if anything drops at all
         float dropRoll = Random.value;
         if (dropRoll > dropChance)
@@ -421,7 +414,7 @@ public class CombatHandler: MonoBehaviour
         {
             // Common drop
             droppedItem = commonDrops[Random.Range(0, commonDrops.Length)];
-            Debug.Log($"{enemy.moncargName} dropped {droppedItem.FriendlyName}");
+            Debug.Log($"Boss {enemy.moncargName} dropped {droppedItem.FriendlyName}");
         }
 
         // Add item to inventory if we got something
@@ -429,6 +422,19 @@ public class CombatHandler: MonoBehaviour
         {
             PlayerInventory.Instance.AddItemToInventory(droppedItem);
         }
+    }
+
+    // ADDED: Method to check if enemy is a boss or miniboss
+    private bool IsBossOrMiniboss(Moncarg enemy)
+    {
+        // Check by name keywords only
+        string enemyName = enemy.moncargName.ToLower();
+        if (enemyName.Contains("boss") || enemyName.Contains("miniboss"))
+        {
+            return true;
+        }
+
+        return false;
     }
 
     // Optional: Method to set custom drop tables for specific enemies
@@ -450,7 +456,6 @@ public class CombatHandler: MonoBehaviour
 
     private void OnCatchClicked()
     {
-
         Debug.Log("Attempting to catch " + enemy.moncargName + "...");
 
         float catchRoll = Random.value; // random number between 0.0 and 1.0
@@ -488,7 +493,6 @@ public class CombatHandler: MonoBehaviour
         Cleanup();
     }
 
-
     private void Cleanup()
     {
         combatUI.Cleanup();
@@ -514,7 +518,6 @@ public class CombatHandler: MonoBehaviour
     }
 
     #region Moncarg Selection
-
     private void AutoEquipMoncargs()
     {
         if (PlayerInventory.Instance != null)
@@ -673,9 +676,7 @@ public class CombatHandler: MonoBehaviour
     {
         waitingForPlayerToEquip = false;
     }
-
     #endregion
-
 }
 
 // Get the StoredMoncarg component from the Moncarg GameObject
