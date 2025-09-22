@@ -94,7 +94,7 @@ public class MapManager : MonoBehaviour
         Debug.Log("Map generation complete! Now displaying the map in the scene.");
 
         // Draw map
-        DisplayMap(startNode, new Vector3(0, -15, 0));
+        DisplayMap(startNode, new Vector3(-20, -18, 0));
 
         // Initialize traversalOverlay AFTER map is displayed
         if (traversalOverlay != null)

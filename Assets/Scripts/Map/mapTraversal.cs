@@ -32,7 +32,7 @@ public class MapTraversalOverlay : MonoBehaviour
         visitedNodes.Add(currentNode);
 
         UpdateNodeColors();
-        mapRoot.SetActive(!mapRoot.activeSelf);
+        mapRoot.SetActive(false);
     }
 
     private void Update()
