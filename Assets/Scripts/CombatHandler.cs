@@ -10,6 +10,9 @@ public class CombatHandler: MonoBehaviour
     [SerializeField] private MoncargSelectionUI selectionUI;
     [SerializeField] private ForceEquipPromptUI forceEquipUI;
 
+    [Header("References")]
+    public GameObject victoryScreen;
+
     // ADDED: Item drop system fields
     [Header("Item Drop System")]
     [SerializeField] private ItemDefinition[] commonDrops;
@@ -406,8 +409,16 @@ public class CombatHandler: MonoBehaviour
     {
         // ADDED: Generate item drops when enemy is defeated
         GenerateItemDrops();
-        
-        combatUI.ShowCatchPanel();
+
+        if (!IsBossOrMiniboss(enemy))
+        {
+            combatUI.ShowCatchPanel();
+        }
+
+        if (enemy.data.isBoss)
+        {
+            victoryScreen.SetActive(true);
+        }
 
         //Experience gaining logic
         /*
@@ -491,9 +502,7 @@ public class CombatHandler: MonoBehaviour
     // ADDED: Method to check if enemy is a boss or miniboss
     private bool IsBossOrMiniboss(Moncarg enemy)
     {
-        // Check by name keywords only
-        string enemyName = enemy.moncargName.ToLower();
-        if (enemyName.Contains("boss") || enemyName.Contains("miniboss"))
+        if (enemy.data.isBoss || enemy.data.isMiniBoss)
         {
             return true;
         }

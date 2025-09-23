@@ -410,8 +410,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 940294202}
-        m_TargetAssemblyTypeName: PauseMenu, Assembly-CSharp
+      - m_Target: {fileID: 940294204}
+        m_TargetAssemblyTypeName: VictoryScreen, Assembly-CSharp
         m_MethodName: MainMenu
         m_Mode: 1
         m_Arguments:
@@ -435,7 +435,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 0.8862746, g: 0.5372549, b: 0.1764706, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -2376,6 +2376,7 @@ MonoBehaviour:
   combatUI: {fileID: 1010655243}
   selectionUI: {fileID: 462797780}
   forceEquipUI: {fileID: 1587555431}
+  victoryScreen: {fileID: 835464287}
   commonDrops:
   - {fileID: 11400000, guid: ff6f9fbed549bd04f848cb39fcad9805, type: 2}
   rareDrops: []
@@ -2836,7 +2837,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 0.13333334, g: 0.08627451, b: 0.10980393, a: 0.392}
+  m_Color: {r: 0.13333334, g: 0.08627451, b: 0.10980393, a: 0.34117648}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -3228,6 +3229,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::VictoryScreen
   victoryScreen: {fileID: 835464287}
+  mainMenu: {fileID: 1866197107}
 --- !u!114 &940294205
 MonoBehaviour:
   m_ObjectHideFlags: 0
