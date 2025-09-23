@@ -55,6 +55,24 @@ public class BoardManager : MonoBehaviour
         //get room grid to return so the player can walk on it
         RoomGrid roomGrid = currentRoom.GetComponent<RoomGrid>();
 
+        //spawn encounter cells based on room ID here instead of immediately in RoomGrid
+        roomGrid.PlaceEncounterTiles(roomID);
+
         return roomGrid;
+    }
+
+    public void disableRoom()
+    {
+        if (currentRoom != null)
+        {
+            currentRoom.SetActive(false);
+        }
+    }
+    public void enableRoom()
+    {
+        if (currentRoom != null)
+        {
+            currentRoom.SetActive(true);
+        }
     }
 }

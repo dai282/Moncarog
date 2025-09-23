@@ -174,6 +174,8 @@ public class GameManager : MonoBehaviour
         Debug.Log("New game started successfully!");
     }
 
+
+
     // ADDED: Handle game over trigger
     public void TriggerGameOver()
     {
@@ -279,7 +281,7 @@ public class GameManager : MonoBehaviour
         player.GetComponent<PlayerMovement>().roomGrid = currentRoomGrid;
 
         // Position player at entrance of new room
-        Vector3 spawnPosition = GetSpawnPositionForDoor(); // You'll need to implement this
+        Vector3 spawnPosition = GetSpawnPositionForDoor();
         player.transform.position = spawnPosition;
 
         Debug.Log($"Updating current room and next rooms!");

@@ -4027,8 +4027,6 @@ MonoBehaviour:
   StoredMoncargs:
   - Details: {fileID: 11400000, guid: 91b31b2502215794ea031592367f0f67, type: 2}
     IsEquipped: 1
-  - Details: {fileID: 11400000, guid: cbb14ee4d38dfb4469a815bdc1401248, type: 2}
-    IsEquipped: 1
   - Details: {fileID: 11400000, guid: a206108243e96244d9e9fbc848d91e0e, type: 2}
     IsEquipped: 1
   InventoryDimensions:
@@ -5326,13 +5324,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::MoncargDatabase
   allMoncargs:
   - {fileID: 2951468559557034578, guid: 9c263b1493eac674c8bf7116e916846a, type: 3}
-  - {fileID: 5151491239075499767, guid: f1123696930af1940a2d02320c339b77, type: 3}
   - {fileID: 5146393331625118865, guid: 9141941f6232ee147971c823723ccf53, type: 3}
   - {fileID: 5930417885874421365, guid: e87966ac96a446847a74b0890160612f, type: 3}
   - {fileID: 3988726585341865935, guid: c381b2e2b253cad489ac870768da6841, type: 3}
-  - {fileID: 4959577150352375591, guid: 49c8737ffb4c0124e8d386575dfbc8e6, type: 3}
   - {fileID: 7161970516609655943, guid: 942bbfb133cbd014da3ef504679458f2, type: 3}
-  - {fileID: 6470595564411063485, guid: 6a479609911b50e4c9342c9cd7570936, type: 3}
   - {fileID: 1083878808720624563, guid: 9324f91e013613d459aa5beaae1120de, type: 3}
   - {fileID: 8772533519010354619, guid: ec1c7b4be87569646ac11a9b0f241b04, type: 3}
   - {fileID: 4959577150352375591, guid: 7d1d0317d5fe01847954bdc7f098e54c, type: 3}
@@ -5340,10 +5335,13 @@ MonoBehaviour:
   - {fileID: 7306095537679296538, guid: de255cff3265a2742ada47202b033391, type: 3}
   - {fileID: 948127656398091485, guid: c5e9fb2468e0d0f4bad8a1c527883799, type: 3}
   - {fileID: 5291904690707256890, guid: da24f734357259843b30fb510e000ca5, type: 3}
-  - {fileID: 4049488232862808857, guid: d76d030792aa4684885112385ecf9d99, type: 3}
-  - {fileID: 7988431587809860476, guid: 71d81a3b4bcfa4545bea12f9ab8ebc66, type: 3}
   - {fileID: 1909571526152986902, guid: 28ea6eec80dcb2f40980d8ed37d09abd, type: 3}
+  - {fileID: 7988431587809860476, guid: 71d81a3b4bcfa4545bea12f9ab8ebc66, type: 3}
   - {fileID: 2769384336740485538, guid: b7d6c3bb4a5c60349991eba55fc71c92, type: 3}
+  - {fileID: 6470595564411063485, guid: 6a479609911b50e4c9342c9cd7570936, type: 3}
+  - {fileID: 5151491239075499767, guid: f1123696930af1940a2d02320c339b77, type: 3}
+  - {fileID: 4959577150352375591, guid: 49c8737ffb4c0124e8d386575dfbc8e6, type: 3}
+  - {fileID: 4049488232862808857, guid: d76d030792aa4684885112385ecf9d99, type: 3}
   availableEnemyMoncargs: []
 --- !u!4 &1635567585
 Transform:

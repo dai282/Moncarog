@@ -52,15 +52,48 @@ public class CombatHandler: MonoBehaviour
     }
     
     //START EVENT DRIVEN BEGIN ENCOUNTER
-    public void BeginEncounter()
+    public void BeginEncounter(int roomID)
     {
         //disable move buttons
         GameManager.Instance.moveUI.DisableAllButtons();
 
         //Create enemy Moncarg instance for battle
         moncargDatabase = GameManager.Instance.moncargDatabase;
-        int randIndex = Random.Range(0, moncargDatabase.availableEnemyMoncargs.Count);
-        enemyObj = Instantiate(moncargDatabase.availableEnemyMoncargs[randIndex]);
+        int databaseLen = moncargDatabase.availableEnemyMoncargs.Count;
+        //boss and miniboss rooms
+        if (roomID < 0)
+        {
+            switch (roomID)
+            {
+                case -1:
+                    //mini boss 1 (grass)
+                    enemyObj = Instantiate(moncargDatabase.availableEnemyMoncargs[databaseLen - 4]);
+                    break;
+                case -2:
+                    //mini boss 2 (water)
+                    enemyObj = Instantiate(moncargDatabase.availableEnemyMoncargs[databaseLen - 3]);
+                    break;
+                case -3:
+                    //mini boss 3 (fire)
+                    enemyObj = Instantiate(moncargDatabase.availableEnemyMoncargs[databaseLen - 2]);
+                    break;
+                case -99:
+                    //final boss
+                    enemyObj = Instantiate(moncargDatabase.availableEnemyMoncargs[databaseLen - 1]);
+                    break;
+                default:
+                    Debug.LogError("Invalid miniboss/boss room ID: " + roomID);
+                    int randIndex = Random.Range(0, databaseLen - 4);
+                    enemyObj = Instantiate(moncargDatabase.availableEnemyMoncargs[randIndex]);
+                    break;
+            }
+        }
+        else
+        {
+            int randIndex = Random.Range(0, databaseLen - 4);
+            enemyObj = Instantiate(moncargDatabase.availableEnemyMoncargs[randIndex]);
+        }
+
         enemyObj.transform.localScale = new Vector3(5f, 5f, 5f);
         enemy = enemyObj.GetComponent<Moncarg>();
         enemy.InitStats();
@@ -76,6 +109,14 @@ public class CombatHandler: MonoBehaviour
 
     public void BeginBattle()
     {
+        //hide the room grid
+        FindFirstObjectByType<BoardManager>().disableRoom();
+
+        //hide player sprite
+        GameObject playerObj = GameObject.FindWithTag("Player");
+        SpriteRenderer spriteRenderer = playerObj.GetComponent<SpriteRenderer>();
+        spriteRenderer.enabled = false;
+
         //show enemy
         enemyObj.SetActive(true);
 
@@ -587,6 +628,14 @@ public class CombatHandler: MonoBehaviour
         //Destroy moncarg game objects to prevent duplicates
         GameObject.Destroy(player.gameObject);
         GameObject.Destroy(enemy.gameObject);
+
+        //reshow the room grid
+        FindFirstObjectByType<BoardManager>().enableRoom();
+
+        //reshow player sprite
+        GameObject playerObj = GameObject.FindWithTag("Player");
+        SpriteRenderer spriteRenderer = playerObj.GetComponent<SpriteRenderer>();
+        spriteRenderer.enabled = true;
 
         //reenable move buttons
         GameManager.Instance.moveUI.EnableAllButtons();

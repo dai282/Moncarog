@@ -7,6 +7,7 @@ public class RoomGrid : MonoBehaviour
     public Tilemap collisionTilemap;
     public Tilemap decorations;
     public Tilemap floor;
+    public int roomGridID;
 
     public enum CellType
     {
@@ -53,11 +54,12 @@ public class RoomGrid : MonoBehaviour
                 }
             }
         }
-        PlaceEncounterTiles();
+        //PlaceEncounterTiles();
     }
 
-    void PlaceEncounterTiles()
+    public void PlaceEncounterTiles(int roomID)
     {
+        roomGridID = roomID;
         // Collect all walkable cells
         List<Vector3Int> walkableCells = new List<Vector3Int>();
         foreach (var kvp in cellData)
@@ -66,18 +68,50 @@ public class RoomGrid : MonoBehaviour
                 walkableCells.Add(kvp.Key);
         }
 
-        // Randomly pick encounter tiles
-        for (int i = 0; i < 10 && walkableCells.Count > 0; i++)
+        //if boss or mini boss room, only 1 encounter tile at the middle of the room
+        if (roomID < 0)
         {
-            int randIndex = Random.Range(0, walkableCells.Count);
-            Vector3Int chosen = walkableCells[randIndex];
-            walkableCells.RemoveAt(randIndex);
+            BoundsInt bounds = collisionTilemap.cellBounds;
 
-            cellData[chosen] = CellType.Encounter;
-            encounterTiles.Add(chosen);
-
-            Debug.Log($"Encounter tile placed at {chosen}");
+            int x = (bounds.xMin + bounds.xMax) / 2;
+            int y = (bounds.yMin + bounds.yMax) / 2;
+            Vector3Int centerPos = new Vector3Int(x, y, 0);
+            if (cellData.ContainsKey(centerPos) && cellData[centerPos] == CellType.Walkable)
+            {
+                cellData[centerPos] = CellType.Encounter;
+                encounterTiles.Add(centerPos);
+                Debug.Log($"Boss/ Mini Boss Encounter tile placed at {centerPos}");
+            }
+            else
+            {
+                Debug.LogWarning($"Center position {centerPos} is not walkable, cannot place encounter tile.");
+            }
         }
+        else
+        {
+            //no encounter in first room
+            if (roomID != 1)
+            {
+                // Randomly pick encounter tiles
+                for (int i = 0; i < 10 && walkableCells.Count > 0; i++)
+                {
+                    int randIndex = Random.Range(0, walkableCells.Count);
+                    Vector3Int chosen = walkableCells[randIndex];
+                    walkableCells.RemoveAt(randIndex);
+
+                    cellData[chosen] = CellType.Encounter;
+                    encounterTiles.Add(chosen);
+
+                    Debug.Log($"Encounter tile placed at {chosen}");
+                }
+            }
+            else
+            {
+                Debug.Log($"No encounter cells in the first room");
+            }
+
+        }
+        
     }
 
     public bool IsWalkable(Vector3 worldPos)
