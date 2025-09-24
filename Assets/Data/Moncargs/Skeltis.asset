@@ -16,8 +16,8 @@ MonoBehaviour:
   Icon: {fileID: -7098808727488637180, guid: d714ebab896904b42ab4ef3fee57e589, type: 3}
   moncargData:
     moncargName: Skeltis
-    maxHealth: 1200
-    health: 1200
+    maxHealth: 1
+    health: 1
     attack: 100
     defense: 80
     speed: 40
