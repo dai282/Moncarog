@@ -59,13 +59,11 @@ public class RoomDoorManager : MonoBehaviour
 
                 Vector3Int doorPos = roomGrid.collisionTilemap.WorldToCell(slotMiddle.position);
 
-                Vector3Int bottomMiddleLeft  = doorPos + new Vector3Int(10, -8, 0);
-                Vector3Int bottomMiddle      = doorPos + new Vector3Int(9, -8, 0);
-                Vector3Int bottomMiddleRight = doorPos + new Vector3Int(8, -8, 0);
-
-                roomGrid.RegisterDoor(bottomMiddleLeft, doorDetector);
-                roomGrid.RegisterDoor(bottomMiddle, doorDetector);
-                roomGrid.RegisterDoor(bottomMiddleRight, doorDetector);
+                roomGrid.RegisterDoor(doorPos + new Vector3Int(10, -8, 0), doorDetector);
+                roomGrid.RegisterDoor(doorPos + new Vector3Int(9, -8, 0), doorDetector);
+                roomGrid.RegisterDoor(doorPos + new Vector3Int(8, -8, 0), doorDetector);
+                roomGrid.RegisterUnwalkable(doorPos + new Vector3Int(11, -8, 0));
+                roomGrid.RegisterUnwalkable(doorPos + new Vector3Int(7, -8, 0));
                 break;
 
             case 2:
@@ -78,6 +76,8 @@ public class RoomDoorManager : MonoBehaviour
                 roomGrid.RegisterDoor(leftDoorPos + new Vector3Int(10, -8, 0), leftDetector);
                 roomGrid.RegisterDoor(leftDoorPos + new Vector3Int(9, -8, 0), leftDetector);
                 roomGrid.RegisterDoor(leftDoorPos + new Vector3Int(8, -8, 0), leftDetector);
+                roomGrid.RegisterUnwalkable(leftDoorPos + new Vector3Int(11, -8, 0));
+                roomGrid.RegisterUnwalkable(leftDoorPos + new Vector3Int(7, -8, 0));
 
                 GameObject rightDoor = Instantiate(doorPrefabs[doorRight], slotRight.position, Quaternion.identity, slotRight);
                 //For detecting doors
@@ -88,6 +88,8 @@ public class RoomDoorManager : MonoBehaviour
                 roomGrid.RegisterDoor(rightDoorPos + new Vector3Int(10, -8, 0), rightDetector);
                 roomGrid.RegisterDoor(rightDoorPos + new Vector3Int(9, -8, 0), rightDetector);
                 roomGrid.RegisterDoor(rightDoorPos + new Vector3Int(8, -8, 0), rightDetector);
+                roomGrid.RegisterUnwalkable(rightDoorPos + new Vector3Int(11, -8, 0));
+                roomGrid.RegisterUnwalkable(rightDoorPos + new Vector3Int(7, -8, 0));
 
                 Instantiate(fillerMiddle, slotMiddle.position, Quaternion.identity, slotMiddle);
                 break;

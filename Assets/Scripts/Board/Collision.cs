@@ -177,6 +177,20 @@ public class RoomGrid : MonoBehaviour
         Debug.Log($"Registered door at cell {cellPos} (world {collisionTilemap.GetCellCenterWorld(cellPos)})");
     }
 
+    public void RegisterUnwalkable(Vector3Int cellPos)
+    {
+        if (cellData.ContainsKey(cellPos))
+        {
+            cellData[cellPos] = CellType.Unwalkable;
+            Debug.Log($"Registered collision at cell {cellPos} (world {collisionTilemap.GetCellCenterWorld(cellPos)})");
+        }
+        else
+        {
+            cellData[cellPos] = CellType.Unwalkable;
+            Debug.LogWarning($"Cell {cellPos} was not in cellData; added as Unwalkable.");
+        }
+    }
+
     public DoorDetector GetDoorAtCell(Vector3Int cellPos)
     {
         doors.TryGetValue(cellPos, out DoorDetector door);
