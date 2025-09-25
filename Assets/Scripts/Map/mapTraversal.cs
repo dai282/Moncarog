@@ -34,21 +34,21 @@ public class MapTraversalOverlay : MonoBehaviour
         UpdateNodeColors();
         mapRoot.SetActive(false);
     }
-
-    private void Update()
-    {
-        #if ENABLE_INPUT_SYSTEM
-        if (UnityEngine.InputSystem.Keyboard.current.aKey.wasPressedThisFrame)
-            Move(0);
-        else if (UnityEngine.InputSystem.Keyboard.current.dKey.wasPressedThisFrame)
-            Move(1);
-        #else
-        if (Input.GetKeyDown(KeyCode.A))
-            Move(0);
-        else if (Input.GetKeyDown(KeyCode.D))
-            Move(1);
-        #endif
-    }
+    //THIS IS HERE FOR DEV PURPOSES, that is all. Uncomment to progress though the map using a / d keys.
+    // private void Update()
+    // {
+    //     #if ENABLE_INPUT_SYSTEM
+    //     if (UnityEngine.InputSystem.Keyboard.current.aKey.wasPressedThisFrame)
+    //         Move(0);
+    //     else if (UnityEngine.InputSystem.Keyboard.current.dKey.wasPressedThisFrame)
+    //         Move(1);
+    //     #else
+    //     if (Input.GetKeyDown(KeyCode.A))
+    //         Move(0);
+    //     else if (Input.GetKeyDown(KeyCode.D))
+    //         Move(1);
+    //     #endif
+    // }
 
     public void Move(int direction)
     {
