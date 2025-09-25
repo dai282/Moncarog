@@ -1,0 +1,41 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9136e7c2ddf01784f8652093b3035372, type: 3}
+  m_Name: Oblin
+  m_EditorClassIdentifier: Assembly-CSharp::MoncargInventoryAdapter
+  FriendlyName: Oblin
+  Icon: {fileID: -6305262992350929552, guid: 76ca4dd05ad120c41bafb95738d64364, type: 3}
+  moncargData:
+    moncargName: Oblin
+    maxHealth: 100
+    health: 100
+    attack: 30
+    defense: 10
+    speed: 10
+    exp: 0
+    level: 1
+    mana: 100
+    maxMana: 100
+    catchChance: 0.5
+    dodgeChance: 0.5
+    type: 3
+    active: 0
+    skillset:
+    - {fileID: 11400000, guid: 411e2c1d2e0c3e847a9c8fa5794f907d, type: 2}
+    - {fileID: 11400000, guid: 720ea51bd46724e479a4139bfe6d8b36, type: 2}
+    - {fileID: 11400000, guid: 8985b594bd5f82844bc91de01609dd50, type: 2}
+    - {fileID: 11400000, guid: f61916e7f4c38c34e9fefb56df2018de, type: 2}
+  SlotDimension:
+    Height: 1
+    Width: 1
+  IsEquipped: 1
+  linkedPrefab: {fileID: 7306095537679296538, guid: de255cff3265a2742ada47202b033391, type: 3}

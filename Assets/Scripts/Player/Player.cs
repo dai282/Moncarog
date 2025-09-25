@@ -19,7 +19,7 @@ public class Player : MonoBehaviour
         set { inventory = value; } 
     }
     
-    private void Start()
+    public void Init()
     {
         // Initialize inventory if not assigned
         if (inventory == null)
@@ -35,6 +35,8 @@ public class Player : MonoBehaviour
             // Toggle inventory visibility or trigger inventory UI display
             Debug.Log($"{playerName} is viewing inventory");
             // You can add UI logic here to show/hide inventory panel
+            this.inventory.ToggleInventory();
+
         }
         else
         {

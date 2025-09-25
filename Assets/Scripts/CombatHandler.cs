@@ -1,108 +1,127 @@
 using UnityEngine;
 using Elementals; //for elemental types
 using UnityEngine.UIElements;
+using System.Collections.Generic;
+using System.Linq;
 
-public class CombatHandler
+public class CombatHandler: MonoBehaviour
 {
-    private UIDocument combatUI;
+    [SerializeField] private CombatHandlerUI combatUI;
+    [SerializeField] private MoncargSelectionUI selectionUI;
+    [SerializeField] private ForceEquipPromptUI forceEquipUI;
 
-    private bool callbacksRegistered = false;
+    [Header("References")]
+    public GameObject victoryScreen;
 
-    private VisualElement optionsContainer;
-    private VisualElement fightContainer;
-
-    private Button fightButton;
-    private Button fleeButton;
-    private Button inventoryButton;
-    private Button switchButton;
-    private Button skill1Button;
-    private Button skill2Button;
-    private Button skill3Button;
-    private Button skill4Button;
-    private Button[] skillButtons = new Button[4];
-    private Button backButton;
-
+    // ADDED: Item drop system fields
+    [Header("Item Drop System")]
+    [SerializeField] private ItemDefinition[] commonDrops;
+    [SerializeField] private ItemDefinition[] rareDrops;
+    [SerializeField] private ItemDefinition[] legendaryDrops;
+    [SerializeField] [Range(0f, 1f)] private float dropChance = 0.7f; // 70% chance to drop something
+    [SerializeField] [Range(0f, 1f)] private float rareDropChance = 0.15f; // 15% chance for rare
+    [SerializeField] [Range(0f, 1f)] private float legendaryDropChance = 0.05f; // 5% chance for legendary
 
     private Moncarg player;
     private Moncarg enemy;
     private Moncarg currentTurn;
     private Moncarg other;
+    private MoncargDatabase moncargDatabase;
+    private GameObject enemyObj;
+    private bool waitingForPlayerToEquip = false;
 
-    public CombatHandler()
+    private void Awake()
     {
-        // Constructor logic if needed
+        SubscribeToUIEvents();
     }
 
-    //setter for UI
-    public void SetUI(UIDocument uiDoc)
+    private void SubscribeToUIEvents()
     {
-        combatUI = uiDoc;
-        var root = combatUI.rootVisualElement;
+        combatUI.OnAttackClicked += OnAttackClicked;
+        combatUI.OnFleeClicked += OnFleeClicked;
+        combatUI.OnCatchClicked += OnCatchClicked;
+        combatUI.OnCancelCatchClicked += OnCancelCatchClicked;
+        combatUI.OnInventoryClicked += OnInventoryClicked;
+        combatUI.OnSwitchClicked += OnSwitchClicked;
 
-        optionsContainer = root.Q<VisualElement>("OptionsContainer");
-        fightContainer = root.Q<VisualElement>("FightContainer");
-
-        fightButton = root.Q<Button>("FightButton");
-        fleeButton = root.Q<Button>("FleeButton");
-        inventoryButton = root.Q<Button>("InventoryButton");
-        switchButton = root.Q<Button>("SwitchButton");
-        skill1Button = root.Q<Button>("Move0");
-        skill2Button = root.Q<Button>("Move1");
-        skill3Button = root.Q<Button>("Move2");
-        skill4Button = root.Q<Button>("Move3");
-        backButton = root.Q<Button>("BackButton");
-
-        skillButtons[0] = skill1Button;
-        skillButtons[1] = skill2Button;
-        skillButtons[2] = skill3Button;
-        skillButtons[3] = skill4Button;
-
-
-        // Register UI callbacks
-        if (!callbacksRegistered)
+        if (selectionUI != null)
         {
-            //fightButton.clicked += OnAttackClicked;
-            fightButton.clicked += ShowFightPanel;
-            backButton.clicked += ShowOptionsPanel;
-
-            fleeButton.clicked += OnFleeClicked;
-
-            //wrapping the call in a lambda to pass the attack option
-            skill1Button.clicked += () => OnAttackClicked(1);
-            skill2Button.clicked += () => OnAttackClicked(2);
-            skill3Button.clicked += () => OnAttackClicked(3);
-            skill4Button.clicked += () => OnAttackClicked(4);
-
-            callbacksRegistered = true;
-
+            selectionUI.OnMoncargSelected += OnMoncargSelected;
+            selectionUI.OnSelectionCancelled += OnSelectionCancelled;
         }
     }
-
-
+    
     //START EVENT DRIVEN BEGIN ENCOUNTER
-    public void BeginEncounter(Moncarg ours, Moncarg enemyMoncarg)
+    public void BeginEncounter(int roomID)
     {
-        player = ours;
-        enemy = enemyMoncarg;
+        //disable move buttons
+        GameManager.Instance.moveUI.DisableAllButtons();
 
-        //setup health display
-        player.SetHealthLabel(combatUI.rootVisualElement.Q<Label>("OurHealthLabel"));
-        player.UpdateHealthLabel();
-        enemy.SetHealthLabel(combatUI.rootVisualElement.Q<Label>("EnemyHealthLabel"));
-        enemy.UpdateHealthLabel();
+        //Create enemy Moncarg instance for battle
+        moncargDatabase = GameManager.Instance.moncargDatabase;
+        int databaseLen = moncargDatabase.availableEnemyMoncargs.Count;
+        //boss and miniboss rooms
+        if (roomID < 0)
+        {
+            switch (roomID)
+            {
+                case -1:
+                    //mini boss 1 (grass)
+                    enemyObj = Instantiate(moncargDatabase.availableEnemyMoncargs[databaseLen - 4]);
+                    break;
+                case -2:
+                    //mini boss 2 (water)
+                    enemyObj = Instantiate(moncargDatabase.availableEnemyMoncargs[databaseLen - 3]);
+                    break;
+                case -3:
+                    //mini boss 3 (fire)
+                    enemyObj = Instantiate(moncargDatabase.availableEnemyMoncargs[databaseLen - 2]);
+                    break;
+                case -99:
+                    //final boss
+                    enemyObj = Instantiate(moncargDatabase.availableEnemyMoncargs[databaseLen - 1]);
+                    break;
+                default:
+                    Debug.LogError("Invalid miniboss/boss room ID: " + roomID);
+                    int randIndex = Random.Range(0, databaseLen - 4);
+                    enemyObj = Instantiate(moncargDatabase.availableEnemyMoncargs[randIndex]);
+                    break;
+            }
+        }
+        else
+        {
+            int randIndex = Random.Range(0, databaseLen - 4);
+            enemyObj = Instantiate(moncargDatabase.availableEnemyMoncargs[randIndex]);
+        }
 
-        //setup mana display
-        player.SetManaLabel(combatUI.rootVisualElement.Q<Label>("OurManaLabel"));
-        player.UpdateManaLabel();
-        enemy.SetManaLabel(combatUI.rootVisualElement.Q<Label>("EnemyManaLabel"));
-        enemy.UpdateManaLabel();
+        enemyObj.transform.localScale = new Vector3(5f, 5f, 5f);
+        enemy = enemyObj.GetComponent<Moncarg>();
+        enemy.InitStats();
+        //hide until combat starts
+        enemyObj.SetActive(false);
 
-        //Set skill button labels
-        skill1Button.text = player.skillset[0].name;
-        skill2Button.text = player.skillset[1].name;
-        skill3Button.text = player.skillset[2].name;
-        skill4Button.text = player.skillset[3].name;
+        //auto equip moncargs if none are equipped
+        //AutoEquipMoncargs();
 
+        //start moncarg selection
+        StartCoroutine(StartMoncargSelection());
+    }
+
+    public void BeginBattle()
+    {
+        //hide the room grid
+        FindFirstObjectByType<BoardManager>().disableRoom();
+
+        //hide player sprite
+        GameObject playerObj = GameObject.FindWithTag("Player");
+        SpriteRenderer spriteRenderer = playerObj.GetComponent<SpriteRenderer>();
+        spriteRenderer.enabled = false;
+
+        //show enemy
+        enemyObj.SetActive(true);
+
+        combatUI.ShowCombatUI(true);
+        combatUI.UpdateMoncargStats(player, enemy);
 
         // Decide who goes first
         currentTurn = (player.speed >= enemy.speed) ? player : enemy;
@@ -117,17 +136,25 @@ public class CombatHandler
         if (!player.active)
         {
             Debug.Log("You need to switch Moncargs!");
+            // ADDED: Check if all player Moncargs are dead
+            if (!HasAnyAliveMoncargs())
+            {
+                OnAllMoncargsDefeated();
+                return;
+            }
             return;
         }
         if (!enemy.active)
         {
             Debug.Log("You won the battle!");
+            OnEnemyDefeated();
             return;
         }
 
+        combatUI.UpdateMoncargStats(player, enemy);
+
         if (currentTurn == player)
         {
-
             //automatic resting
             if (player.mana <=0 )
             {
@@ -137,17 +164,6 @@ public class CombatHandler
             else
             {
                 Debug.Log("Your turn! Choose an action.");
-                for (int i = 0; i < 4; i++ )
-                {
-                    if(player.mana < player.skillset[i].manaCost)
-                    {
-                        skillButtons[i].SetEnabled(false);
-                    }
-                    else
-                    {
-                        skillButtons[i].SetEnabled(true);
-                    }
-                }
                 // UI buttons are active, waiting for player click
             }
         }
@@ -158,28 +174,13 @@ public class CombatHandler
         }
     }
 
-    //Hides options display and just shows fight moves
-    private void ShowFightPanel()
-    {
-        optionsContainer.style.display = DisplayStyle.None;
-        fightContainer.style.display = DisplayStyle.Flex;
-
-    }
-
-    //Hides fight moves and just shows combat encounter options
-    private void ShowOptionsPanel()
-    {
-        fightContainer.style.display = DisplayStyle.None;
-        optionsContainer.style.display = DisplayStyle.Flex;
-    }
-
     private void OnAttackClicked(int attackOption)
     {
         if (currentTurn != player) return;
 
         Debug.Log("Player chose Attack!");
 
-        Skill attackChoice = player.skillset[attackOption - 1];
+        SkillDefinition attackChoice = player.skillset[attackOption - 1];
 
         if (attackChoice.name == "Rest")
         {
@@ -188,14 +189,7 @@ public class CombatHandler
         }
         else
         {
-            if (TryDodge(enemy))
-            {
-                Debug.Log($"{enemy.moncargName} dodged the attack!");
-            }
-            else
-            {
-                ExecuteAttack(player, enemy, attackChoice);
-            }
+            ExecuteAttack(player, enemy, attackChoice);
         }
         EndTurn();
     }
@@ -213,15 +207,55 @@ public class CombatHandler
 
     private void EnemyTurn()
     {
-        if (enemy.mana <= 0)
+        // List of moves with weights
+        List<(SkillDefinition skill, float weight)> movePool = new List<(SkillDefinition, float)>();
+
+        // Add Ultimate if available
+        if (enemy.mana >= enemy.skillset[3].manaCost)
+            movePool.Add((enemy.skillset[3], 0.2f)); // 20%
+
+        // Add Elemental if available
+        if (enemy.mana >= enemy.skillset[2].manaCost)
+            movePool.Add((enemy.skillset[2], 0.6f)); // 60%
+
+        // Add Basic (always available, fallback)
+        movePool.Add((enemy.skillset[1], 0.2f)); // 20%
+
+        // If no mana at all for any move except basic chance to rest
+        if (enemy.mana < enemy.skillset[2].manaCost && enemy.mana < enemy.skillset[3].manaCost)
         {
-            Debug.Log(enemy.moncargName + " ran out of mana! Automatic resting...");
-            Rest(enemy);
-            return;
+            float restRoll = Random.value;
+            if (restRoll < 0.3f) // 30% chance to rest early
+            {
+                Debug.Log(enemy.moncargName + " is low on mana and decides to Rest...");
+                Rest(enemy);
+                return;
+            }
         }
 
-        // For now, enemy always uses basic attack
-        ExecuteAttack(enemy, player, enemy.skillset[1]);
+        // Roll weighted random choice
+        float totalWeight = 0f;
+        foreach (var move in movePool)
+            totalWeight += move.weight;
+
+        float roll = Random.value * totalWeight;
+        float cumulative = 0f;
+        SkillDefinition chosenSkill = movePool[0].skill; // fallback to first
+
+        foreach (var move in movePool)
+        {
+            cumulative += move.weight;
+            if (roll <= cumulative)
+            {
+                chosenSkill = move.skill;
+                break;
+            }
+        }
+
+        // Execute chosen move
+        Debug.Log(enemy.moncargName + " chose " + chosenSkill.name);
+        ExecuteAttack(enemy, player, chosenSkill);
+
         EndTurn();
     }
 
@@ -235,38 +269,19 @@ public class CombatHandler
         NextTurn();
     }
 
-    private void Cleanup()
-    {
-        if (callbacksRegistered)
-        {
-            // Unregister callbacks so buttons don’t stack
-            skill1Button.clicked -= () => OnAttackClicked(1);
-            skill2Button.clicked -= () => OnAttackClicked(2);
-            skill3Button.clicked -= () => OnAttackClicked(3);
-            fleeButton.clicked -= OnFleeClicked;
-            fightButton.clicked += ShowFightPanel;
-            backButton.clicked += ShowOptionsPanel;
-
-            callbacksRegistered = false;
-        }
-        
-    }
-
-
     //END EVENT DRIVEN BEGIN ENCOUNTER
 
-    public void ExecuteAttack(Moncarg attacker, Moncarg defender, Skill attackChoice)
+    #region Attack Execution
+    public void ExecuteAttack(Moncarg attacker, Moncarg defender, SkillDefinition attackChoice)
     {
-        if (attacker.mana < attackChoice.manaCost)
+        if (TryDodge(defender))
         {
-            Debug.Log(attacker.moncargName + " does not have enough mana to use " + attackChoice.name + "!");
+            Debug.Log($"{defender.moncargName} dodged the attack!");
             return;
         }
 
         // Deduct mana cost
         attacker.mana -= attackChoice.manaCost;
-        //update mana display
-        attacker.UpdateManaLabel();
 
         // Calculate base damage
         float damage = attackChoice.damage + attacker.attack - defender.defense;
@@ -284,9 +299,6 @@ public class CombatHandler
 
         Debug.Log(attacker.moncargName + " used " + attackChoice.name + " on " + defender.moncargName + " for " + damage + " damage!");
 
-        //update health display
-        defender.UpdateHealthLabel();
-
         // Check if defender is defeated
         if (defender.health <= 0)
         {
@@ -294,6 +306,8 @@ public class CombatHandler
             defender.active = false;
             Debug.Log(defender.moncargName + " has been defeated!");
         }
+
+        combatUI.UpdateMoncargStats(player, enemy);
     }
 
     public bool TryDodge(Moncarg defender)
@@ -302,7 +316,7 @@ public class CombatHandler
         return roll < defender.dodgeChance;
     }
 
-    public float checkElemental(Moncarg attacker, Moncarg defender, Skill attackChoice, float damage)
+    public float checkElemental(Moncarg attacker, Moncarg defender, SkillDefinition attackChoice, float damage)
     {
         //Check for elemental effectiveness | REFACTOR THIS INTO ANOTHER METHOD LATER
         if (attackChoice.type == ElementalType.Fire && defender.type == ElementalType.Plant)
@@ -338,6 +352,65 @@ public class CombatHandler
 
         return damage;
     }
+    #endregion
+
+    // ADDED: Game Over System Methods
+    #region Game Over System
+    private bool HasAnyAliveMoncargs()
+    {
+        // Check if any equipped Moncargs are still alive (health > 0)
+        var equippedMoncargs = PlayerInventory.Instance.StoredMoncargs
+            .Where(m => m.IsEquipped && m?.Details != null)
+            .ToList();
+
+        foreach (var storedMoncarg in equippedMoncargs)
+        {
+            if (storedMoncarg.Details.moncargData.health > 0)
+            {
+                return true; // Found at least one alive Moncarg
+            }
+        }
+
+        Debug.Log("All equipped Moncargs are defeated!");
+        return false; // All Moncargs are dead
+    }
+
+    private void OnAllMoncargsDefeated()
+    {
+        Debug.Log("OnAllMoncargsDefeated() called!");
+        
+        // Hide combat UI
+        combatUI.ShowCombatUI(false);
+        
+        // Trigger game over through GameManager
+        if (GameManager.Instance != null)
+        {
+            Debug.Log("Calling GameManager.TriggerGameOver()");
+            GameManager.Instance.TriggerGameOver();
+        }
+        else
+        {
+            Debug.LogError("GameManager.Instance is null!");
+        }
+        
+        // Clean up combat objects
+        Cleanup();
+    }
+
+    private void CleanupForGameOver()
+    {
+        // Destroy game objects but don't re-enable move buttons
+        // since we're going to game over screen
+        if (player != null && player.gameObject != null)
+        {
+            GameObject.Destroy(player.gameObject);
+        }
+        if (enemy != null && enemy.gameObject != null)
+        {
+            GameObject.Destroy(enemy.gameObject);
+        }
+    }
+    #endregion
 
     private void Rest(Moncarg moncarg)
     {
@@ -348,8 +421,399 @@ public class CombatHandler
         {
             moncarg.mana = moncarg.maxMana;
         }
-        moncarg.UpdateManaLabel();
+
+        combatUI.UpdateMoncargStats(player, enemy);
+
         Debug.Log(moncarg.moncargName + " rested and recovered " + manaRecovered + " mana.");
         EndTurn();
     }
+
+    private void OnInventoryClicked()
+    {
+        PlayerInventory.Instance.ShowInventory();
+    }
+
+    private void OnSwitchClicked()
+    {
+        var equippedMoncargs = PlayerInventory.Instance.StoredMoncargs
+           .Where(m => m.IsEquipped)
+           .Select(m => m.Details)
+           .ToList();
+
+        // Show selection UI for multiple equipped moncargs
+        selectionUI.Show(equippedMoncargs);
+
+        GameObject.Destroy(player.gameObject);
+    }
+
+    private void OnEnemyDefeated()
+    {
+        // ADDED: Generate item drops when enemy is defeated
+        GenerateItemDrops();
+
+        if (!IsBossOrMiniboss(enemy))
+        {
+            combatUI.ShowCatchPanel();
+        }
+
+        if (enemy.data.isBoss)
+        {
+            victoryScreen.SetActive(true);
+        }
+        Cleanup();
+        //Experience gaining logic
+        /*
+        Debug.Log("You won the battle!");
+        // Reward player with experience points
+        int expGained = enemy.exp;
+        player.exp += expGained;
+        Debug.Log(player.moncargName + " gained " + expGained + " experience points!");
+
+        // Check for level up
+        if (player.exp >= player.level * 100) // Example leveling formula
+        {
+            player.level++;
+            player.exp = 0; // Reset experience or carry over excess
+            player.maxHealth += 10; // Increase stats on level up
+            player.attack += 5;
+            player.defense += 5;
+            player.speed += 2;
+            player.maxMana += 5;
+            player.health = player.maxHealth; // Heal to full on level up
+            player.mana = player.maxMana; // Restore mana on level up
+
+            Debug.Log(player.moncargName + " leveled up to level " + player.level + "!");
+        }
+
+        Cleanup();
+        combatUI.rootVisualElement.style.display = DisplayStyle.None;
+        // Return to map or previous state
+        */
+    }
+
+    // ADDED: Item drop system methods
+    #region Item Drop System
+    private void GenerateItemDrops()
+    {
+        // ADDED: Check if enemy is a boss or miniboss only
+        if (!IsBossOrMiniboss(enemy))
+        {
+            Debug.Log($"{enemy.moncargName} is not a boss/miniboss - no item drops");
+            return;
+        }
+
+        // Check if anything drops at all
+        float dropRoll = Random.value;
+        if (dropRoll > dropChance)
+        {
+            Debug.Log($"No items dropped from {enemy.moncargName}");
+            return;
+        }
+
+        // Determine rarity
+        ItemDefinition droppedItem = null;
+        float rarityRoll = Random.value;
+
+        if (rarityRoll <= legendaryDropChance && legendaryDrops != null && legendaryDrops.Length > 0)
+        {
+            // Legendary drop
+            droppedItem = legendaryDrops[Random.Range(0, legendaryDrops.Length)];
+            Debug.Log($"LEGENDARY DROP! {enemy.moncargName} dropped {droppedItem.FriendlyName}!");
+        }
+        else if (rarityRoll <= legendaryDropChance + rareDropChance && rareDrops != null && rareDrops.Length > 0)
+        {
+            // Rare drop
+            droppedItem = rareDrops[Random.Range(0, rareDrops.Length)];
+            Debug.Log($"Rare drop! {enemy.moncargName} dropped {droppedItem.FriendlyName}!");
+        }
+        else if (commonDrops != null && commonDrops.Length > 0)
+        {
+            // Common drop
+            droppedItem = commonDrops[Random.Range(0, commonDrops.Length)];
+            Debug.Log($"Boss {enemy.moncargName} dropped {droppedItem.FriendlyName}");
+        }
+
+        // Add item to inventory if we got something
+        if (droppedItem != null && PlayerInventory.Instance != null)
+        {
+            PlayerInventory.Instance.AddItemToInventory(droppedItem);
+        }
+    }
+
+    // ADDED: Method to check if enemy is a boss or miniboss
+    private bool IsBossOrMiniboss(Moncarg enemy)
+    {
+        if (enemy.data.isBoss || enemy.data.isMiniBoss)
+        {
+            return true;
+        }
+
+        return false;
+    }
+
+    // Optional: Method to set custom drop tables for specific enemies
+    public void SetCustomDropTable(ItemDefinition[] commons, ItemDefinition[] rares, ItemDefinition[] legendaries)
+    {
+        commonDrops = commons;
+        rareDrops = rares;
+        legendaryDrops = legendaries;
+    }
+
+    // Optional: Method to modify drop chances dynamically
+    public void SetDropChances(float baseChance, float rareChance, float legendaryChance)
+    {
+        dropChance = Mathf.Clamp01(baseChance);
+        rareDropChance = Mathf.Clamp01(rareChance);
+        legendaryDropChance = Mathf.Clamp01(legendaryChance);
+    }
+    #endregion
+
+    private void OnCatchClicked()
+    {
+        Debug.Log("Attempting to catch " + enemy.moncargName + "...");
+
+        float catchRoll = Random.value; // random number between 0.0 and 1.0
+
+        if (catchRoll < enemy.catchChance)
+        {
+            OnCatchSussess();
+        }
+        else
+        {
+            Debug.Log("Failed to catch " + enemy.moncargName + "!");
+            Cleanup();
+        }
+    }
+
+    private void OnCatchSussess()
+    {
+        Debug.Log("Successfully caught " + enemy.moncargName + "!");
+        
+        // ADDED: Check if Moncarg inventory is full before adding
+        if (PlayerInventory.Instance.IsMoncargInventoryFull())
+        {
+            Debug.Log($"Cannot store {enemy.moncargName} - Moncarg inventory is full! Consider releasing some Moncargs first.");
+            // You could show a UI message here instead of just logging
+            Cleanup();
+            return;
+        }
+        
+        enemy.role = Moncarg.moncargRole.PlayerOwned;
+
+        //Retrieve enemy moncarg game object and StoredMoncarg component
+        GameObject enemyGO = enemy.gameObject;
+        StoredMoncarg enemyStoredMoncarg = enemyGO.GetComponent<StoredMoncarg>();
+        enemyStoredMoncarg.Details.moncargData.reset(); //reset health, mana and status
+
+        //Add to inventory
+        enemyStoredMoncarg.AddToInventory();
+
+        Cleanup();
+    }
+
+    private void OnCancelCatchClicked()
+    {
+        Debug.Log("Catch cancelled.");
+        Cleanup();
+    }
+
+    private void Cleanup()
+    {
+        combatUI.Cleanup();
+        combatUI.ShowCombatUI(false);
+
+        //reset enemy stats
+        resetEnemy();
+
+        //Destroy moncarg game objects to prevent duplicates
+        GameObject.Destroy(player.gameObject);
+        GameObject.Destroy(enemy.gameObject);
+
+        //reshow the room grid
+        FindFirstObjectByType<BoardManager>().enableRoom();
+
+        //reshow player sprite
+        GameObject playerObj = GameObject.FindWithTag("Player");
+        SpriteRenderer spriteRenderer = playerObj.GetComponent<SpriteRenderer>();
+        spriteRenderer.enabled = true;
+
+        //reenable move buttons
+        GameManager.Instance.moveUI.EnableAllButtons();
+    }
+
+    private void resetEnemy()
+    {
+        //Retrieve enemy moncarg game object and StoredMoncarg component
+        GameObject enemyGO = enemy.gameObject;
+        StoredMoncarg enemyStoredMoncarg = enemyGO.GetComponent<StoredMoncarg>();
+        enemyStoredMoncarg.Details.moncargData.reset(); //reset health, mana and status
+    }
+
+    #region Moncarg Selection
+    private void AutoEquipMoncargs()
+    {
+        if (PlayerInventory.Instance != null)
+        {
+            // Equip first 3 moncargs by default (or all if less than 3)
+            int equippedCount = 0;
+            foreach (var storedMoncarg in PlayerInventory.Instance.StoredMoncargs)
+            {
+                if (equippedCount < 3)
+                {
+                    storedMoncarg.IsEquipped = true;
+                    equippedCount++;
+                    Debug.Log($"Auto-equipped: {storedMoncarg.Details.FriendlyName}");
+                }
+                else
+                {
+                    break;
+                }
+            }
+
+            PlayerInventory.Instance.UpdateMoncargEquippedCount();
+        }
+    }
+
+    private System.Collections.IEnumerator StartMoncargSelection()
+    {
+        // Wait for inventory to be initialized
+        yield return new WaitUntil(() => PlayerInventory.Instance != null && PlayerInventory.Instance.m_IsInventoryReady);
+
+        // Get equipped moncargs
+        var equippedMoncargs = PlayerInventory.Instance.StoredMoncargs
+            .Where(m => m.IsEquipped)
+            .Select(m => m.Details)
+            .ToList();
+
+        if (equippedMoncargs.Count == 0)
+        {
+            Debug.LogWarning("No equipped Moncargs found! Opening Inventory to equip one");
+            ForcePlayerToEquipMoncarg();
+        }
+        else if (equippedMoncargs.Count == 1)
+        {
+            // If only one equipped, use it automatically
+            OnMoncargSelected(equippedMoncargs[0]);
+        }
+        else
+        {
+            // Show selection UI for multiple equipped moncargs
+            selectionUI.Show(equippedMoncargs);
+        }
+    }
+
+    private void ForcePlayerToEquipMoncarg()
+    {
+        waitingForPlayerToEquip = true;
+
+        forceEquipUI.ShowPrompt("Please equip at least one Moncarg from your inventory to continue!");
+
+        // Show inventory and prompt player to equip a moncarg
+        if (PlayerInventory.Instance != null)
+        {
+            PlayerInventory.Instance.ShowInventory();
+            PlayerInventory.Instance.SwitchToMoncargMode();
+
+            // You might want to show a message to the player here
+            Debug.Log("Please equip at least one Moncarg to continue!");
+
+            // Start checking for equipped moncargs
+            StartCoroutine(WaitForPlayerToEquip());
+        }
+    }
+
+    private System.Collections.IEnumerator WaitForPlayerToEquip()
+    {
+        // Wait until player equips at least one moncarg
+        yield return new WaitUntil(() =>
+            PlayerInventory.Instance.StoredMoncargs.Any(m => m.IsEquipped) ||
+            !waitingForPlayerToEquip);
+
+        if (waitingForPlayerToEquip)
+        {
+            // Player equipped a moncarg, continue with selection
+            var equippedMoncargs = PlayerInventory.Instance.StoredMoncargs
+                .Where(m => m.IsEquipped)
+                .Select(m => m.Details)
+                .ToList();
+
+            if (equippedMoncargs.Count == 1)
+            {
+                OnMoncargSelected(equippedMoncargs[0]);
+            }
+            else
+            {
+                selectionUI.Show(equippedMoncargs);
+            }
+
+            waitingForPlayerToEquip = false;
+        }
+    }
+
+    private void OnMoncargSelected(MoncargInventoryAdapter selectedMoncarg)
+    {
+        Debug.Log($"Selected Moncarg: {selectedMoncarg.FriendlyName}");
+
+        // Hide inventory if it's open
+        if (PlayerInventory.Instance != null && PlayerInventory.Instance.IsInventoryVisible())
+        {
+            PlayerInventory.Instance.HideInventory();
+        }
+
+        if (forceEquipUI != null)
+        {
+            forceEquipUI.HidePrompt();
+        }
+
+        // Spawn the selected moncarg for battle
+        GameObject playerMoncargObj = selectedMoncarg.CreateMoncargGameObject();
+        player = playerMoncargObj.GetComponent<Moncarg>();
+        player.InitStats();
+
+        // Begin battle
+        BeginBattle();
+    }
+
+    private void OnSelectionCancelled()
+    {
+        // If selection was cancelled but we have equipped moncargs, use the first one
+        var equippedMoncargs = PlayerInventory.Instance.StoredMoncargs
+            .Where(m => m.IsEquipped)
+            .Select(m => m.Details)
+            .ToList();
+
+        if (equippedMoncargs.Count > 0)
+        {
+            Debug.Log("Selection cancelled, but equipped Moncargs found. Using the first one.");
+            OnMoncargSelected(equippedMoncargs[0]);
+        }
+        else
+        {
+            // If no equipped moncargs after cancellation, force equip
+            ForcePlayerToEquipMoncarg();
+        }
+    }
+
+    private void OnDestroy()
+    {
+        if (selectionUI != null)
+        {
+            selectionUI.OnMoncargSelected -= OnMoncargSelected;
+            selectionUI.OnSelectionCancelled -= OnSelectionCancelled;
+        }
+    }
+
+    // Public method to cancel the equip waiting (if player closes inventory without equipping)
+    public void CancelEquipWaiting()
+    {
+        waitingForPlayerToEquip = false;
+    }
+    #endregion
 }
+
+// Get the StoredMoncarg component from the Moncarg GameObject
+//StoredMoncarg storedMoncarg = moncargGameObject.GetComponent<StoredMoncarg>();
+//if (storedMoncarg != null)
+//{
+//    storedMoncarg.AddToInventory();
+//}

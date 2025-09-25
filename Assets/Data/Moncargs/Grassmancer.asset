@@ -1,0 +1,43 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9136e7c2ddf01784f8652093b3035372, type: 3}
+  m_Name: Grassmancer
+  m_EditorClassIdentifier: Assembly-CSharp::MoncargInventoryAdapter
+  FriendlyName: Grassmancer
+  Icon: {fileID: 7935518174836657070, guid: b879dd6ea62cf6640910dc9e748b28a9, type: 3}
+  moncargData:
+    moncargName: Grassmancer
+    maxHealth: 500
+    health: 500
+    attack: 80
+    defense: 60
+    speed: 20
+    exp: 0
+    level: 1
+    mana: 200
+    maxMana: 200
+    catchChance: 0
+    dodgeChance: 0.3
+    type: 2
+    active: 0
+    skillset:
+    - {fileID: 11400000, guid: 411e2c1d2e0c3e847a9c8fa5794f907d, type: 2}
+    - {fileID: 11400000, guid: 8985b594bd5f82844bc91de01609dd50, type: 2}
+    - {fileID: 11400000, guid: 97604302c55309e478b18f815634f918, type: 2}
+    - {fileID: 11400000, guid: 6c1ec54f72e173949affb398c260b4aa, type: 2}
+    isBoss: 0
+    isMiniBoss: 1
+  SlotDimension:
+    Height: 1
+    Width: 1
+  IsEquipped: 1
+  linkedPrefab: {fileID: 6470595564411063485, guid: 6a479609911b50e4c9342c9cd7570936, type: 3}

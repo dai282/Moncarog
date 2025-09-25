@@ -3,36 +3,72 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.UIElements;
-using UnityEngine.InputSystem;
 
 public sealed class PlayerInventory : MonoBehaviour
 {
+    #region Static Instance
     public static PlayerInventory Instance;
+    // ADDED: Public method to refresh UI after clearing inventory
+    public void RefreshAfterClear()
+    {
+        RefreshInventoryDisplay();
+        UpdateMoncargEquippedCount();
+        UpdateWeightDisplay();
+        ClearSelection();
+    }
 
-    private VisualElement m_Root;
-    private VisualElement m_InventoryGrid;
-    private UIDocument m_UIDocument;
+    #endregion
 
-    private static Label m_ItemDetailHeader;
-    private static Label m_ItemDetailBody;
-    private static Label m_ItemDetailPrice;
-    private bool m_IsInventoryReady;
-    private VisualElement m_Telegraph;
-    
-    // Toggle state
-    private bool m_IsInventoryOpen = true;
-
+    #region Inventory Data
+    [Header("Inventory Content")]
     public List<StoredItem> StoredItems = new List<StoredItem>();
-    public Dimensions InventoryDimensions;
+    public List<StoredMoncargData> StoredMoncargs = new List<StoredMoncargData>();
+
+    [Header("Grid Settings")]
+    public Dimensions InventoryDimensions = new Dimensions { Width = 8, Height = 8 };
+    
+    [Header("Weight Settings")]
+    public int MaxWeight = 54;
+    
+    // ADDED: Max Moncarg limit
+    [Header("Moncarg Limits")]
+    public int MaxMoncargs = 6; // Maximum 6 Moncargs allowed
     
     public static Dimensions SlotDimension { get; private set; }
+    #endregion
 
+    #region UI Elements
+    private VisualElement m_Root;
+    private VisualElement m_InventoryGrid;
+    private VisualElement m_Telegraph;
+    
+    private Button m_MoncargButton;
+    private Button m_ItemsButton;
+    private Button m_EquipButton;
+    private Button m_DropButton;
+    private Label m_MoncargEquippedLabel;
+    private Label m_WeightLabel;
+    
+    private static Label m_ItemDetailHeader;
+    private static Label m_ItemDetailBody;
+    #endregion
+
+    #region State Management
+    private enum InventoryMode { Items, Moncargs }
+    private InventoryMode m_CurrentMode = InventoryMode.Items;
+    public bool m_IsInventoryReady = false;
+    
+    private ItemDefinition m_CurrentSelectedItem;
+    private MoncargInventoryAdapter m_CurrentSelectedMoncarg;
+    #endregion
+
+    #region Unity Lifecycle
     private void Awake()
     {
         if (Instance == null)
         {
             Instance = this;
-            Configure();
+            StartCoroutine(InitializeInventory());
         }
         else if (Instance != this)
         {
@@ -43,194 +79,506 @@ public sealed class PlayerInventory : MonoBehaviour
     private void Update()
     {
         // Check for 'I' key press to toggle inventory using new Input System
-        if (Keyboard.current.iKey.wasPressedThisFrame)
+        if (UnityEngine.InputSystem.Keyboard.current.iKey.wasPressedThisFrame)
         {
             ToggleInventory();
         }
     }
+    #endregion
 
-    private void ToggleInventory()
+    #region Initialization
+    private IEnumerator InitializeInventory()
     {
-        m_IsInventoryOpen = !m_IsInventoryOpen;
+        yield return StartCoroutine(SetupUIElements());
+        yield return StartCoroutine(ConfigureInventorySettings());
         
-        if (m_UIDocument != null)
-        {
-            m_UIDocument.rootVisualElement.style.display = m_IsInventoryOpen ? DisplayStyle.Flex : DisplayStyle.None;
-        }
+        // Wait until inventory is fully ready before loading content
+        yield return new WaitUntil(() => m_IsInventoryReady);
         
-        Debug.Log($"Inventory {(m_IsInventoryOpen ? "opened" : "closed")}");
-    }
-
-    // Public method to check if inventory is open (useful for other scripts)
-    public bool IsInventoryOpen => m_IsInventoryOpen;
-
-    // Public methods to explicitly open/close inventory
-    public void OpenInventory()
-    {
-        if (!m_IsInventoryOpen)
-        {
-            ToggleInventory();
-        }
-    }
-
-    public void CloseInventory()
-    {
-        if (m_IsInventoryOpen)
-        {
-            ToggleInventory();
-        }
-    }
-
-    private void Configure()
-    {
-        StartCoroutine(ConfigureCoroutine());
-    }
-
-    private IEnumerator ConfigureCoroutine()
-    {
-        m_UIDocument = GetComponentInChildren<UIDocument>();
-        m_Root = m_UIDocument?.rootVisualElement;
+        LoadCurrentInventoryMode();
+        UpdateMoncargEquippedCount();
+        UpdateWeightDisplay();
+        ClearSelection();
         
+        // Hide inventory after initialization
+        HideInventory();
+        
+        Debug.Log("Inventory initialization complete - starting hidden");
+    }
+
+    private IEnumerator SetupUIElements()
+    {
+        // Get root UI element
+        m_Root = GetComponentInChildren<UIDocument>().rootVisualElement;
+
         if (m_Root == null)
         {
-            Debug.LogError("No UIDocument found or rootVisualElement is null!");
+            Debug.LogError("No UIDocument found!");
             yield break;
         }
-        
+
+        // Find grid container
         m_InventoryGrid = m_Root.Q<VisualElement>("Grid");
-        
         if (m_InventoryGrid == null)
         {
-            Debug.LogError("Could not find Grid element in UXML!");
+            Debug.LogError("Grid element not found in UXML!");
             yield break;
         }
-        
-        Debug.Log($"Found Grid element with {m_InventoryGrid.Children().Count()} children");
 
-        VisualElement itemDetails = m_Root.Q<VisualElement>("ItemDetails");
+        // Setup buttons
+        SetupNavigationButtons();
         
+        // Setup item details panel
+        SetupItemDetailsPanel();
+        
+        // Setup weight display
+        SetupWeightDisplay();
+        
+        // Configure telegraph for drag preview
+        ConfigureInventoryTelegraph();
+        
+        Debug.Log($"UI setup complete. Grid has {m_InventoryGrid.Children().Count()} slots");
+    }
+
+    private void SetupNavigationButtons()
+    {
+        var buttonContainer = m_Root.Q<VisualElement>("Container_Level");
+        if (buttonContainer != null)
+        {
+            var buttons = buttonContainer.Children().OfType<Button>().ToArray();
+            if (buttons.Length >= 2)
+            {
+                m_MoncargButton = buttons[0]; // MONCARG button
+                m_ItemsButton = buttons[1];   // Items button
+
+                m_MoncargButton.clicked += SwitchToMoncargMode;
+                m_ItemsButton.clicked += SwitchToItemsMode;
+
+                // Set initial button states
+                SetActiveButton(m_ItemsButton);
+            }
+        }
+
+        // Find equipped Moncarg counter
+        var moncargEquip = m_Root.Q<VisualElement>("MoncargEquip");
+        m_MoncargEquippedLabel = moncargEquip?.Q<Label>("Value");
+    }
+
+    private void SetupItemDetailsPanel()
+    {
+        var itemDetails = m_Root.Q<VisualElement>("ItemDetails");
         if (itemDetails != null)
         {
             m_ItemDetailHeader = itemDetails.Q<Label>("FriendlyName");
             m_ItemDetailBody = itemDetails.Q<Label>("Description");
-        }
-        else
-        {
-            Debug.LogWarning("ItemDetails element not found");
-        }
-
-        yield return null; // Wait one frame
-
-        ConfigureSlotDimensions();
-        ConfigureInventoryTelegraph();
-
-        m_IsInventoryReady = true;
-        Debug.Log("Inventory configuration complete");
-    }
-
-    private void ConfigureSlotDimensions()
-    {
-        try
-        {
-            Debug.Log("Starting ConfigureSlotDimensions");
             
-            var children = m_InventoryGrid.Children();
-            Debug.Log($"Grid has {children.Count()} children");
-            
-            VisualElement firstSlot = children.FirstOrDefault();
-            
-            if (firstSlot == null)
+            // Setup buttons
+            var buttonContainer = itemDetails.Q<VisualElement>("Container_Buttons");
+            if (buttonContainer != null)
             {
-                Debug.LogError("No children found in Grid!");
-                SlotDimension = new Dimensions { Width = 150, Height = 150 }; // Fallback values
-                return;
+                m_EquipButton = buttonContainer.Q<Button>("btn_Equip");
+                m_DropButton = buttonContainer.Q<Button>("btn_Drop");
+                
+                if (m_EquipButton != null) m_EquipButton.clicked += OnEquipButtonClicked;
+                if (m_DropButton != null) m_DropButton.clicked += OnDropButtonClicked;
             }
             
-            // Force layout update
-            m_InventoryGrid.MarkDirtyRepaint();
-            
-            Debug.Log($"First slot world bound: {firstSlot.worldBound}");
-            
-            // If worldBound is still NaN, use the fixed size from your UXML (150x150)
-            float width = float.IsNaN(firstSlot.worldBound.width) ? 150f : firstSlot.worldBound.width;
-            float height = float.IsNaN(firstSlot.worldBound.height) ? 150f : firstSlot.worldBound.height;
-
-            SlotDimension = new Dimensions
+            // Setup close button (try both locations)
+            var closeButton = m_Root.Q<Button>("bttn_close");
+            if (closeButton == null)
             {
-                Width = Mathf.RoundToInt(width),
-                Height = Mathf.RoundToInt(height)
+                closeButton = itemDetails.Q<Button>("bttn_close");
+            }
+            
+            if (closeButton != null)
+            {
+                closeButton.clicked += () => HideInventory();
+            }
+        }
+    }
+
+    private void SetupWeightDisplay()
+    {
+        var weightContainer = m_Root.Q<VisualElement>("Container_Weight");
+        m_WeightLabel = weightContainer?.Q<Label>("Value");
+    }
+
+    private IEnumerator ConfigureInventorySettings()
+    {
+        yield return null; // Wait for UI layout
+        
+        // Configure slot dimensions with fallback
+        SlotDimension = GetSlotDimensions();
+        m_IsInventoryReady = true;
+        
+        Debug.Log($"Slot dimensions: {SlotDimension.Width}x{SlotDimension.Height}");
+    }
+
+    private Dimensions GetSlotDimensions()
+    {
+        var firstSlot = m_InventoryGrid.Children().FirstOrDefault();
+        if (firstSlot != null && !float.IsNaN(firstSlot.worldBound.width))
+        {
+            return new Dimensions
+            {
+                Width = Mathf.RoundToInt(firstSlot.worldBound.width),
+                Height = Mathf.RoundToInt(firstSlot.worldBound.height)
             };
-            
-            Debug.Log($"Configured slot dimensions: {SlotDimension.Width}x{SlotDimension.Height}");
         }
-        catch (System.Exception e)
-        {
-            Debug.LogError($"Error in ConfigureSlotDimensions: {e.Message}");
-            Debug.LogError($"Stack trace: {e.StackTrace}");
-            SlotDimension = new Dimensions { Width = 150, Height = 150 }; // Fallback values
-        }
+        
+        // Fallback to UXML defined size
+        return new Dimensions { Width = 150, Height = 150 };
     }
+    #endregion
 
-    private void Start() 
+    #region Public Interface
+    public void ToggleInventory()
     {
-        StartCoroutine(LoadInventoryCoroutine());
-    }
-
-    private IEnumerator LoadInventoryCoroutine()
-    {
-        // Wait until inventory is ready
-        yield return new WaitUntil(() => m_IsInventoryReady);
-
-        foreach (StoredItem loadedItem in StoredItems)
+        if (m_Root != null)
         {
-            ItemVisual inventoryItemVisual = new ItemVisual(loadedItem.Details);
-                    
-            AddItemToInventoryGrid(inventoryItemVisual);
-
-            yield return StartCoroutine(GetPositionForItemCoroutine(inventoryItemVisual, loadedItem));
+            bool isVisible = m_Root.style.display == DisplayStyle.Flex;
+            m_Root.style.display = isVisible ? DisplayStyle.None : DisplayStyle.Flex;
+            Debug.Log($"Inventory {(isVisible ? "hidden" : "shown")}");
         }
     }
 
-    private IEnumerator GetPositionForItemCoroutine(VisualElement newItem, StoredItem loadedItem)
+    public void ShowInventory()
     {
-        for (int y = 0; y < InventoryDimensions.Height; y++)
+        if (m_Root != null)
         {
-            for (int x = 0; x < InventoryDimensions.Width; x++)
+            m_Root.style.display = DisplayStyle.Flex;
+        }
+    }
+
+    public void HideInventory()
+    {
+        if (m_Root != null)
+        {
+            m_Root.style.display = DisplayStyle.None;
+        }
+    }
+
+    public bool IsInventoryVisible()
+    {
+        return m_Root != null && m_Root.style.display == DisplayStyle.Flex;
+    }
+    #endregion
+
+    #region Button Actions
+    private void OnEquipButtonClicked()
+    {
+        if (m_CurrentMode == InventoryMode.Items && m_CurrentSelectedItem != null)
+        {
+            if (m_CurrentSelectedItem.isPowerup)
             {
-                //try position
-                SetItemPosition(newItem, new Vector2(SlotDimension.Width * x, 
-                    SlotDimension.Height * y));
+                ApplyPowerupToMoncarg(m_CurrentSelectedItem);
+            }
+            else
+            {
+                Debug.Log($"Using item: {m_CurrentSelectedItem.FriendlyName}");
+                // Handle regular items here
+            }
+        }
+        else if (m_CurrentMode == InventoryMode.Moncargs && m_CurrentSelectedMoncarg != null)
+        {
+            // Find the stored moncarg data
+            var storedMoncarg = StoredMoncargs.FirstOrDefault(m => m.Details == m_CurrentSelectedMoncarg);
+            if (storedMoncarg != null)
+            {
+                // Check if we can equip (max 3)
+                int currentEquipped = StoredMoncargs.Count(m => m?.Details != null && m.IsEquipped);
 
-                yield return null; // Wait one frame
-
-                StoredItem overlappingItem = StoredItems.FirstOrDefault(s => 
-                    s.RootVisual != null && 
-                    s.RootVisual.layout.Overlaps(newItem.layout));
-
-                //Nothing is here! Place the item.
-                if (overlappingItem == null)
+                if (!storedMoncarg.IsEquipped && currentEquipped >= 3)
                 {
-                    ConfigureInventoryItem(loadedItem, newItem as ItemVisual);
-                    yield break; // Found space, exit coroutine
+                    Debug.Log("Cannot equip - maximum 3 Moncargs allowed");
+                    return;
+                }
+
+                storedMoncarg.IsEquipped = !storedMoncarg.IsEquipped;
+                UpdateMoncargEquippedCount();
+
+                string action = storedMoncarg.IsEquipped ? "Equipped" : "Unequipped";
+                Debug.Log($"{action} Moncarg: {m_CurrentSelectedMoncarg.FriendlyName}");
+            }
+        }
+    }
+
+    // New method - minimal powerup functionality
+    private void ApplyPowerupToMoncarg(ItemDefinition powerup)
+    {
+        // Get the first equipped moncarg
+        var targetMoncarg = StoredMoncargs.FirstOrDefault(m => m?.Details != null && m.IsEquipped);
+        if (targetMoncarg == null)
+        {
+            Debug.Log("No equipped Moncarg to apply powerup to");
+            return;
+        }
+
+        var moncargData = targetMoncarg.Details.moncargData;
+        var storedItem = StoredItems.FirstOrDefault(x => x.Details == powerup);
+
+        // Store old stats for comparison
+        float oldAttack = moncargData.attack;
+        float oldDefense = moncargData.defense;
+        float oldMaxHealth = moncargData.maxHealth;
+        int oldSpeed = moncargData.speed;
+        int oldMaxMana = moncargData.maxMana;
+
+        // Apply multipliers directly to stats
+        moncargData.attack *= powerup.attackMultiplier;
+        moncargData.defense *= powerup.defenseMultiplier;
+        moncargData.health *= powerup.healthMultiplier;
+        moncargData.speed = Mathf.RoundToInt(moncargData.speed * powerup.speedMultiplier);
+        moncargData.mana = Mathf.RoundToInt(moncargData.maxMana * powerup.manaMultiplier);
+
+        // Update current health/mana if they increased. Cap the current health and mana to their max health and mana
+        if (moncargData.health > moncargData.maxHealth) moncargData.health = moncargData.maxHealth;
+        if (moncargData.mana > moncargData.maxMana) moncargData.mana = moncargData.maxMana;
+
+        // Debug stat changes
+        Debug.Log($"=== POWERUP APPLIED: {powerup.FriendlyName} to {moncargData.moncargName} ===");
+        Debug.Log($"Multipliers - Attack: x{powerup.attackMultiplier}, Defense: x{powerup.defenseMultiplier}, Health: x{powerup.healthMultiplier}, Speed: x{powerup.speedMultiplier}, Mana: x{powerup.manaMultiplier}");
+
+        if (oldAttack != moncargData.attack)
+            Debug.Log($"Attack: {oldAttack} → {moncargData.attack} (+{moncargData.attack - oldAttack:F1})");
+        if (oldDefense != moncargData.defense)
+            Debug.Log($"Defense: {oldDefense} → {moncargData.defense} (+{moncargData.defense - oldDefense:F1})");
+        if (oldMaxHealth != moncargData.maxHealth)
+            Debug.Log($"Max Health: {oldMaxHealth} → {moncargData.maxHealth} (+{moncargData.maxHealth - oldMaxHealth:F1})");
+        if (oldSpeed != moncargData.speed)
+            Debug.Log($"Speed: {oldSpeed} → {moncargData.speed} (+{moncargData.speed - oldSpeed})");
+        if (oldMaxMana != moncargData.maxMana)
+            Debug.Log($"Max Mana: {oldMaxMana} → {moncargData.maxMana} (+{moncargData.maxMana - oldMaxMana})");
+
+        // Remove item if consumable
+        if (powerup.isConsumable && storedItem != null)
+        {
+            if (storedItem.RootVisual != null)
+            {
+                storedItem.RootVisual.RemoveFromHierarchy();
+            }
+            StoredItems.Remove(storedItem);
+            UpdateWeightDisplay();
+            Debug.Log($"Consumed {powerup.FriendlyName} - removed from inventory");
+            ClearSelection();
+        }
+        else if (!powerup.isConsumable)
+        {
+            Debug.Log($"Powerup {powerup.FriendlyName} applied permanently to {moncargData.moncargName}");
+        }
+        var combatUI = FindFirstObjectByType<CombatHandlerUI>();
+        if (combatUI != null)
+        {
+            combatUI.RefreshUI();
+        }
+    }
+
+    private void OnDropButtonClicked()
+    {
+        if (m_CurrentMode == InventoryMode.Items && m_CurrentSelectedItem != null)
+        {
+            var itemToRemove = StoredItems.FirstOrDefault(x => x.Details == m_CurrentSelectedItem);
+            if (itemToRemove != null)
+            {
+                if (itemToRemove.RootVisual != null)
+                {
+                    itemToRemove.RootVisual.RemoveFromHierarchy();
+                }
+                StoredItems.Remove(itemToRemove);
+                UpdateWeightDisplay();
+                Debug.Log($"Dropped item: {m_CurrentSelectedItem.FriendlyName}");
+            }
+        }
+        else if (m_CurrentMode == InventoryMode.Moncargs && m_CurrentSelectedMoncarg != null)
+        {
+            // Find the stored moncarg data
+            var storedMoncarg = StoredMoncargs.FirstOrDefault(m => m.Details == m_CurrentSelectedMoncarg);
+            if (storedMoncarg != null)
+            {
+                if (storedMoncarg.IsEquipped)
+                {
+                    // If equipped, just unequip it
+                    storedMoncarg.IsEquipped = false;
+                    UpdateMoncargEquippedCount();
+                    Debug.Log($"Unequipped Moncarg: {m_CurrentSelectedMoncarg.FriendlyName}");
+                }
+                else
+                {
+                    // If not equipped, remove it completely
+                    if (storedMoncarg.RootVisual != null)
+                    {
+                        storedMoncarg.RootVisual.RemoveFromHierarchy();
+                    }
+                    StoredMoncargs.Remove(storedMoncarg);
+                    UpdateWeightDisplay();
+                    Debug.Log($"Released Moncarg: {m_CurrentSelectedMoncarg.FriendlyName}");
                 }
             }
         }
-        
-        // No space found
-        Debug.Log("No space - Cannot pick up the item");
-        RemoveItemFromInventoryGrid(newItem);
+
+        //update enemy moncarg database
+        MoncargDatabase.Instance.UpdateEnemyDatabase();
+
+        // Clear selection and hide details
+        ClearSelection();
     }
 
-    private static void SetItemPosition(VisualElement element, Vector2 vector)
+    private void ClearSelection()
     {
-        element.style.left = vector.x;
-        element.style.top = vector.y;
+        m_CurrentSelectedItem = null;
+        m_CurrentSelectedMoncarg = null;
+        
+        if (m_ItemDetailHeader != null) m_ItemDetailHeader.text = "Select an item";
+        if (m_ItemDetailBody != null) m_ItemDetailBody.text = "Click on an item to see details";
+    }
+    #endregion
+
+    #region Inventory Mode Switching
+    private void SwitchToItemsMode()
+    {
+        Debug.Log("Switching to Items mode");
+        m_CurrentMode = InventoryMode.Items;
+        SetActiveButton(m_ItemsButton);
+        RefreshInventoryDisplay();
+        UpdateWeightDisplay();
+        ClearSelection();
     }
 
-    private void AddItemToInventoryGrid(VisualElement item) => m_InventoryGrid.Add(item);
-    
-    private void RemoveItemFromInventoryGrid(VisualElement item) => m_InventoryGrid.Remove(item);
+    public void SwitchToMoncargMode()
+    {
+        Debug.Log("Switching to Moncargs mode");
+        m_CurrentMode = InventoryMode.Moncargs;
+        SetActiveButton(m_MoncargButton);
+        RefreshInventoryDisplay();
+        UpdateWeightDisplay();
+        ClearSelection();
+    }
 
+    private void SetActiveButton(Button activeButton)
+    {
+        // Reset all button colors
+        var normalColor = new Color(226f/255f, 137f/255f, 45f/255f);
+        var activeColor = Color.yellow;
+        
+        if (m_ItemsButton != null) m_ItemsButton.style.backgroundColor = normalColor;
+        if (m_MoncargButton != null) m_MoncargButton.style.backgroundColor = normalColor;
+        
+        // Highlight active button
+        if (activeButton != null) activeButton.style.backgroundColor = activeColor;
+    }
+
+    private void RefreshInventoryDisplay()
+    {
+        ClearGrid();
+        LoadCurrentInventoryMode();
+    }
+    #endregion
+
+    #region Inventory Loading
+    private void LoadCurrentInventoryMode()
+    {
+        switch (m_CurrentMode)
+        {
+            case InventoryMode.Items:
+                LoadItems();
+                break;
+            case InventoryMode.Moncargs:
+                LoadMoncargs();
+                break;
+        }
+    }
+
+    private void LoadItems()
+    {
+        for (int i = 0; i < StoredItems.Count; i++)
+        {
+            var storedItem = StoredItems[i];
+            if (storedItem?.Details == null) continue;
+
+            var itemVisual = new ItemVisual(storedItem.Details);
+            m_InventoryGrid.Add(itemVisual);
+            
+            PositionItemInGrid(itemVisual, i);
+            itemVisual.style.visibility = Visibility.Visible;
+            
+            storedItem.RootVisual = itemVisual;
+        }
+    }
+
+    private void LoadMoncargs()
+    {
+        for (int i = 0; i < StoredMoncargs.Count; i++)
+        {
+            var storedMoncarg = StoredMoncargs[i];
+            if (storedMoncarg?.Details == null) continue;
+
+            var moncargVisual = new MoncargVisual(storedMoncarg.Details);
+            m_InventoryGrid.Add(moncargVisual);
+            
+            PositionItemInGrid(moncargVisual, i);
+            moncargVisual.style.visibility = Visibility.Visible;
+            
+            storedMoncarg.RootVisual = moncargVisual;
+        }
+    }
+
+    private void PositionItemInGrid(VisualElement item, int index)
+    {
+        int column = index % InventoryDimensions.Width;
+        int row = index / InventoryDimensions.Width;
+        
+        var position = new Vector2(
+            column * SlotDimension.Width, 
+            row * SlotDimension.Height
+        );
+        
+        item.style.left = position.x;
+        item.style.top = position.y;
+    }
+
+    private void ClearGrid()
+    {
+        var itemsToRemove = m_InventoryGrid.Children()
+            .Where(child => child.name != "SlotIcon" && child.name != "Telegraph")
+            .ToList();
+        
+        foreach (var item in itemsToRemove)
+        {
+            m_InventoryGrid.Remove(item);
+        }
+    }
+    #endregion
+
+    #region Weight Management
+    private void UpdateWeightDisplay()
+    {
+        if (m_WeightLabel != null)
+        {
+            int currentWeight = CalculateCurrentWeight();
+            m_WeightLabel.text = $"{currentWeight}/{MaxWeight}";
+        }
+    }
+
+    private int CalculateCurrentWeight()
+    {
+        int totalWeight = 0;
+        
+        if (m_CurrentMode == InventoryMode.Items)
+        {
+            // Count items - you can add weight property to ItemDefinition if needed
+            totalWeight = StoredItems.Count(x => x?.Details != null);
+        }
+        else
+        {
+            // Count moncargs
+            totalWeight = StoredMoncargs.Count(x => x?.Details != null);
+        }
+        
+        return totalWeight;
+    }
+    #endregion
+
+    #region Telegraph System (Drag Preview)
     private void ConfigureInventoryTelegraph()
     {
         m_Telegraph = new VisualElement
@@ -244,63 +592,212 @@ public sealed class PlayerInventory : MonoBehaviour
         };
 
         m_Telegraph.AddToClassList("slot-icon-highlighted");
-        AddItemToInventoryGrid(m_Telegraph);
+        m_InventoryGrid.Add(m_Telegraph);
     }
 
-    public (bool canPlace, Vector2 position) ShowPlacementTarget(ItemVisual draggedItem)
+    public (bool canPlace, Vector2 position) ShowPlacementTarget(VisualElement draggedItem)
     {
-        if (draggedItem == null || m_InventoryGrid == null || m_Telegraph == null)
+        if (!IsValidDragOperation(draggedItem))
         {
-            return (canPlace: false, position: Vector2.zero);
+            HideTelegraph();
+            return (false, Vector2.zero);
         }
 
-        if (!m_InventoryGrid.layout.Contains(new Vector2(draggedItem.localBound.xMax,
-            draggedItem.localBound.yMax)))
-        {
-            m_Telegraph.style.visibility = Visibility.Hidden;
-            return (canPlace: false, position: Vector2.zero);
-        }
-
-        VisualElement targetSlot = m_InventoryGrid.Children().Where(x => 
-            x != null && x.layout.Overlaps(draggedItem.layout) && x != draggedItem).OrderBy(x => 
-            Vector2.Distance(x.worldBound.position, 
-            draggedItem.worldBound.position)).FirstOrDefault();
-
+        var targetSlot = FindNearestSlot(draggedItem);
         if (targetSlot == null)
         {
-            m_Telegraph.style.visibility = Visibility.Hidden;
-            return (canPlace: false, position: Vector2.zero);
+            HideTelegraph();
+            return (false, Vector2.zero);
         }
 
-        m_Telegraph.style.width = draggedItem.style.width;
-        m_Telegraph.style.height = draggedItem.style.height;
+        ShowTelegraphAt(targetSlot, draggedItem);
 
-        SetItemPosition(m_Telegraph, new Vector2(targetSlot.layout.position.x,
-            targetSlot.layout.position.y));
-
-        m_Telegraph.style.visibility = Visibility.Visible;
-
-        var overlappingItems = StoredItems.Where(x => x != null && x.RootVisual != null && 
-            x.RootVisual.layout.Overlaps(m_Telegraph.layout)).ToArray();
-
-        if (overlappingItems.Length > 1)
+        if (HasOverlappingItems(targetSlot))
         {
-            m_Telegraph.style.visibility = Visibility.Hidden;
-            return (canPlace: false, position: Vector2.zero);
+            HideTelegraph();
+            return (false, Vector2.zero);
         }
 
-        return (canPlace: true, targetSlot.worldBound.position);
+        return (true, targetSlot.worldBound.position);
     }
 
+    private bool IsValidDragOperation(VisualElement draggedItem)
+    {
+        return draggedItem != null && 
+               m_InventoryGrid != null && 
+               m_Telegraph != null &&
+               m_InventoryGrid.layout.Contains(new Vector2(draggedItem.localBound.xMax, draggedItem.localBound.yMax));
+    }
+
+    private VisualElement FindNearestSlot(VisualElement draggedItem)
+    {
+        return m_InventoryGrid.Children()
+            .Where(x => x != null && 
+                       x.name == "SlotIcon" && 
+                       x.layout.Overlaps(draggedItem.layout) && 
+                       x != draggedItem)
+            .OrderBy(x => Vector2.Distance(x.worldBound.position, draggedItem.worldBound.position))
+            .FirstOrDefault();
+    }
+
+    private void ShowTelegraphAt(VisualElement targetSlot, VisualElement draggedItem)
+    {
+        m_Telegraph.style.width = draggedItem.style.width;
+        m_Telegraph.style.height = draggedItem.style.height;
+        m_Telegraph.style.left = targetSlot.layout.position.x;
+        m_Telegraph.style.top = targetSlot.layout.position.y;
+        m_Telegraph.style.visibility = Visibility.Visible;
+    }
+
+    private void HideTelegraph()
+    {
+        if (m_Telegraph != null)
+        {
+            m_Telegraph.style.visibility = Visibility.Hidden;
+        }
+    }
+
+    private bool HasOverlappingItems(VisualElement targetSlot)
+    {
+        if (m_CurrentMode == InventoryMode.Items)
+        {
+            return StoredItems.Count(x => x?.RootVisual != null && 
+                                         x.RootVisual.layout.Overlaps(m_Telegraph.layout)) > 1;
+        }
+        else
+        {
+            return StoredMoncargs.Count(x => x?.RootVisual != null && 
+                                           x.RootVisual.layout.Overlaps(m_Telegraph.layout)) > 1;
+        }
+    }
+    #endregion
+
+    #region Item Details Display
     public static void UpdateItemDetails(ItemDefinition item)
     {
+        Instance.m_CurrentSelectedItem = item;
+        Instance.m_CurrentSelectedMoncarg = null;
+        
         if (m_ItemDetailHeader != null) m_ItemDetailHeader.text = item.FriendlyName;
         if (m_ItemDetailBody != null) m_ItemDetailBody.text = item.Description;
     }
 
-    private static void ConfigureInventoryItem(StoredItem item, ItemVisual visual)
+    public static void UpdateMoncargDetails(MoncargInventoryAdapter moncargAdapter)
     {
-        item.RootVisual = visual;
-        visual.style.visibility = Visibility.Visible;
+        Instance.m_CurrentSelectedMoncarg = moncargAdapter;
+        Instance.m_CurrentSelectedItem = null;
+        
+        if (m_ItemDetailHeader != null) m_ItemDetailHeader.text = moncargAdapter.FriendlyName;
+        if (m_ItemDetailBody != null) m_ItemDetailBody.text = moncargAdapter.Description;
     }
+    #endregion
+
+    #region Moncarg Management
+    public void UpdateMoncargEquippedCount()
+    {
+        int equippedCount = StoredMoncargs.Count(m => m?.Details != null && m.IsEquipped);
+        if (m_MoncargEquippedLabel != null)
+        {
+            m_MoncargEquippedLabel.text = $"{equippedCount}/3";
+        }
+    }
+
+    public GameObject SpawnMoncargFromInventory(MoncargInventoryAdapter adapter)
+    {
+        return adapter?.CreateMoncargGameObject();
+    }
+
+    // ADDED: Check if inventory is full for Moncargs
+    public bool IsMoncargInventoryFull()
+    {
+        return StoredMoncargs.Count >= MaxMoncargs;
+    }
+
+    // ADDED: Get current Moncarg count
+    public int GetCurrentMoncargCount()
+    {
+        return StoredMoncargs.Count(m => m?.Details != null);
+    }
+
+    // ADDED: Get remaining Moncarg slots
+    public int GetRemainingMoncargSlots()
+    {
+        return MaxMoncargs - GetCurrentMoncargCount();
+    }
+    #endregion
+
+    #region Utility Methods
+    private void AddItemToInventoryGrid(VisualElement item) => m_InventoryGrid.Add(item);
+    private void RemoveItemFromInventoryGrid(VisualElement item) => m_InventoryGrid.Remove(item);
+    
+    // Helper methods for adding items/moncargs to inventory
+    public void AddItemToInventory(ItemDefinition item)
+    {
+        if (item == null) return;
+        
+        var storedItem = new StoredItem { Details = item };
+        StoredItems.Add(storedItem);
+        
+        if (m_IsInventoryReady && m_CurrentMode == InventoryMode.Items && IsInventoryVisible())
+        {
+            RefreshInventoryDisplay();
+        }
+        
+        Debug.Log($"Added item to inventory: {item.FriendlyName}");
+    }
+    
+    // MODIFIED: Add check for max Moncarg limit
+    public void AddMoncargToInventory(MoncargInventoryAdapter moncarg, bool autoEquip = false)
+    {
+        if (moncarg == null) return;
+        
+        // ADDED: Check if Moncarg inventory is full
+        if (IsMoncargInventoryFull())
+        {
+            Debug.LogWarning($"Cannot add {moncarg.FriendlyName} - Moncarg inventory is full ({StoredMoncargs.Count}/{MaxMoncargs})");
+            return;
+        }
+        
+        var storedMoncarg = new StoredMoncargData 
+        { 
+            Details = moncarg,
+            IsEquipped = false
+        };
+        
+        // Auto-equip if requested and we have room
+        if (autoEquip)
+        {
+            int currentEquipped = StoredMoncargs.Count(m => m?.Details != null && m.IsEquipped);
+            if (currentEquipped < 3)
+            {
+                storedMoncarg.IsEquipped = true;
+            }
+        }
+        
+        StoredMoncargs.Add(storedMoncarg);
+        
+        if (m_IsInventoryReady && m_CurrentMode == InventoryMode.Moncargs && IsInventoryVisible())
+        {
+            RefreshInventoryDisplay();
+        }
+        
+        UpdateMoncargEquippedCount();
+        Debug.Log($"Added moncarg to inventory: {moncarg.FriendlyName} (Equipped: {storedMoncarg.IsEquipped}) [{GetCurrentMoncargCount()}/{MaxMoncargs}]");
+    }
+    
+    // Check if player has any equipped moncargs
+    public bool HasEquippedMoncargs()
+    {
+        return StoredMoncargs.Any(m => m?.Details != null && m.IsEquipped);
+    }
+    
+    // Get all equipped moncargs    
+    public List<MoncargInventoryAdapter> GetEquippedMoncargs()
+    {
+        return StoredMoncargs
+            .Where(m => m?.Details != null && m.IsEquipped)
+            .Select(m => m.Details)
+            .ToList();
+    }
+    #endregion
 }

@@ -1,0 +1,178 @@
+/* Main container */
+.selection-panel {
+    position: absolute;
+    width: 450px;
+    height: 550px;
+    background-color: rgba(20, 20, 30, 0.95);
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 25px;
+    border: 2px solid #e2892d;
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+}
+
+/* Title */
+.selection-title {
+    font-size: 22px;
+    color: #e2892d;
+    margin-bottom: 20px;
+    text-align: center;
+    font-weight: bold;
+    -unity-font-style: bold;
+}
+
+/* List view */
+.moncarg-list {
+    height: auto;
+    margin-bottom: 20px;
+    background-color: rgba(40, 40, 50, 0.6);
+    border-radius: 6px;
+    border: 1px solid #444;
+}
+
+/* List view item */
+.moncarg-item {
+    flex-direction: row;
+    align-items: center;
+    padding: 8px;
+    margin: 2px;
+    border-radius: 4px;
+}
+
+.moncarg-item:hover {
+    background-color: rgba(60, 60, 80, 0.8);
+}
+
+.moncarg-item:selected {
+    background-color: rgba(50, 80, 120, 0.4);
+    border-left-width: 3px;
+    border-left-color: #4a8cff;
+}
+
+/* Moncarg icon */
+.moncarg-icon {
+    width: 55px;
+    height: 55px;
+    margin-right: 12px;
+    margin-left: 5px;
+    border-radius: 4px;
+    border: 1px solid #555;
+}
+
+/* Info container */
+.info-container {
+    flex-direction: column;
+    flex-grow: 1;
+}
+
+/* Name label */
+.moncarg-name {
+    font-size: 15px;
+    color: #ffffff;
+    font-weight: bold;
+    -unity-font-style: bold;
+    margin-bottom: 2px;
+}
+
+/* Type label */
+.moncarg-type {
+    font-size: 12px;
+    color: #aaaaaa;
+    margin-bottom: 4px;
+}
+
+/* Stats container */
+.stats-container {
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+/* Stat items */
+.stat-item {
+    flex-direction: row;
+    align-items: center;
+}
+
+/* Health text */
+.health-text {
+    font-size: 11px;
+    color: #ff7777;
+}
+
+/* Mana text */
+.mana-text {
+    font-size: 11px;
+    color: #7777ff;
+}
+
+/* Buttons container */
+.buttons-container {
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+/* Confirm button */
+.confirm-button {
+    width: 130px;
+    height: 42px;
+    background-color: #e2892d;
+    color: white;
+    font-weight: bold;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.confirm-button:hover {
+    background-color: #f0a04d;
+}
+
+.confirm-button:active {
+    background-color: #d0781d;
+}
+
+.confirm-button:disabled {
+    background-color: #666666;
+    color: #999999;
+}
+
+/* Cancel button */
+.cancel-button {
+    width: 130px;
+    height: 42px;
+    background-color: #555566;
+    color: white;
+    font-weight: bold;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.cancel-button:hover {
+    background-color: #666677;
+}
+
+.cancel-button:active {
+    background-color: #444455;
+}
+
+/* Elemental type colors */
+.type-fire {
+    color: #ff6633;
+}
+
+.type-water {
+    color: #3399ff;
+}
+
+.type-plant {
+    color: #66cc33;
+}
+
+.type-electric {
+    color: #ffcc00;
+}
+
+.type-earth {
+    color: #cc9966;
+}

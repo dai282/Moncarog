@@ -1,0 +1,5 @@
+<ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <ui:VisualElement name="PromptPanel" style="flex-grow: 1; position: relative; background-color: rgba(0, 0, 0, 0.5); padding-top: 20px; padding-right: 20px; padding-bottom: 20px; padding-left: 20px; justify-content: center; -unity-text-align: upper-center;">
+        <ui:Label text="Please equip at least one Moncarg to continue!" name="PromptText" parse-escape-sequences="false" style="color: rgb(255, 255, 255); font-size: 35px;" />
+    </ui:VisualElement>
+</ui:UXML>
