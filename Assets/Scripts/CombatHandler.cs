@@ -394,7 +394,7 @@ public class CombatHandler: MonoBehaviour
         }
         
         // Clean up combat objects
-        CleanupForGameOver();
+        Cleanup();
     }
 
     private void CleanupForGameOver()
