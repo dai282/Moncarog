@@ -460,7 +460,7 @@ public class CombatHandler: MonoBehaviour
         {
             victoryScreen.SetActive(true);
         }
-
+        Cleanup();
         //Experience gaining logic
         /*
         Debug.Log("You won the battle!");
