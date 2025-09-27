@@ -21,7 +21,7 @@ MonoBehaviour:
   isPowerup: 1
   isConsumable: 1
   isEquipped: 0
-  attackMultiplier: 1
+  attackMultiplier: 1.5
   defenseMultiplier: 1
   healthMultiplier: 1
   speedMultiplier: 1
