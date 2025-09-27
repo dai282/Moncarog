@@ -4,7 +4,7 @@ using System.Linq;
 
 public class MapGenerator
 {
-    private const int roomsToMiniBoss = 1;
+    private const int roomsToMiniBoss = 6;
     private const int roomsToFinalBoss = 5;
 
     //reordered these 
