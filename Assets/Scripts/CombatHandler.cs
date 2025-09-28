@@ -18,7 +18,7 @@ public class CombatHandler: MonoBehaviour
     [SerializeField] private ItemDefinition[] commonDrops;
     [SerializeField] private ItemDefinition[] rareDrops;
     [SerializeField] private ItemDefinition[] legendaryDrops;
-    [SerializeField] [Range(0f, 1f)] private float dropChance = 0.7f; // 70% chance to drop something
+    [SerializeField] [Range(0f, 1f)] private float dropChance = 1f; // 70% chance to drop something
     [SerializeField] [Range(0f, 1f)] private float rareDropChance = 0.15f; // 15% chance for rare
     [SerializeField] [Range(0f, 1f)] private float legendaryDropChance = 0.05f; // 5% chance for legendary
 
@@ -79,7 +79,7 @@ public class CombatHandler: MonoBehaviour
                     break;
                 case -99:
                     //final boss
-                    enemyObj = Instantiate(moncargDatabase.availableEnemyMoncargs[databaseLen - 1]);
+                    enemyObj = Instantiate(moncargDatabase.availableEnemyMoncargs[databaseLen - 2]);
                     break;
                 default:
                     Debug.LogError("Invalid miniboss/boss room ID: " + roomID);
@@ -459,8 +459,14 @@ public class CombatHandler: MonoBehaviour
         if (enemy.data.isBoss)
         {
             victoryScreen.SetActive(true);
+            Cleanup();
         }
-        Cleanup();
+
+        if (enemy.data.isMiniBoss)
+        {
+            Cleanup();
+        }
+
         //Experience gaining logic
         /*
         Debug.Log("You won the battle!");

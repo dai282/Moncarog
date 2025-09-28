@@ -27,13 +27,15 @@ MonoBehaviour:
     maxMana: 100
     catchChance: 0.5
     dodgeChance: 0.5
-    type: 0
-    active: 0
+    type: 2
+    active: 1
     skillset:
     - {fileID: 11400000, guid: 411e2c1d2e0c3e847a9c8fa5794f907d, type: 2}
     - {fileID: 11400000, guid: 720ea51bd46724e479a4139bfe6d8b36, type: 2}
     - {fileID: 11400000, guid: a1d873551fb28104882311a8e35a430f, type: 2}
     - {fileID: 11400000, guid: d69bf7ad7978f924cab1f0c3a0f6bb38, type: 2}
+    isBoss: 0
+    isMiniBoss: 0
   SlotDimension:
     Height: 1
     Width: 1

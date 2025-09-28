@@ -18,7 +18,7 @@ MonoBehaviour:
     moncargName: Kachu
     maxHealth: 300
     health: 300
-    attack: 50
+    attack: 20
     defense: 10
     speed: 10
     exp: 200
