@@ -27,7 +27,7 @@ MonoBehaviour:
     maxMana: 500
     catchChance: 0.1
     dodgeChance: 0.1
-    type: 0
+    type: 1
     active: 1
     skillset:
     - {fileID: 11400000, guid: 411e2c1d2e0c3e847a9c8fa5794f907d, type: 2}
