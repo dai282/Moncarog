@@ -77,4 +77,32 @@ public class MoncargDatabase : MonoBehaviour
 
         return ownedNames;
     }
+
+    // Add this to MoncargDatabase.cs
+    public GameObject GetRandomStarterMoncarg()
+    {
+        if (allMoncargs.Length == 0) return null;
+
+        // Filter for starter-appropriate Moncargs (you can customize this logic)
+        List<GameObject> starterMoncargs = new List<GameObject>();
+        foreach (GameObject moncarg in allMoncargs)
+        {
+
+            StoredMoncarg stored = moncarg.GetComponent<StoredMoncarg>();
+
+            //exclude boss and miniboss moncargs
+            if (!(stored.Details.moncargData.isBoss || stored.Details.moncargData.isMiniBoss))
+            {
+                starterMoncargs.Add(moncarg);
+            }
+
+        }
+
+        // If no filtered Moncargs, use all available
+        if (starterMoncargs.Count == 0)
+            starterMoncargs = allMoncargs.ToList();
+
+        int randomIndex = Random.Range(0, starterMoncargs.Count);
+        return starterMoncargs[randomIndex];
+    }
 }

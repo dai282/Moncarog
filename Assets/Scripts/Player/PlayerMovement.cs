@@ -54,6 +54,14 @@ public class PlayerMovement : MonoBehaviour
             return false;
         }
 
+        // Chest detection
+        ChestDetector chest = roomGrid.GetChestAtCell(cellPos);
+        if (chest != null && chest.isStartingChest)
+        {
+            chest.OnPlayerInteract();
+            return false; // Stop movement when interacting with chest
+        }
+
         // Check center point
         if (!roomGrid.IsWalkable(position))
         {

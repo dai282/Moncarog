@@ -21,6 +21,8 @@ public class RoomGrid : MonoBehaviour
     private Dictionary<Vector3Int, DoorDetector> doors = new Dictionary<Vector3Int, DoorDetector>();
     private HashSet<Vector3Int> encounterTiles = new HashSet<Vector3Int>();
 
+    private Dictionary<Vector3Int, ChestDetector> chests = new Dictionary<Vector3Int, ChestDetector>();
+
     void Awake()
     {
         GenerateCellData();
@@ -195,5 +197,31 @@ public class RoomGrid : MonoBehaviour
     {
         doors.TryGetValue(cellPos, out DoorDetector door);
         return door;
+    }
+
+    public void AutoRegisterChests()
+    {
+        // Find all ChestDetector components in this room
+        ChestDetector[] allChests = GetComponentsInChildren<ChestDetector>();
+
+        foreach (ChestDetector chest in allChests)
+        {
+            Vector3Int cellPos = collisionTilemap.WorldToCell(chest.transform.position);
+            RegisterChest(cellPos, chest);
+        }
+
+        Debug.Log($"Auto-registered {allChests.Length} chests in room");
+    }
+
+    public void RegisterChest(Vector3Int cellPos, ChestDetector chest)
+    {
+        chests[cellPos] = chest;
+        Debug.Log($"Registered chest at cell {cellPos}");
+    }
+
+    public ChestDetector GetChestAtCell(Vector3Int cellPos)
+    {
+        chests.TryGetValue(cellPos, out ChestDetector chest);
+        return chest;
     }
 }
