@@ -1,18 +1,21 @@
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using System.Collections.Generic;
 
 public class ChestManager : MonoBehaviour
 {
     public static ChestManager Instance { get; private set; }
 
     [Header("UI References")]
-    public GameObject chestConfirmationPanel;
-    public GameObject moncargCardPanel;
-    public TextMeshProUGUI confirmationText;
-    public TextMeshProUGUI moncargNameText;
-    public TextMeshProUGUI moncargDescriptionText;
-    public Image moncargImage;
+    public GameObject moncargSelectionPanel;
+    public GameObject[] moncargCards = new GameObject[3]; // Drag 3 card UI objects here
+    public TextMeshProUGUI[] moncargNameTexts = new TextMeshProUGUI[3];
+    public TextMeshProUGUI[] moncargDescriptionTexts = new TextMeshProUGUI[3];
+    public Image[] moncargImages = new Image[3];
+    public Button[] selectButtons = new Button[3];
+
+    private List<GameObject> availableMoncargs = new List<GameObject>();
 
     private ChestDetector currentChest;
 
@@ -29,47 +32,93 @@ public class ChestManager : MonoBehaviour
     void Start()
     {
         // Hide panels at start
-        chestConfirmationPanel.SetActive(false);
-        moncargCardPanel.SetActive(false);
+
+        moncargSelectionPanel.SetActive(false);
     }
 
-    public void ShowChestConfirmation(ChestDetector chest)
-    {
-        currentChest = chest;
-        confirmationText.text = "Open this chest to get your starting Moncarg?";
-        chestConfirmationPanel.SetActive(true);
-    }
 
-    public void OnConfirmOpen()
+    public void ShowMoncargSelection()
     {
-        chestConfirmationPanel.SetActive(false);
-        currentChest.OpenChest();
-    }
+        // Get 3 random unique Moncargs
+        availableMoncargs = MoncargDatabase.Instance.GetStarterMoncargs();
 
-    public void OnCancelOpen()
-    {
-        chestConfirmationPanel.SetActive(false);
-        currentChest = null;
-    }
-
-    public void ShowMoncargCard(GameObject moncargPrefab)
-    {
-        StoredMoncarg storedMoncarg = moncargPrefab.GetComponent<StoredMoncarg>();
-
-        if (storedMoncarg != null)
+        // Populate the UI cards
+        for (int i = 0; i < 3; i++)
         {
-            moncargNameText.text = storedMoncarg.Details.FriendlyName;
-            moncargDescriptionText.text = $"Type: {storedMoncarg.Details.moncargData.type}\nHP: {storedMoncarg.Details.moncargData.maxHealth}";
-            // You can set the image if you have sprites
-            moncargImage.sprite = storedMoncarg.Details.Icon;
+            if (i < availableMoncargs.Count)
+            {
+                StoredMoncarg storedMoncarg = availableMoncargs[i].GetComponent<StoredMoncarg>();
+                if (storedMoncarg != null)
+                {
+                    moncargNameTexts[i].text = storedMoncarg.Details.FriendlyName;
+                    moncargDescriptionTexts[i].text = $"Type: {storedMoncarg.Details.moncargData.type}\nHP: {storedMoncarg.Details.moncargData.maxHealth}\nAttack: {storedMoncarg.Details.moncargData.attack}";
+                    moncargImages[i].sprite = storedMoncarg.Details.Icon;
 
-            moncargCardPanel.SetActive(true);
+                    // Set up button with correct index
+                    int index = i; // Important: capture the index for the lambda
+                    selectButtons[i].onClick.RemoveAllListeners();
+                    selectButtons[i].onClick.AddListener(() => OnMoncargSelected(index));
+                }
+            }
+        }
+
+        moncargSelectionPanel.SetActive(true);
+    }
+
+
+    public void OnMoncargSelected(int index)
+    {
+        if (index < availableMoncargs.Count)
+        {
+            GameObject selectedMoncarg = availableMoncargs[index];
+            AddMoncargToInventory(selectedMoncarg);
+            ShowSelectedMoncargCard(selectedMoncarg);
         }
     }
 
-    public void CloseMoncargCard()
+    private void AddMoncargToInventory(GameObject moncargPrefab)
     {
-        moncargCardPanel.SetActive(false);
-        currentChest = null;
+        GameObject moncargInstance = Instantiate(moncargPrefab);
+        StoredMoncarg storedMoncarg = moncargInstance.GetComponent<StoredMoncarg>();
+
+        if (storedMoncarg != null)
+        {
+            storedMoncarg.Details.moncargData.reset();
+            storedMoncarg.AddToInventory();
+
+            Debug.Log($"Added {storedMoncarg.Details.FriendlyName} to inventory as starter!");
+        }
+
+        Destroy(moncargInstance);
+
+        // Mark chest as opened
+        FindFirstObjectByType<ChestDetector>()?.SetOpened();
+    }
+
+    private void ShowSelectedMoncargCard(GameObject moncargPrefab)
+    {
+        moncargSelectionPanel.SetActive(false);
+
+        // You could show a confirmation card here if needed
+        Debug.Log($"Starter Moncarg selected: {moncargPrefab.GetComponent<StoredMoncarg>().Details.FriendlyName}");
+
+        // Optional: Show brief confirmation message
+        StartCoroutine(ShowBriefConfirmation(moncargPrefab));
+    }
+
+    private System.Collections.IEnumerator ShowBriefConfirmation(GameObject moncargPrefab)
+    {
+        StoredMoncarg storedMoncarg = moncargPrefab.GetComponent<StoredMoncarg>();
+
+        // You could show a quick popup here
+        Debug.Log($"Welcome {storedMoncarg.Details.FriendlyName} to your team!");
+
+        yield return new WaitForSeconds(2f);
+        // Hide any confirmation UI if you added it
+    }
+
+    public void CloseSelectionPanel()
+    {
+        moncargSelectionPanel.SetActive(false);
     }
 }

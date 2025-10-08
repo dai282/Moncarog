@@ -79,7 +79,7 @@ public class MoncargDatabase : MonoBehaviour
     }
 
     // Add this to MoncargDatabase.cs
-    public GameObject GetRandomStarterMoncarg()
+    public List<GameObject> GetStarterMoncargs()
     {
         if (allMoncargs.Length == 0) return null;
 
@@ -102,7 +102,15 @@ public class MoncargDatabase : MonoBehaviour
         if (starterMoncargs.Count == 0)
             starterMoncargs = allMoncargs.ToList();
 
-        int randomIndex = Random.Range(0, starterMoncargs.Count);
-        return starterMoncargs[randomIndex];
+        List<GameObject> moncargsToChooseFrom = new List<GameObject>();
+
+        //3 starter moncargs to choose from
+        for (int i = 0; i < 3; i++)
+        {
+            int randomIndex = Random.Range(0, starterMoncargs.Count);
+            moncargsToChooseFrom.Add(starterMoncargs[randomIndex]);
+            starterMoncargs.RemoveAt(randomIndex); // Ensure uniqueness
+        }
+        return moncargsToChooseFrom;
     }
 }
