@@ -74,6 +74,8 @@ public class ChestManager : MonoBehaviour
             AddMoncargToInventory(selectedMoncarg);
             ShowSelectedMoncargCard(selectedMoncarg);
         }
+
+
     }
 
     private void AddMoncargToInventory(GameObject moncargPrefab)
@@ -88,6 +90,8 @@ public class ChestManager : MonoBehaviour
 
             Debug.Log($"Added {storedMoncarg.Details.FriendlyName} to inventory as starter!");
         }
+
+        AlertManager.Instance.ShowAlert($"Added {storedMoncarg.Details.FriendlyName} to inventory as starter!");
 
         Destroy(moncargInstance);
 

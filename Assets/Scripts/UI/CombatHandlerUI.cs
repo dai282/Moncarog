@@ -179,6 +179,7 @@ public class CombatHandlerUI : MonoBehaviour
 
     public void ShowCatchPanel()
     {
+        Debug.Log("Showing Catch Panel");
         optionsContainer.style.display = DisplayStyle.None;
         fightContainer.style.display = DisplayStyle.None;
         catchContainer.style.display = DisplayStyle.Flex;
