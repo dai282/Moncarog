@@ -14,10 +14,15 @@
         <ui:Button text="Catch" name="CatchButton" style="height: 17%; width: 45%; top: auto; left: auto; right: auto; bottom: auto; min-width: auto; font-size: 30%; position: relative;" />
         <ui:Button text="Cancel" name="CancelCatchButton" parse-escape-sequences="false" style="height: 17%; width: 45%; top: auto; left: auto; right: auto; bottom: auto; min-width: auto; font-size: 20%; position: relative;" />
     </ui:VisualElement>
-    <ui:VisualElement name="OptionsContainer" enabled="true" style="flex-grow: 1; flex-direction: row; display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: flex-end; align-self: flex-end; align-content: flex-end; width: 40%; height: auto; padding-top: 0;">
+    <ui:VisualElement name="OptionsContainer" enabled="true" style="flex-grow: 1; flex-direction: row; display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: flex-end; align-self: flex-end; align-content: flex-end; width: 40%; height: auto; padding-top: 0; position: relative;">
         <ui:Button text="Fight" name="FightButton" style="height: 17%; width: 45%; top: auto; left: auto; right: auto; bottom: auto; min-width: auto; font-size: 30%; position: relative;" />
         <ui:Button text="Inventory" name="InventoryButton" parse-escape-sequences="false" style="height: 17%; width: 45%; top: auto; left: auto; right: auto; bottom: auto; min-width: auto; font-size: 20%; position: relative;" />
         <ui:Button text="Switch" name="SwitchButton" style="height: 17%; width: 45%; top: auto; left: auto; right: auto; bottom: auto; min-width: auto; font-size: 30%; position: relative;" />
         <ui:Button text="Flee" name="FleeButton" style="height: 17%; width: 45%; top: auto; left: auto; right: auto; bottom: auto; min-width: auto; font-size: 30%; position: relative;" />
+    </ui:VisualElement>
+    <ui:VisualElement name="CombatTerminal" style="flex-grow: 1; position: absolute; height: 372px; width: 1082px; top: 708px; left: 5px;">
+        <ui:Label name="Third" style="background-color: rgb(188, 188, 188); height: 112px; font-size: 40px; white-space: pre-wrap;" />
+        <ui:Label name="Second" style="background-color: rgb(188, 188, 188); height: 117px; font-size: 40px; white-space: pre-wrap;" />
+        <ui:Label text="A battle begins!" name="First" style="background-color: rgb(188, 188, 188); height: 112px; font-size: 40px; white-space: pre-wrap;" />
     </ui:VisualElement>
 </ui:UXML>

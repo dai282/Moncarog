@@ -10,6 +10,7 @@ public class CombatHandlerUI : MonoBehaviour
     private VisualElement optionsContainer;
     private VisualElement fightContainer;
     private VisualElement catchContainer;
+    private VisualElement combatTerminal;
 
     private Button fightButton;
     private Button fleeButton;
@@ -19,6 +20,7 @@ public class CombatHandlerUI : MonoBehaviour
     private Button cancelCatchButton;
     private Button backButton;
     private Button[] skillButtons = new Button[4];
+    private Label[] eventLabels = new Label[3];
 
     private ProgressBar playerHealth;
     private ProgressBar playerMana;
@@ -53,6 +55,7 @@ public class CombatHandlerUI : MonoBehaviour
         optionsContainer = root.Q<VisualElement>("OptionsContainer");
         fightContainer = root.Q<VisualElement>("FightContainer");
         catchContainer = root.Q<VisualElement>("CatchContainer");
+        combatTerminal = root.Q<VisualElement>("CombatTerminal");
 
         // Get buttons
         fightButton = root.Q<Button>("FightButton");
@@ -67,6 +70,12 @@ public class CombatHandlerUI : MonoBehaviour
         skillButtons[1] = root.Q<Button>("Move1");
         skillButtons[2] = root.Q<Button>("Move2");
         skillButtons[3] = root.Q<Button>("Move3");
+
+        //get combat terminal labels
+        eventLabels[0] = root.Q<Label>("First");
+        eventLabels[1] = root.Q<Label>("Second");
+        eventLabels[2] = root.Q<Label>("Third");
+
 
         // Get progress bars
         playerHealth = root.Q<ProgressBar>("PlayerHealth");
@@ -152,6 +161,14 @@ public class CombatHandlerUI : MonoBehaviour
                 skillButtons[i].SetEnabled(player.mana >= player.skillset[i].manaCost);
             }
         }
+    }
+
+    public void UpdateCombatTerminal(string text)
+    {
+        eventLabels[2].text = eventLabels[1].text;
+        eventLabels[1].text = eventLabels[0].text;
+        eventLabels[0].text = text;
+
     }
 
     // New method to refresh UI after powerup changes

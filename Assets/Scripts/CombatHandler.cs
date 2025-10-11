@@ -136,6 +136,8 @@ public class CombatHandler: MonoBehaviour
         if (!player.active)
         {
             Debug.Log("You need to switch Moncargs!");
+            combatUI.UpdateCombatTerminal("You need to switch Moncargs!");
+            
             // ADDED: Check if all player Moncargs are dead
             if (!HasAnyAliveMoncargs())
             {
@@ -147,6 +149,8 @@ public class CombatHandler: MonoBehaviour
         if (!enemy.active)
         {
             Debug.Log("You won the battle!");
+            combatUI.UpdateCombatTerminal("You won the battle!");
+
             OnEnemyDefeated();
             return;
         }
@@ -159,11 +163,15 @@ public class CombatHandler: MonoBehaviour
             if (player.mana <=0 )
             {
                 Debug.Log(player.moncargName + " ran out of mana! Automatic resting...");
+                combatUI.UpdateCombatTerminal("Ran out of mana! Automatic resting...");
+
                 Rest(player);
             }
             else
             {
                 Debug.Log("Your turn! Choose an action.");
+                combatUI.UpdateCombatTerminal("Your turn! Choose an action.");
+
                 // UI buttons are active, waiting for player click
             }
         }
@@ -228,6 +236,8 @@ public class CombatHandler: MonoBehaviour
             if (restRoll < 0.3f) // 30% chance to rest early
             {
                 Debug.Log(enemy.moncargName + " is low on mana and decides to Rest...");
+                combatUI.UpdateCombatTerminal(enemy.moncargName + "is low on mana and decides to Rest...");
+
                 Rest(enemy);
                 return;
             }
@@ -277,6 +287,8 @@ public class CombatHandler: MonoBehaviour
         if (TryDodge(defender))
         {
             Debug.Log($"{defender.moncargName} dodged the attack!");
+            combatUI.UpdateCombatTerminal($"{defender.moncargName} dodged the attack!");
+
             return;
         }
 
@@ -298,6 +310,7 @@ public class CombatHandler: MonoBehaviour
         defender.health -= damage;
 
         Debug.Log(attacker.moncargName + " used " + attackChoice.name + " on " + defender.moncargName + " for " + damage + " damage!");
+        combatUI.UpdateCombatTerminal(attacker.moncargName + " used " + attackChoice.name + " on " + defender.moncargName + " for " + damage + " damage!");
 
         // Check if defender is defeated
         if (defender.health <= 0)
@@ -305,6 +318,8 @@ public class CombatHandler: MonoBehaviour
             defender.health = 0;
             defender.active = false;
             Debug.Log(defender.moncargName + " has been defeated!");
+            combatUI.UpdateCombatTerminal(defender.moncargName + " has been defeated!");
+
         }
 
         combatUI.UpdateMoncargStats(player, enemy);
@@ -425,6 +440,8 @@ public class CombatHandler: MonoBehaviour
         combatUI.UpdateMoncargStats(player, enemy);
 
         Debug.Log(moncarg.moncargName + " rested and recovered " + manaRecovered + " mana.");
+        combatUI.UpdateCombatTerminal(moncarg.moncargName + " rested and recovered " + manaRecovered + " mana.");
+
         EndTurn();
     }
 
