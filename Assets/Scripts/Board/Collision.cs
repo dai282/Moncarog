@@ -1,4 +1,7 @@
 using UnityEngine;
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 using UnityEngine.Tilemaps;
 using System.Collections.Generic;
 
@@ -8,6 +11,9 @@ public class RoomGrid : MonoBehaviour
     public Tilemap decorations;
     public Tilemap floor;
     public int roomGridID;
+    private Dictionary<Vector3Int, int> encounterGroups = new Dictionary<Vector3Int, int>();
+    public int groupsToPlace = 5;
+    public int tilesPerGroup = 5;
 
     public enum CellType
     {
@@ -93,16 +99,24 @@ public class RoomGrid : MonoBehaviour
             if (roomID != 1)
             {
                 // Randomly pick encounter tiles
-                for (int i = 0; i < 10 && walkableCells.Count > 0; i++)
+                for (int group = 0; group < groupsToPlace; group++)
                 {
-                    int randIndex = Random.Range(0, walkableCells.Count);
-                    Vector3Int chosen = walkableCells[randIndex];
-                    walkableCells.RemoveAt(randIndex);
+                    if (walkableCells.Count == 0)
+                        break;
 
-                    cellData[chosen] = CellType.Encounter;
-                    encounterTiles.Add(chosen);
+                    int tilesAdded = 0;
 
-                    Debug.Log($"Encounter tile placed at {chosen}");
+                    for (int i = 0; i < tilesPerGroup && walkableCells.Count > 0; i++)
+                    {
+                        int randIndex = Random.Range(0, walkableCells.Count);
+                        Vector3Int chosenCell = walkableCells[randIndex];
+                        walkableCells.RemoveAt(randIndex);
+
+                        AddEncounterTile(chosenCell, group);
+                        tilesAdded++;
+                    }
+
+                    Debug.Log($"Encounter group {group} placed with {tilesAdded} tiles.");
                 }
             }
             else
@@ -112,6 +126,28 @@ public class RoomGrid : MonoBehaviour
 
         }
         
+    }
+
+    private void AddEncounterTile(Vector3Int pos, int groupID)
+    {
+        cellData[pos] = CellType.Encounter;
+        encounterTiles.Add(pos);
+        encounterGroups[pos] = groupID;
+    }
+
+    private List<Vector3Int> GetNearbyWalkableCells(Vector3Int center, List<Vector3Int> candidates, int radius)
+    {
+        List<Vector3Int> nearby = new List<Vector3Int>();
+
+        foreach (Vector3Int cell in candidates)
+        {
+            if (Mathf.Abs(cell.x - center.x) <= radius && Mathf.Abs(cell.y - center.y) <= radius)
+            {
+                nearby.Add(cell);
+            }
+        }
+
+        return nearby;
     }
 
     public bool IsWalkable(Vector3 worldPos)
@@ -134,12 +170,29 @@ public class RoomGrid : MonoBehaviour
 
     public void ResetEncounterTile(Vector3Int cellPos)
     {
-        if (encounterTiles.Contains(cellPos))
+        if (!encounterTiles.Contains(cellPos))
+            return;
+
+        if (!encounterGroups.TryGetValue(cellPos, out int groupID))
+            groupID = -1;
+
+        // Find all tiles in the same group
+        List<Vector3Int> tilesToRemove = new List<Vector3Int>();
+        foreach (var kvp in encounterGroups)
         {
-            cellData[cellPos] = CellType.Walkable;
-            encounterTiles.Remove(cellPos);
-            Debug.Log($"Encounter tile at {cellPos} reset to Walkable");
+            if (kvp.Value == groupID)
+                tilesToRemove.Add(kvp.Key);
         }
+
+        // Reset all tiles in the group
+        foreach (Vector3Int tile in tilesToRemove)
+        {
+            cellData[tile] = CellType.Walkable;
+            encounterTiles.Remove(tile);
+            encounterGroups.Remove(tile);
+        }
+
+        Debug.Log($"Encounter group {groupID} cleared ({tilesToRemove.Count} tiles reset to Walkable).");
     }
 
     void PrintUnwalkableTiles()
@@ -195,5 +248,42 @@ public class RoomGrid : MonoBehaviour
     {
         doors.TryGetValue(cellPos, out DoorDetector door);
         return door;
+    }
+
+    private void OnDrawGizmos()
+    {
+        if (encounterTiles == null || encounterTiles.Count == 0)
+            return;
+
+        // Distinguish groups by color
+        Color[] groupColors =
+        {
+            Color.red, Color.blue, Color.green, Color.yellow, Color.magenta,
+            new Color(1f, 0.5f, 0f), // orange
+            new Color(0f, 1f, 1f),   // cyan
+            new Color(0.6f, 0.3f, 1f) // purple-ish
+        };
+
+        foreach (var tile in encounterTiles)
+        {
+            int groupID = -1;
+            if (encounterGroups != null && encounterGroups.TryGetValue(tile, out int id))
+                groupID = id;
+
+            // Pick color for group (wrap if more groups than colors)
+            Color gizmoColor = groupColors[Mathf.Abs(groupID) % groupColors.Length];
+
+            Gizmos.color = gizmoColor;
+            Vector3 worldPos = collisionTilemap.CellToWorld(tile) + new Vector3(0.5f, 0.5f, 0); // center of tile
+
+            // Draw a solid cube for the tile
+            Gizmos.DrawCube(worldPos, new Vector3(0.8f, 0.8f, 0.1f));
+
+            // Optional: draw group label above tile
+    #if UNITY_EDITOR
+            UnityEditor.Handles.color = gizmoColor;
+            UnityEditor.Handles.Label(worldPos + Vector3.up * 0.4f, $"G{groupID}");
+    #endif
+        }
     }
 }
