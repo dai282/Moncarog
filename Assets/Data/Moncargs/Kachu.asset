@@ -17,18 +17,18 @@ MonoBehaviour:
   moncargData:
     moncargName: Kachu
     maxHealth: 300
-    health: 300
+    health: 0
     attack: 50
     defense: 10
-    speed: 10
+    speed: 1
     exp: 200
     level: 5
-    mana: 500
+    mana: 150
     maxMana: 500
     catchChance: 0.2
     dodgeChance: 0.2
     type: 0
-    active: 1
+    active: 0
     skillset:
     - {fileID: 11400000, guid: 411e2c1d2e0c3e847a9c8fa5794f907d, type: 2}
     - {fileID: 11400000, guid: 720ea51bd46724e479a4139bfe6d8b36, type: 2}

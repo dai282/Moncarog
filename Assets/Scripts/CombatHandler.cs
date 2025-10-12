@@ -474,12 +474,14 @@ public class CombatHandler: MonoBehaviour
         {
             combatUI.ShowCatchPanel();
         }
-
-        if (enemy.data.isBoss)
+        else if (enemy.data.isBoss)
         {
             victoryScreen.SetActive(true);
         }
-        Cleanup();
+        else{
+            Cleanup();
+        }
+        
         //Experience gaining logic
         /*
         Debug.Log("You won the battle!");
