@@ -21,8 +21,10 @@
         <ui:Button text="Flee" name="FleeButton" style="height: 17%; width: 45%; top: auto; left: auto; right: auto; bottom: auto; min-width: auto; font-size: 30%; position: relative;" />
     </ui:VisualElement>
     <ui:VisualElement name="CombatTerminal" style="flex-grow: 1; position: absolute; height: 372px; width: 1082px; top: 708px; left: 5px;">
-        <ui:Label name="Third" style="background-color: rgb(188, 188, 188); height: 112px; font-size: 40px; white-space: pre-wrap;" />
-        <ui:Label name="Second" style="background-color: rgb(188, 188, 188); height: 117px; font-size: 40px; white-space: pre-wrap;" />
-        <ui:Label text="A battle begins!" name="First" style="background-color: rgb(188, 188, 188); height: 112px; font-size: 40px; white-space: pre-wrap;" />
+        <ui:Label name="Fifth" style="background-color: rgb(188, 188, 188); height: 65px; font-size: 30px; white-space: pre-wrap;" />
+        <ui:Label name="Fourth" style="background-color: rgb(188, 188, 188); height: 65px; font-size: 30px; white-space: pre-wrap;" />
+        <ui:Label name="Third" style="background-color: rgb(188, 188, 188); height: 65px; font-size: 30px; white-space: pre-wrap;" />
+        <ui:Label name="Second" style="background-color: rgb(188, 188, 188); height: 65px; font-size: 30px; white-space: pre-wrap;" />
+        <ui:Label text="A battle begins!" name="First" style="background-color: rgb(188, 188, 188); height: 65px; font-size: 30px; white-space: pre-wrap;" />
     </ui:VisualElement>
 </ui:UXML>

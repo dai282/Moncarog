@@ -460,6 +460,8 @@ public class CombatHandler: MonoBehaviour
         // Show selection UI for multiple equipped moncargs
         selectionUI.Show(equippedMoncargs);
 
+        combatUI.UpdateCombatTerminal("Switching out " + player.moncargName);
+
         GameObject.Destroy(player.gameObject);
     }
 

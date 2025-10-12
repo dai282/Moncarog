@@ -20,7 +20,7 @@ public class CombatHandlerUI : MonoBehaviour
     private Button cancelCatchButton;
     private Button backButton;
     private Button[] skillButtons = new Button[4];
-    private Label[] eventLabels = new Label[3];
+    private Label[] eventLabels = new Label[5];
 
     private ProgressBar playerHealth;
     private ProgressBar playerMana;
@@ -75,6 +75,9 @@ public class CombatHandlerUI : MonoBehaviour
         eventLabels[0] = root.Q<Label>("First");
         eventLabels[1] = root.Q<Label>("Second");
         eventLabels[2] = root.Q<Label>("Third");
+        eventLabels[3] = root.Q<Label>("Fourth");
+        eventLabels[4] = root.Q<Label>("Fifth");
+
 
 
         // Get progress bars
@@ -165,8 +168,11 @@ public class CombatHandlerUI : MonoBehaviour
 
     public void UpdateCombatTerminal(string text)
     {
-        eventLabels[2].text = eventLabels[1].text;
-        eventLabels[1].text = eventLabels[0].text;
+        for (int i = 4; i > 0; i--)
+        {
+            eventLabels[i].text = eventLabels[i - 1].text;
+        }
+
         eventLabels[0].text = text;
 
     }
@@ -214,6 +220,12 @@ public class CombatHandlerUI : MonoBehaviour
         switchButton.clicked -= () => OnSwitchClicked?.Invoke();
         catchButton.clicked -= () => OnCatchClicked?.Invoke();
         cancelCatchButton.clicked -= () => OnCancelCatchClicked?.Invoke();
+
+        //clears combat terminal
+        for (int i = 0; i < 5; i++)
+        {
+            eventLabels[i].text = " ";
+        }
 
         for (int i = 0; i < 4; i++)
         {
