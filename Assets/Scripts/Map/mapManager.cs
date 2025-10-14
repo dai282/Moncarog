@@ -94,7 +94,7 @@ public class MapManager : MonoBehaviour
         Debug.Log("Map generation complete! Now displaying the map in the scene.");
 
         // Draw map
-        DisplayMap(startNode, new Vector3(-20, -18, 0));
+        DisplayMap(startNode, new Vector3(0, -18, 0));
 
         // Initialize traversalOverlay AFTER map is displayed
         if (traversalOverlay != null)
@@ -108,7 +108,6 @@ public class MapManager : MonoBehaviour
         isReady = true;
     }
 
-    // Inside MapManager.cs
     private void DisplayMap(MapGenerator.MapNode node, Vector3 origin)
     {
         if (visitedNodes.Contains(node)) return;

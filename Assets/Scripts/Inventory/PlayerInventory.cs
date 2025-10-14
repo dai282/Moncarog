@@ -353,6 +353,8 @@ public sealed class PlayerInventory : MonoBehaviour
         // Remove item if consumable
         if (powerup.isConsumable && storedItem != null)
         {
+            StatsCollector.Instance?.RecordPotionUsed();
+            
             if (storedItem.RootVisual != null)
             {
                 storedItem.RootVisual.RemoveFromHierarchy();

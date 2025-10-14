@@ -283,6 +283,12 @@ public class CombatHandler: MonoBehaviour
         // Deduct mana cost
         attacker.mana -= attackChoice.manaCost;
 
+        if (attacker == player)
+        {
+            StatsCollector.Instance?.RecordManaChange(attackChoice.manaCost, false); // Record mana spent
+            StatsCollector.Instance?.RecordAbilityUsed(); // Record that an ability was used
+        }
+
         // Calculate base damage
         float damage = attackChoice.damage + attacker.attack - defender.defense;
 
@@ -296,6 +302,15 @@ public class CombatHandler: MonoBehaviour
 
         // Apply damage to defender
         defender.health -= damage;
+
+        if (attacker == player && damage > 0)
+        {
+            StatsCollector.Instance?.RecordDamageDealt(damage); // Record damage dealt BY player
+        }
+        else if (defender == player && damage > 0)
+        {
+            StatsCollector.Instance?.RecordHPChange(damage, false); // Record HP lost BY player
+        }
 
         Debug.Log(attacker.moncargName + " used " + attackChoice.name + " on " + defender.moncargName + " for " + damage + " damage!");
 
@@ -422,6 +437,11 @@ public class CombatHandler: MonoBehaviour
             moncarg.mana = moncarg.maxMana;
         }
 
+        if (moncarg == player)
+        {
+            StatsCollector.Instance?.RecordManaChange(manaRecovered, true); // Record mana recovered
+        }
+
         combatUI.UpdateMoncargStats(player, enemy);
 
         Debug.Log(moncarg.moncargName + " rested and recovered " + manaRecovered + " mana.");
@@ -448,7 +468,8 @@ public class CombatHandler: MonoBehaviour
 
     private void OnEnemyDefeated()
     {
-        // ADDED: Generate item drops when enemy is defeated
+        StatsCollector.Instance?.RecordMoncarogDefeated();
+
         GenerateItemDrops();
 
         if (!IsBossOrMiniboss(enemy))
@@ -598,6 +619,8 @@ public class CombatHandler: MonoBehaviour
             return;
         }
         
+        StatsCollector.Instance?.RecordMoncarogCollected();
+
         enemy.role = Moncarg.moncargRole.PlayerOwned;
 
         //Retrieve enemy moncarg game object and StoredMoncarg component

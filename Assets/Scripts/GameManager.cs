@@ -49,6 +49,17 @@ public class GameManager : MonoBehaviour
         // MODIFIED: Initialize game normally without clearing inventory
         InitializeGame();
     }
+    
+    public void SaveGame()
+    {
+        Debug.Log("Saving game data...");
+        // This is the critical line that merges session stats into the lifetime record and saves it.
+        StatsCollector.Instance?.SaveStats(); 
+        
+        // Add other save logic here (e.g., saving player position, inventory, etc.)
+        
+        Debug.Log("Game Saved.");
+    }
 
     // ADDED: Normal game initialization without clearing progress
     private void InitializeGame()
@@ -66,10 +77,10 @@ public class GameManager : MonoBehaviour
         {
             int moncargCount = PlayerInventory.Instance.GetCurrentMoncargCount();
             int equippedCount = PlayerInventory.Instance.StoredMoncargs.Count(m => m?.Details != null && m.IsEquipped);
-            
+
             Debug.Log($"Existing Moncargs in inventory: {moncargCount}");
             Debug.Log($"Equipped Moncargs: {equippedCount}");
-            
+
             // List all Moncargs
             for (int i = 0; i < PlayerInventory.Instance.StoredMoncargs.Count; i++)
             {
@@ -79,7 +90,7 @@ public class GameManager : MonoBehaviour
                     Debug.Log($"Moncarg {i}: {moncarg.Details.FriendlyName}, Equipped: {moncarg.IsEquipped}");
                 }
             }
-            
+
             // Only add starting Moncarg if player has no Moncargs
             if (moncargCount == 0)
             {

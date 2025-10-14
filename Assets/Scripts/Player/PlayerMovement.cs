@@ -10,6 +10,7 @@ public class PlayerMovement : MonoBehaviour
     private Rigidbody2D rb;
     private Vector2 movementDirection = Vector2.zero;
     private SpriteRenderer spriteRenderer;
+    private Vector3Int lastCellPos;
 
     void Start()
     {
@@ -20,6 +21,11 @@ public class PlayerMovement : MonoBehaviour
         if (collisionOffset <= 0 && spriteRenderer != null)
         {
             collisionOffset = spriteRenderer.bounds.extents.x;
+        }
+
+        if (roomGrid != null)
+        {
+            lastCellPos = roomGrid.collisionTilemap.WorldToCell(transform.position);
         }
     }
 
@@ -35,6 +41,13 @@ public class PlayerMovement : MonoBehaviour
             {
                 // Move to the target position
                 rb.MovePosition(targetPosition);
+
+                Vector3Int currentCellPos = roomGrid.collisionTilemap.WorldToCell(rb.position);
+                if (currentCellPos != lastCellPos)
+                {
+                    StatsCollector.Instance?.RecordStep();
+                    lastCellPos = currentCellPos;
+                }
             }
         }
     }
