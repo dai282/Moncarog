@@ -46,6 +46,7 @@ public class StatsUI : MonoBehaviour
         
         statsScreenPanel.SetActive(true);
         UpdateStatsDisplay();
+        
     }
 
     // This method is called by the "Return" button on this stats screen
@@ -67,29 +68,30 @@ public class StatsUI : MonoBehaviour
 
         GameStats lifetimeStats = StatsCollector.Instance.GetLifetimeRecord();
         GameStats sessionStats = StatsCollector.Instance.GetCurrentSessionStats();
+        StatsCollector.Instance.SaveStats();
 
         // Populate Lifetime UI
-        lifetimeStepsText.text = $"Steps Taken: {lifetimeStats.StepsTaken}";
-        lifetimeDamageDealtText.text = $"Damage Dealt: {lifetimeStats.DamageDealt:F0}";
-        lifetimeMoncargsDefeatedText.text = $"Moncargs Defeated: {lifetimeStats.moncargsDefeated}";
-        lifetimeHpRecoveredText.text = $"HP Recovered: {lifetimeStats.HPRecovered:F0}";
-        lifetimeHpLostText.text = $"HP Lost: {lifetimeStats.HPLost:F0}";
-        lifetimeManaRecoveredText.text = $"Mana Recovered: {lifetimeStats.ManaRecovered:F0}";
-        lifetimeManaSpentText.text = $"Mana Spent: {lifetimeStats.ManaSpent:F0}";
-        lifetimePotionsUsedText.text = $"Potions Used: {lifetimeStats.PotionsUsed}";
-        lifetimeAbilitiesUsedText.text = $"Abilities Used: {lifetimeStats.AbilitiesUsed}";
-        lifetimeMoncargsCollectedText.text = $"Moncargs Collected: {lifetimeStats.moncargsCollected}";
+        lifetimeStepsText.text = $"Steps Taken:\t\t {lifetimeStats.StepsTaken}";
+        lifetimeDamageDealtText.text = $"Damage Dealt:\t\t {lifetimeStats.DamageDealt:F0}";
+        lifetimeMoncargsDefeatedText.text = $"Moncargs Defeated:\t {lifetimeStats.moncargsDefeated}";
+        lifetimeHpRecoveredText.text = $"HP Recovered:\t\t {lifetimeStats.HPRecovered:F0}";
+        lifetimeHpLostText.text = $"HP Lost:\t\t\t {lifetimeStats.HPLost:F0}";
+        lifetimeManaRecoveredText.text = $"Mana Recovered:\t\t {lifetimeStats.ManaRecovered:F0}";
+        lifetimeManaSpentText.text = $"Mana Spent:\t\t {lifetimeStats.ManaSpent:F0}";
+        lifetimePotionsUsedText.text = $"Potions Used:\t\t {lifetimeStats.PotionsUsed}";
+        lifetimeAbilitiesUsedText.text = $"Abilities Used:\t\t {lifetimeStats.AbilitiesUsed}";
+        lifetimeMoncargsCollectedText.text = $"Moncargs Collected:\t {lifetimeStats.moncargsCollected}";
 
         // Populate Session UI
-        sessionStepsText.text = $"Steps Taken: {sessionStats.StepsTaken}";
-        sessionDamageDealtText.text = $"Damage Dealt: {sessionStats.DamageDealt:F0}";
-        sessionMoncargsDefeatedText.text = $"Moncargs Defeated: {sessionStats.moncargsDefeated}";
-        sessionHpRecoveredText.text = $"HP Recovered: {sessionStats.HPRecovered:F0}";
-        sessionHpLostText.text = $"HP Lost: {sessionStats.HPLost:F0}";
-        sessionManaRecoveredText.text = $"Mana Recovered: {sessionStats.ManaRecovered:F0}";
-        sessionManaSpentText.text = $"Mana Spent: {sessionStats.ManaSpent:F0}";
-        sessionPotionsUsedText.text = $"Potions Used: {sessionStats.PotionsUsed}";
-        sessionAbilitiesUsedText.text = $"Abilities Used: {sessionStats.AbilitiesUsed}";
-        sessionMoncargsCollectedText.text = $"Moncargs Collected: {sessionStats.moncargsCollected}";
+        sessionStepsText.text = $"Steps Taken:\t\t {sessionStats.StepsTaken}";
+        sessionDamageDealtText.text = $"Damage Dealt:\t\t {sessionStats.DamageDealt:F0}";
+        sessionMoncargsDefeatedText.text = $"Moncargs Defeated:\t {sessionStats.moncargsDefeated}";
+        sessionHpRecoveredText.text = $"HP Recovered:\t\t {sessionStats.HPRecovered:F0}";
+        sessionHpLostText.text = $"HP Lost:\t\t\t {sessionStats.HPLost:F0}";
+        sessionManaRecoveredText.text = $"Mana Recovered:\t\t {sessionStats.ManaRecovered:F0}";
+        sessionManaSpentText.text = $"Mana Spent:\t\t {sessionStats.ManaSpent:F0}";
+        sessionPotionsUsedText.text = $"Potions Used:\t\t {sessionStats.PotionsUsed}";
+        sessionAbilitiesUsedText.text = $"Abilities Used:\t\t {sessionStats.AbilitiesUsed}";
+        sessionMoncargsCollectedText.text = $"Moncargs Collected:\t {sessionStats.moncargsCollected}";
     }
 }
