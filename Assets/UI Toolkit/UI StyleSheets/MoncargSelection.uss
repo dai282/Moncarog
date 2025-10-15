@@ -2,11 +2,11 @@
 .selection-panel {
     position: absolute;
     width: 450px;
-    height: 550px;
-    background-color: rgba(20, 20, 30, 0.95);
+    height: auto;
+    /*background-color: rgba(20, 20, 30, 10);*/
+    background-color: rgba(0, 255, 255, 255);
     top: 50%;
     left: 50%;
-    transform: translate(-50%, -50%);
     padding: 25px;
     border: 2px solid #e2892d;
     border-radius: 8px;
@@ -19,7 +19,6 @@
     color: #e2892d;
     margin-bottom: 20px;
     text-align: center;
-    font-weight: bold;
     -unity-font-style: bold;
 }
 
@@ -28,6 +27,7 @@
     height: auto;
     margin-bottom: 20px;
     background-color: rgba(40, 40, 50, 0.6);
+    /*background-color: rgba(40, 40, 50, 0.6);*/
     border-radius: 6px;
     border: 1px solid #444;
 }
@@ -36,8 +36,7 @@
 .moncarg-item {
     flex-direction: row;
     align-items: center;
-    padding: 8px;
-    margin: 2px;
+    height: auto;
     border-radius: 4px;
 }
 
