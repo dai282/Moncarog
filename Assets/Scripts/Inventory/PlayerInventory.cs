@@ -792,7 +792,7 @@ public sealed class PlayerInventory : MonoBehaviour
     {
         return StoredMoncargs.Any(m => m?.Details != null && m.IsEquipped);
     }
-    
+
     // Get all equipped moncargs    
     public List<MoncargInventoryAdapter> GetEquippedMoncargs()
     {
@@ -802,4 +802,41 @@ public sealed class PlayerInventory : MonoBehaviour
             .ToList();
     }
     #endregion
+    
+    public void LoadInventory(List<SavedStoredItem> savedItems, List<SavedStoredMoncarg> savedMoncargs)
+    {
+        StoredItems.Clear();
+        StoredMoncargs.Clear();
+
+        // Load Items
+        foreach (var savedItem in savedItems)
+        {
+            ItemDefinition itemDef = ResourceDB.Instance.GetItemByID(savedItem.itemDefinitionId);
+            if (itemDef != null)
+            {
+                StoredItems.Add(new StoredItem { Details = itemDef });
+            }
+        }
+
+        // Load Moncargs
+        foreach (var savedMoncarg in savedMoncargs)
+        {
+            MoncargInventoryAdapter moncargAdapter = ResourceDB.Instance.GetMoncargByID(savedMoncarg.moncargAdapterId);
+            if (moncargAdapter != null)
+            {
+                // IMPORTANT: We must not modify the ScriptableObject directly.
+                // We apply the saved health/mana to the data container inside the adapter.
+                moncargAdapter.moncargData.health = savedMoncarg.currentHealth;
+                moncargAdapter.moncargData.mana = (int)savedMoncarg.currentMana;
+
+                StoredMoncargs.Add(new StoredMoncargData
+                {
+                    Details = moncargAdapter,
+                    IsEquipped = savedMoncarg.isEquipped
+                });
+            }
+        }
+        Debug.Log($"Inventory loaded. {StoredItems.Count} items, {StoredMoncargs.Count} Moncargs.");
+        RefreshAfterClear(); // This will update all the UI correctly
+    }
 }

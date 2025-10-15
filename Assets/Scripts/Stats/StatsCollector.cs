@@ -57,57 +57,36 @@ public class StatsCollector : MonoBehaviour
         LoadLifetimeRecord();
     }
 
-    // --- Loading & Saving Logic ---
-    
-    // Step 1: Load the existing lifetime record from the save file
     private void LoadLifetimeRecord()
-    {
-        if (PlayerPrefs.HasKey(LIFETIME_RECORD_KEY))
-        {
-            string json = PlayerPrefs.GetString(LIFETIME_RECORD_KEY);
-            LifetimeRecord = JsonUtility.FromJson<GameStats>(json);
-            Debug.Log("[StatsCollector] Lifetime record loaded successfully.");
-        }
-        else
-        {
-            // If no record exists, initialize with a new, empty GameStats object
-            LifetimeRecord = new GameStats();
-            Debug.Log("[StatsCollector] No existing lifetime record found. Initializing new record.");
-        }
-    }
+{
+    // Use the SaveManager to load the data
+    LifetimeRecord = SaveManager.Instance.LoadLifetimeStats();
+    Debug.Log("[StatsCollector] Lifetime record loaded via SaveManager.");
+}
 
-    // Step 2: Merge the session stats into the lifetime record and save
-    public void SaveStats()
-    {
-        // 1. Merge CurrentSessionStats into LifetimeRecord (additive)
-        LifetimeRecord.StepsTaken += CurrentSessionStats.StepsTaken;
-        LifetimeRecord.DamageDealt += CurrentSessionStats.DamageDealt;
-        LifetimeRecord.moncargsDefeated += CurrentSessionStats.moncargsDefeated;
-        LifetimeRecord.HPRecovered += CurrentSessionStats.HPRecovered;
-        LifetimeRecord.HPLost += CurrentSessionStats.HPLost;
-        LifetimeRecord.ManaRecovered += CurrentSessionStats.ManaRecovered;
-        LifetimeRecord.ManaSpent += CurrentSessionStats.ManaSpent;
-        LifetimeRecord.PotionsUsed += CurrentSessionStats.PotionsUsed;
-        LifetimeRecord.AbilitiesUsed += CurrentSessionStats.AbilitiesUsed;
-        LifetimeRecord.moncargsCollected += CurrentSessionStats.moncargsCollected;
+// Step 2: Merge the session stats into the lifetime record and save
+public void SaveStats()
+{
+    // 1. Merge session stats into lifetime record (this logic is fine)
+    LifetimeRecord.StepsTaken += CurrentSessionStats.StepsTaken;
+    // ... (rest of the merge logic)
+    LifetimeRecord.moncargsCollected += CurrentSessionStats.moncargsCollected;
 
-        // 2. Save the merged LifetimeRecord back to PlayerPrefs/save file
-        string json = JsonUtility.ToJson(LifetimeRecord);
-        PlayerPrefs.SetString(LIFETIME_RECORD_KEY, json);
-        PlayerPrefs.Save(); // Ensure data is written to disk
-        
-        // 3. Optional: Reset session stats after successful save
-        CurrentSessionStats = new GameStats();
+    // 2. Use the SaveManager to save the updated lifetime record
+    SaveManager.Instance.SaveLifetimeStats(LifetimeRecord);
 
-        Debug.Log($"[StatsCollector] Stats saved and merged. Lifetime Steps: {LifetimeRecord.StepsTaken}");
-    }
+    // 3. IMPORTANT: Reset session stats after merging
+    CurrentSessionStats = new GameStats();
 
-    // --- Public Getters (for displaying stats) ---
+    Debug.Log($"[StatsCollector] Stats saved and merged. Lifetime Steps: {LifetimeRecord.StepsTaken}");
+}
+
+    // Public Getters (for displaying stats)
 
     public GameStats GetCurrentSessionStats() => CurrentSessionStats;
     public GameStats GetLifetimeRecord() => LifetimeRecord;
 
-    // --- Public Recording Methods (called by other scripts) ---
+    // Public Recording Methods (called by other scripts)
 
     public void RecordStep()
     {

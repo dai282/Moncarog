@@ -15,6 +15,8 @@ public class MapTraversalOverlay : MonoBehaviour
 
     private MapGenerator.MapNode currentNode;
     public GameObject mapRoot;
+    private List<int> traversalPath = new List<int>();
+
 
     // Tracks all visited nodes
     private HashSet<MapGenerator.MapNode> visitedNodes = new HashSet<MapGenerator.MapNode>();
@@ -55,6 +57,7 @@ public class MapTraversalOverlay : MonoBehaviour
         if (currentNode.Exits.Count == 0) return;
 
         MapGenerator.MapNode nextNode = null;
+        traversalPath.Add(direction);
 
         if (currentNode.Exits.Count == 1)
         {
@@ -64,6 +67,42 @@ public class MapTraversalOverlay : MonoBehaviour
         else if (currentNode.Exits.Count == 2)
         {
             // Two exits → A = index 0, D = index 1
+            nextNode = (direction == 0) ? currentNode.Exits[0] : currentNode.Exits[1];
+        }
+
+        if (nextNode != null)
+        {
+            currentNode = nextNode;
+            visitedNodes.Add(currentNode);
+            UpdateNodeColors();
+        }
+    }
+
+    public List<int> GetTraversalPath()
+    {
+        return traversalPath;
+    }
+    public void SetTraversalPath(List<int> path)
+    {
+        traversalPath = new List<int>(path);
+        // Replay the moves to get to the correct state
+        foreach (int direction in traversalPath)
+        {
+            MoveWithoutRecording(direction); // We need a version of Move that doesn't re-add to the list
+        }
+    }
+
+    // A version of Move that doesn't record the path again
+    private void MoveWithoutRecording(int direction)
+    {
+        if (currentNode.Exits.Count == 0) return;
+        MapGenerator.MapNode nextNode = null;
+        if (currentNode.Exits.Count == 1)
+        {
+            nextNode = currentNode.Exits[0];
+        }
+        else if (currentNode.Exits.Count == 2)
+        {
             nextNode = (direction == 0) ? currentNode.Exits[0] : currentNode.Exits[1];
         }
 

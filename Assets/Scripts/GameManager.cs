@@ -304,4 +304,54 @@ public class GameManager : MonoBehaviour
     {
         return new Vector3(4, -15, -2);
     }
+
+    // Add these new methods to GameManager.cs
+
+    // Public method for a "Continue" button
+    public void ContinueGame()
+    {
+        Debug.Log("Continue button pressed.");
+        RunData data = SaveManager.Instance.LoadRun();
+        if (data != null)
+        {
+            StartCoroutine(LoadGameFromData(data));
+        }
+        else
+        {
+            Debug.LogWarning("No save data found, starting a new game instead.");
+            StartNewGame();
+        }
+    }
+
+    // This coroutine orchestrates the entire loading process
+    private IEnumerator LoadGameFromData(RunData data)
+    {
+        Debug.Log("Loading game from saved data...");
+
+        // Hide UI during load if necessary
+        if (moveUI != null) moveUI.DisableAllButtons();
+
+        // 1. Load Inventory FIRST
+        if (PlayerInventory.Instance != null && data.items != null && data.moncargs != null)
+        {
+            PlayerInventory.Instance.LoadInventory(data.items, data.moncargs);
+        }
+
+        // 2. Load Map and Traversal Path
+        mapManager.LoadMapFromData(data.mapNodes);
+        yield return new WaitUntil(() => mapManager.isReady); // Wait for the map to be fully generated
+        mapManager.traversalOverlay.SetTraversalPath(data.traversalPath);
+
+        // 3. Load the correct room
+        (currentRoom, nextRooms) = mapManager.GetCurrentRoomInfo();
+        currentRoomGrid = board.GenerateRoom(currentRoom);
+        player.GetComponent<PlayerMovement>().roomGrid = currentRoomGrid;
+
+        // 4. Position the Player
+        player.transform.position = data.playerPosition;
+
+        // 5. Finalize
+        if (moveUI != null) moveUI.EnableAllButtons();
+        Debug.Log("Game load complete.");
+    }
 }

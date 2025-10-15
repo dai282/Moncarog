@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections.Generic;
+using System.Linq;
 
 public class MapManager : MonoBehaviour
 {
@@ -16,6 +17,7 @@ public class MapManager : MonoBehaviour
 
     [Header("References")]
     public MapTraversalOverlay traversalOverlay;
+    private MapGenerator.MapNode _startNode;
 
     private MapGenerator mapGenerator;
     private MapGenerator.MapNode startNode;
@@ -246,5 +248,84 @@ public class MapManager : MonoBehaviour
         public int doorSingle;
         public int doorLeft;
         public int doorRight;
+    }
+
+    public List<SerializableMapNode> GetSerializableMap()
+    {
+        var list = new List<SerializableMapNode>();
+        if (startNode == null) return list;
+
+        var allNodes = new HashSet<MapGenerator.MapNode>();
+
+        // Traverse the entire map graph from the start node
+        void Traverse(MapGenerator.MapNode node)
+        {
+            if (node == null || allNodes.Contains(node)) return;
+            allNodes.Add(node);
+            foreach (var exit in node.Exits) Traverse(exit);
+        }
+        Traverse(startNode);
+
+        // Convert each node to its serializable version
+        foreach (var node in allNodes)
+        {
+            list.Add(new SerializableMapNode
+            {
+                roomId = node.Room.Name,
+                roomType = (int)node.Room.Type,
+                position = node.Position,
+                exitRoomIds = node.Exits.Select(exit => exit.Room.Name).ToList()
+            });
+        }
+        return list;
+    }
+
+    public void LoadMapFromData(List<SerializableMapNode> mapData)
+    {
+        CleanupMap(); // Clear any existing map visuals and data
+
+        Dictionary<int, MapGenerator.MapNode> createdNodes = new Dictionary<int, MapGenerator.MapNode>();
+
+        // First pass: create all the node objects
+        foreach(var nodeData in mapData)
+        {
+            var newNode = new MapGenerator.MapNode
+            {
+                Room = new MapGenerator.Room { Name = nodeData.roomId, Type = (MapGenerator.RoomType)nodeData.roomType },
+                Position = nodeData.position
+            };
+            createdNodes.Add(nodeData.roomId, newNode);
+
+            if (nodeData.roomId == 1) // Identify the start node
+            {
+                startNode = newNode;
+            }
+        }
+
+        // Second pass: connect all the exits
+        foreach(var nodeData in mapData)
+        {
+            MapGenerator.MapNode currentNode = createdNodes[nodeData.roomId];
+            foreach(int exitId in nodeData.exitRoomIds)
+            {
+                if (createdNodes.ContainsKey(exitId))
+                {
+                    currentNode.Exits.Add(createdNodes[exitId]);
+                }
+            }
+        }
+
+        // Now that the graph is rebuilt, spawn the visuals and initialize traversal
+        if (startNode != null)
+        {
+            Debug.Log("Map graph rebuilt from save data. Displaying map...");
+            DisplayMap(startNode, new Vector3(0, -14, 0));
+            traversalOverlay.Initialize(startNode, nodeToGameObjectMap);
+            isReady = true;
+        }
+        else
+        {
+            Debug.LogError("Failed to rebuild map: Start node not found in saved data.");
+        }
     }
 }
