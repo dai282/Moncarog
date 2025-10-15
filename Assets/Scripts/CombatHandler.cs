@@ -9,6 +9,7 @@ public class CombatHandler: MonoBehaviour
     [SerializeField] private CombatHandlerUI combatUI;
     [SerializeField] private MoncargSelectionUI selectionUI;
     [SerializeField] private ForceEquipPromptUI forceEquipUI;
+    [SerializeField] private CameraManager cam;
 
     [Header("References")]
     public GameObject victoryScreen;
@@ -109,6 +110,9 @@ public class CombatHandler: MonoBehaviour
 
     public void BeginBattle()
     {
+        //Move the Camera
+        cam.LockToPoint();
+
         //hide the room grid
         FindFirstObjectByType<BoardManager>().disableRoom();
 
@@ -660,6 +664,9 @@ public class CombatHandler: MonoBehaviour
 
         //reenable move buttons
         GameManager.Instance.moveUI.EnableAllButtons();
+
+        //Return camera to player
+        cam.ResumeFollowing();
     }
 
     private void resetEnemy()
