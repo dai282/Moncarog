@@ -41,11 +41,11 @@ public class MoncargData
     public void InitializeBaseStats()
     {
         // Set base stats (these should be set in the inspector for each Moncarg)
-        baseMaxHealth = maxHealth;
-        baseAttack = attack;
-        baseDefense = defense;
-        baseSpeed = speed;
-        baseMaxMana = maxMana;
+        maxHealth = baseMaxHealth;
+        attack = baseAttack;
+        defense = baseDefense;
+        speed = baseSpeed;
+        maxMana = baseMaxMana;
 
         level = 1;
         exp = 0;
@@ -71,9 +71,10 @@ public class MoncargData
         float speedScaling = 0.08f;     // 8% increase per level
         float manaScaling = 0.10f;      // 10% increase per level
 
-        maxHealth = baseMaxHealth * (1 + (level - 1) * healthScaling);
-        attack = baseAttack * (1 + (level - 1) * attackScaling);
-        defense = baseDefense * (1 + (level - 1) * defenseScaling);
+        //round statis to int
+        maxHealth = Mathf.RoundToInt(baseMaxHealth * (1 + (level - 1) * healthScaling));
+        attack = Mathf.RoundToInt(baseAttack * (1 + (level - 1) * attackScaling));
+        defense = Mathf.RoundToInt(baseDefense * (1 + (level - 1) * defenseScaling));
         speed = Mathf.RoundToInt(baseSpeed * (1 + (level - 1) * speedScaling));
         maxMana = Mathf.RoundToInt(baseMaxMana * (1 + (level - 1) * manaScaling));
 

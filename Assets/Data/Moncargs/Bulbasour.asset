@@ -16,18 +16,23 @@ MonoBehaviour:
   Icon: {fileID: -8576927913760934702, guid: ee1b26e7dc8f24746a9bd69d947391a8, type: 3}
   moncargData:
     moncargName: Bulbasour
-    maxHealth: 500
-    health: 500
-    attack: 10
-    defense: 10
+    baseMaxHealth: 760
+    baseAttack: 15
+    baseDefense: 13
+    baseSpeed: 2
+    baseMaxMana: 666
+    maxHealth: 760
+    health: 760
+    attack: 15
+    defense: 13
     speed: 2
     exp: 0
     level: 1
-    mana: 500
-    maxMana: 500
+    mana: 666
+    maxMana: 666
     catchChance: 0.1
     dodgeChance: 0.1
-    type: 0
+    type: 1
     active: 1
     skillset:
     - {fileID: 11400000, guid: 411e2c1d2e0c3e847a9c8fa5794f907d, type: 2}
@@ -36,6 +41,7 @@ MonoBehaviour:
     - {fileID: 11400000, guid: 8e2369e9803aa844cb6493fee4c23d99, type: 2}
     isBoss: 0
     isMiniBoss: 0
+    expToNextLevel: 100
   SlotDimension:
     Height: 1
     Width: 1
