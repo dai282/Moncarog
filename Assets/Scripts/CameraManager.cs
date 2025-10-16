@@ -10,6 +10,10 @@ public class CameraManager : MonoBehaviour
     private enum CameraMode { Following, Locked }
     private CameraMode currentMode = CameraMode.Following;
 
+    //setting boundary limits for the camera
+    public float minX, maxX;
+    public float minY, maxY;
+
 
     private void Awake()
     {
@@ -21,7 +25,14 @@ public class CameraManager : MonoBehaviour
         switch (currentMode)
         {
             case CameraMode.Following:
-                transform.position = target.position + offset;
+                Vector3 boundPosition = target.position + offset;
+
+                //applying boundaries to camera position
+                boundPosition.x = Mathf.Clamp(boundPosition.x, minX, maxX);
+                boundPosition.y = Mathf.Clamp(boundPosition.y, minY, maxY);
+
+                transform.position = boundPosition;
+               
                 break;
             case CameraMode.Locked:
                 

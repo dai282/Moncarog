@@ -1605,7 +1605,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CameraManager
   target: {fileID: 2020702137}
-  lockPointTarget: {x: 4, y: 0, z: -10}
+  lockPointTarget: {x: 0, y: 0, z: -10}
+  minX: 0.5
+  maxX: 8.5
+  minY: -11.5
+  maxY: 7.5
 --- !u!1 &500144454
 GameObject:
   m_ObjectHideFlags: 0
