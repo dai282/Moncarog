@@ -41,11 +41,21 @@ public class MoncargData
     public void InitializeBaseStats()
     {
         // Set base stats (these should be set in the inspector for each Moncarg)
+        
         maxHealth = baseMaxHealth;
         attack = baseAttack;
         defense = baseDefense;
         speed = baseSpeed;
         maxMana = baseMaxMana;
+
+
+        // need to change to this and run once to initialize base stats, then comment out 
+        /*
+        baseMaxHealth = maxHealth;
+        baseAttack = attack;
+        baseDefense = defense;
+        baseSpeed = speed;
+        baseMaxMana = maxMana; */
 
         level = 1;
         exp = 0;
