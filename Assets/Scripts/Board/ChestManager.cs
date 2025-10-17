@@ -78,6 +78,7 @@ public class ChestManager : MonoBehaviour
             ShowSelectedMoncargCard(selectedMoncarg);
         }
 
+        MovementUI.Instance.EnableAllButtons();
 
     }
 

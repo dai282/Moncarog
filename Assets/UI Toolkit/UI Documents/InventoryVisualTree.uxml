@@ -1,6 +1,6 @@
 <ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
     <Style src="project://database/Assets/InventoryStyle.uss?fileID=7433441132597879392&amp;guid=e645ff5d96843f342949745b608cc47a&amp;type=3#InventoryStyle" />
-    <ui:VisualElement name="Container" style="flex-grow: 1; background-color: rgb(34, 22, 28); display: none;">
+    <ui:VisualElement name="Container" style="flex-grow: 1; background-color: rgb(34, 22, 28); display: flex;">
         <ui:VisualElement name="Header" style="flex-direction: row; height: auto; max-height: 150px; min-height: 100px; padding-left: 10px; padding-right: 10px; padding-top: 0; padding-bottom: 0; border-bottom-color: rgb(255, 124, 0); border-bottom-width: 1px;">
             <ui:Label text="INVENTORY" display-tooltip-when-elided="true" name="lbl_Header" class="header_Main header_main" style="flex-grow: 1; -unity-text-align: middle-left; color: rgb(255, 255, 255); -unity-font-definition: url(&quot;project://database/Assets/BoldPixels/Assets/font/BoldPixels.ttf?fileID=12800000&amp;guid=71a55b0538d48354b87afab937af74d2&amp;type=3#BoldPixels&quot;); font-size: 70%;" />
             <ui:VisualElement name="Container_Level" style="flex-grow: 1; flex-direction: row; justify-content: center; padding-top: 10px;">
