@@ -31,7 +31,7 @@ public class AlertManager : MonoBehaviour
     {
         if (alertText != null)
         {
-            alertText.text = message;
+            alertText.text = message.ToUpper();
         }
 
         if (alertPanel != null)

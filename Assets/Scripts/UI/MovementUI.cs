@@ -4,6 +4,19 @@ using UnityEngine.EventSystems;
 public class MovementUI : MonoBehaviour
 {
     public GameObject[] buttons; // drag & drop buttons in Inspector
+    public static MovementUI Instance { get; private set; }
+
+    private void Awake()
+    {
+        // Singleton pattern to ensure only one instance of GameManager exists
+        if (Instance != null)
+        {
+            Destroy(gameObject);
+            return;
+        }
+
+        Instance = this;
+    }
 
     public void DisableAllButtons()
     {

@@ -62,6 +62,9 @@ public class ChestManager : MonoBehaviour
             }
         }
 
+        //Disable movement buttons
+        MovementUI.Instance.DisableAllButtons();
+
         moncargSelectionPanel.SetActive(true);
     }
 
