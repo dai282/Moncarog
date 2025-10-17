@@ -14,8 +14,6 @@ public class PlayerMovement : MonoBehaviour
 
     [SerializeField] private AudioClip walkingClip;
 
-    private bool isPlayingFootstep = false;
-
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -40,21 +38,21 @@ public class PlayerMovement : MonoBehaviour
             {
                 // Move to the target position
                 rb.MovePosition(targetPosition);
+
+                //play walking sound
+                if (walkingClip != null)
+                {
+                    SoundFxManager.Instance.PlayWalkingSoundFXClip(walkingClip, transform, 1f);
+                }
             }
         }
-        if (movementDirection != Vector2.zero && !isPlayingFootstep)
+        else
         {
-            StartCoroutine(PlayWalkingSound());
+            // Stop walking sound when not moving
+            SoundFxManager.Instance.StopWalkingSound();
         }
     }
 
-    IEnumerator PlayWalkingSound()
-    {
-        isPlayingFootstep = true;
-        SoundFxManager.Instance.PlaySoundFXClip(walkingClip, transform, 1f);
-        yield return new WaitForSeconds(walkingClip.length);
-        isPlayingFootstep = false;
-    }
 
     bool IsPositionWalkable(Vector2 position)
     {
