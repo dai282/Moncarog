@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
+using System.Collections;
 
 public class PlayerMovement : MonoBehaviour
 {
@@ -10,6 +11,10 @@ public class PlayerMovement : MonoBehaviour
     private Rigidbody2D rb;
     private Vector2 movementDirection = Vector2.zero;
     private SpriteRenderer spriteRenderer;
+
+    [SerializeField] private AudioClip walkingClip;
+
+    private bool isPlayingFootstep = false;
 
     void Start()
     {
@@ -37,6 +42,18 @@ public class PlayerMovement : MonoBehaviour
                 rb.MovePosition(targetPosition);
             }
         }
+        if (movementDirection != Vector2.zero && !isPlayingFootstep)
+        {
+            StartCoroutine(PlayWalkingSound());
+        }
+    }
+
+    IEnumerator PlayWalkingSound()
+    {
+        isPlayingFootstep = true;
+        SoundFxManager.Instance.PlaySoundFXClip(walkingClip, transform, 1f);
+        yield return new WaitForSeconds(walkingClip.length);
+        isPlayingFootstep = false;
     }
 
     bool IsPositionWalkable(Vector2 position)

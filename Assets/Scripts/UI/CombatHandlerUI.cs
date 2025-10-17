@@ -87,7 +87,7 @@ public class CombatHandlerUI : MonoBehaviour
         enemyMana = root.Q<ProgressBar>("EnemyMana");
 
         // Set up colors
-        SetupProgressBarColors();
+        //SetupProgressBarColors();
 
         // Register callbacks
         RegisterCallbacks();
@@ -107,6 +107,7 @@ public class CombatHandlerUI : MonoBehaviour
         var enemyManaProgress = enemyMana.Q(className: "unity-progress-bar__progress");
         enemyManaProgress.style.backgroundColor = new StyleColor(Color.blue);
     }
+
 
     private void RegisterCallbacks()
     {

@@ -47,23 +47,6 @@ public class MoncargSelectionUI : MonoBehaviour
         }
     }
 
-    /*
-    private void SetupListView()
-    {
-        if (moncargList != null)
-        {
-            moncargList.makeItem = () => new Label();
-            moncargList.bindItem = (element, index) => {
-                if (element is Label label && index < equippedMoncargs.Count)
-                {
-                    label.text = equippedMoncargs[index].FriendlyName;
-                }
-            };
-
-            moncargList.selectionChanged += OnSelectionChanged;
-        }
-    }*/
-
     private void OnSelectionChanged(IEnumerable<object> selectedItems)
     {
         var selected = selectedItems.FirstOrDefault();
@@ -143,8 +126,21 @@ public class MoncargSelectionUI : MonoBehaviour
                     infoContainer.AddToClassList("info-container");
 
                     // Name and level
-                    var nameLabel = new Label($"{moncargData.FriendlyName} - Lv. {moncargData.moncargData.level}");
+                    var nameLabel = new Label($"{moncargData.FriendlyName}");
                     nameLabel.AddToClassList("moncarg-name");
+
+                    var levelLabel = new Label($"Lv. {moncargData.moncargData.level}");
+                    levelLabel.AddToClassList("moncarg-level");
+
+                    var nameandLevelContainer = new VisualElement();
+                    infoContainer.AddToClassList("name-level-container");
+
+                    nameandLevelContainer.Add(nameLabel);
+                    nameandLevelContainer.Add(levelLabel);
+
+                    //Type and stat container
+                    var typeAndStatContainer = new VisualElement();
+                    infoContainer.AddToClassList("type-stat-container");
 
                     // Type with appropriate color class
                     var typeLabel = new Label(moncargData.moncargData.type.ToString());
@@ -176,10 +172,12 @@ public class MoncargSelectionUI : MonoBehaviour
                     statsContainer.Add(healthContainer);
                     statsContainer.Add(manaContainer);
 
+                    typeAndStatContainer.Add(typeLabel);
+                    typeAndStatContainer.Add(statsContainer);
+
                     // Build hierarchy
-                    infoContainer.Add(nameLabel);
-                    infoContainer.Add(typeLabel);
-                    infoContainer.Add(statsContainer);
+                    infoContainer.Add(nameandLevelContainer);
+                    infoContainer.Add(typeAndStatContainer);
 
                     element.Add(icon);
                     element.Add(infoContainer);
