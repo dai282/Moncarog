@@ -5,7 +5,10 @@ public class SoundFxManager : MonoBehaviour
     public static SoundFxManager Instance { get; private set; }
 
     [SerializeField] private AudioSource soundFXObject;
+
     private AudioSource currentWalkingAudio; // Track walking audio
+
+    [SerializeField] private AudioClip buttonClip;
 
     private void Awake()
     {
@@ -16,6 +19,27 @@ public class SoundFxManager : MonoBehaviour
         }
 
         Instance = this;
+    }
+
+    public void PlayButtonFXClip()
+    {
+        //spawn game object
+        AudioSource audioSource = Instantiate(soundFXObject, Vector3.zero, Quaternion.identity);
+
+        //assign the audio clip
+        audioSource.clip = buttonClip;
+
+        //assign volume
+        audioSource.volume = 1f;
+
+        //play sound
+        audioSource.Play();
+
+        //get length of clip
+        float clipLength = buttonClip.length;
+
+        //destroy game object after playing
+        Destroy(audioSource.gameObject, clipLength);
     }
 
     public void PlaySoundFXClip(AudioClip audioClip, Transform spawnTransform, float volume)

@@ -6,6 +6,7 @@ using System.Linq;
 
 public class CombatHandler: MonoBehaviour
 {
+    #region Variables
     [SerializeField] private CombatHandlerUI combatUI;
     [SerializeField] private MoncargSelectionUI selectionUI;
     [SerializeField] private ForceEquipPromptUI forceEquipUI;
@@ -23,6 +24,13 @@ public class CombatHandler: MonoBehaviour
     [SerializeField] [Range(0f, 1f)] private float rareDropChance = 0.15f; // 15% chance for rare
     [SerializeField] [Range(0f, 1f)] private float legendaryDropChance = 0.05f; // 5% chance for legendary
 
+    [Header("Sound Effects")]
+    [SerializeField] private AudioClip normalAttackSoundFX;
+    [SerializeField] private AudioClip fireAttackSoundFX;
+    [SerializeField] private AudioClip waterAttackSoundFX;
+    [SerializeField] private AudioClip plantAttackSoundFX;
+    [SerializeField] private AudioClip levelUpSoundFX;
+
     private Moncarg player;
     private Moncarg enemy;
     private Moncarg currentTurn;
@@ -31,6 +39,8 @@ public class CombatHandler: MonoBehaviour
     private GameObject enemyObj;
     private bool waitingForPlayerToEquip = false;
     private bool encounterStarted = false;
+
+    #endregion
 
     private void Awake()
     {
@@ -291,6 +301,8 @@ public class CombatHandler: MonoBehaviour
     #region Attack Execution
     public void ExecuteAttack(Moncarg attacker, Moncarg defender, SkillDefinition attackChoice)
     {
+        PlayAttackSoundFX(attackChoice);
+
         if (TryDodge(defender))
         {
             Debug.Log($"{defender.moncargName} dodged the attack!");
@@ -373,6 +385,26 @@ public class CombatHandler: MonoBehaviour
         }
 
         return Mathf.RoundToInt(damage);
+    }
+
+    private void PlayAttackSoundFX(SkillDefinition attackChoice)
+    {
+        if (attackChoice.type == ElementalType.Fire)
+        {
+            SoundFxManager.Instance.PlaySoundFXClip(fireAttackSoundFX, transform, 1f);
+        }
+        else if (attackChoice.type == ElementalType.Water)
+        {
+            SoundFxManager.Instance.PlaySoundFXClip(waterAttackSoundFX, transform, 1f);
+        }
+        else if (attackChoice.type == ElementalType.Plant)
+        {
+            SoundFxManager.Instance.PlaySoundFXClip(plantAttackSoundFX, transform, 1f);
+        }
+        else
+        {
+            SoundFxManager.Instance.PlaySoundFXClip(normalAttackSoundFX, transform, 1f);
+        }
     }
     #endregion
 
@@ -459,6 +491,8 @@ public class CombatHandler: MonoBehaviour
 
     private void OnSwitchClicked()
     {
+        SoundFxManager.Instance.PlayButtonFXClip();
+
         var equippedMoncargs = PlayerInventory.Instance.StoredMoncargs
            .Where(m => m.IsEquipped)
            .Select(m => m.Details)
@@ -530,6 +564,8 @@ public class CombatHandler: MonoBehaviour
         {
             AlertManager.Instance.ShowAlert($"{moncargName} reached level {newLevel}!", 3f);
         }
+
+        SoundFxManager.Instance.PlaySoundFXClip(levelUpSoundFX, transform, 1f);
     }
     #endregion
 

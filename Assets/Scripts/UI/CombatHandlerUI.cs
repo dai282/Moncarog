@@ -189,6 +189,7 @@ public class CombatHandlerUI : MonoBehaviour
 
     public void ShowFightPanel()
     {
+        SoundFxManager.Instance.PlayButtonFXClip();
         optionsContainer.style.display = DisplayStyle.None;
         fightContainer.style.display = DisplayStyle.Flex;
         catchContainer.style.display = DisplayStyle.None;
@@ -196,6 +197,7 @@ public class CombatHandlerUI : MonoBehaviour
 
     public void ShowOptionsPanel()
     {
+        SoundFxManager.Instance.PlayButtonFXClip();
         fightContainer.style.display = DisplayStyle.None;
         optionsContainer.style.display = DisplayStyle.Flex;
         catchContainer.style.display = DisplayStyle.None;
@@ -203,6 +205,7 @@ public class CombatHandlerUI : MonoBehaviour
 
     public void ShowCatchPanel()
     {
+        SoundFxManager.Instance.PlayButtonFXClip();
         Debug.Log("Showing Catch Panel");
         optionsContainer.style.display = DisplayStyle.None;
         fightContainer.style.display = DisplayStyle.None;

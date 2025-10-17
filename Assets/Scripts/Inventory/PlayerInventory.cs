@@ -252,6 +252,7 @@ public sealed class PlayerInventory : MonoBehaviour
 
     public void HideInventory()
     {
+        SoundFxManager.Instance.PlayButtonFXClip();
         if (m_Root != null)
         {
             m_Root.style.display = DisplayStyle.None;
@@ -267,6 +268,7 @@ public sealed class PlayerInventory : MonoBehaviour
     #region Button Actions
     private void OnEquipButtonClicked()
     {
+        SoundFxManager.Instance.PlayButtonFXClip();
         if (m_CurrentMode == InventoryMode.Items && m_CurrentSelectedItem != null)
         {
             if (m_CurrentSelectedItem.isPowerup)
@@ -437,6 +439,7 @@ public sealed class PlayerInventory : MonoBehaviour
     private void SwitchToItemsMode()
     {
         Debug.Log("Switching to Items mode");
+        SoundFxManager.Instance.PlayButtonFXClip();
         m_CurrentMode = InventoryMode.Items;
         SetActiveButton(m_ItemsButton);
         RefreshInventoryDisplay();
@@ -447,6 +450,7 @@ public sealed class PlayerInventory : MonoBehaviour
     public void SwitchToMoncargMode()
     {
         Debug.Log("Switching to Moncargs mode");
+        SoundFxManager.Instance.PlayButtonFXClip();
         m_CurrentMode = InventoryMode.Moncargs;
         SetActiveButton(m_MoncargButton);
         RefreshInventoryDisplay();
