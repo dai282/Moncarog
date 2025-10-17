@@ -18,6 +18,8 @@ public class GameManager : MonoBehaviour
     private List<MapManager.RoomInfo> nextRooms;
     private RoomGrid currentRoomGrid;
 
+    private int roomLevel = 1;
+
     public MoncargDatabase moncargDatabase;
 
     //static instance that stores reference to the GameManager. public get and private set
@@ -61,36 +63,6 @@ public class GameManager : MonoBehaviour
         //reset moncarg database
         moncargDatabase.resetMoncargDatabase();
 
-        // Debug existing inventory
-        if (PlayerInventory.Instance != null)
-        {
-            int moncargCount = PlayerInventory.Instance.GetCurrentMoncargCount();
-            int equippedCount = PlayerInventory.Instance.StoredMoncargs.Count(m => m?.Details != null && m.IsEquipped);
-            
-            Debug.Log($"Existing Moncargs in inventory: {moncargCount}");
-            Debug.Log($"Equipped Moncargs: {equippedCount}");
-            
-            // List all Moncargs
-            for (int i = 0; i < PlayerInventory.Instance.StoredMoncargs.Count; i++)
-            {
-                var moncarg = PlayerInventory.Instance.StoredMoncargs[i];
-                if (moncarg?.Details != null)
-                {
-                    Debug.Log($"Moncarg {i}: {moncarg.Details.FriendlyName}, Equipped: {moncarg.IsEquipped}");
-                }
-            }
-            
-            // Only add starting Moncarg if player has no Moncargs
-            if (moncargCount == 0)
-            {
-                Debug.Log("No Moncargs found, adding starting Moncarg");
-                AddStartingMoncarg();
-            }
-            else
-            {
-                Debug.Log("Existing Moncargs found, skipping starting Moncarg");
-            }
-        }
 
         //initalize the map and get current room
         mapManager.Init();
@@ -151,8 +123,6 @@ public class GameManager : MonoBehaviour
             // Refresh UI after clearing
             PlayerInventory.Instance.RefreshAfterClear();
             
-            // Add starting Moncarg
-            AddStartingMoncarg();
         }
 
         //initalize the map and get current room
@@ -200,42 +170,6 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    // ADDED: Add starting Moncarg for new game
-    private void AddStartingMoncarg()
-    {
-        if (startingMoncargPrefab != null)
-        {
-            GameObject startingMoncargObj = Instantiate(startingMoncargPrefab);
-            
-            // Convert to player-owned
-            Moncarg startingMoncarg = startingMoncargObj.GetComponent<Moncarg>();
-            if (startingMoncarg != null)
-            {
-                startingMoncarg.role = Moncarg.moncargRole.PlayerOwned;
-                
-                // Reset stats to full
-                startingMoncarg.InitStats();
-                startingMoncarg.health = startingMoncarg.maxHealth;
-                startingMoncarg.mana = startingMoncarg.maxMana;
-                
-                // Add to inventory
-                StoredMoncarg storedMoncarg = startingMoncargObj.GetComponent<StoredMoncarg>();
-                if (storedMoncarg != null)
-                {
-                    PlayerInventory.Instance.AddMoncargToInventory(storedMoncarg.Details, true); // Auto-equip
-                }
-            }
-            
-            // Destroy the temporary object
-            DestroyImmediate(startingMoncargObj);
-            
-            Debug.Log("Added starting Moncarg to player inventory");
-        }
-        else
-        {
-            Debug.LogWarning("No starting Moncarg prefab assigned!");
-        }
-    }
 
     void Update()
     {
@@ -268,6 +202,9 @@ public class GameManager : MonoBehaviour
 
     private void LoadNextRoom(MapManager.RoomInfo nextRoom)
     {
+        // Update enemy levels for the new room
+        MoncargDatabase.Instance.SetRoomLevel(roomLevel++);
+
         // Destroy current room
         if (currentRoomGrid != null)
         {

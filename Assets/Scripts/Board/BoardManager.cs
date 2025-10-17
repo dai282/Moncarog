@@ -58,6 +58,12 @@ public class BoardManager : MonoBehaviour
         //spawn encounter cells based on room ID here instead of immediately in RoomGrid
         roomGrid.PlaceEncounterTiles(roomID);
 
+        if (roomID == 1)
+        {
+            //starting room, spawn chest
+            roomGrid.AutoRegisterChests();
+        }
+
         return roomGrid;
     }
 

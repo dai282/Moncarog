@@ -30,6 +30,7 @@ public class CombatHandler: MonoBehaviour
     private MoncargDatabase moncargDatabase;
     private GameObject enemyObj;
     private bool waitingForPlayerToEquip = false;
+    private bool encounterStarted = false;
 
     private void Awake()
     {
@@ -57,6 +58,8 @@ public class CombatHandler: MonoBehaviour
     {
         //disable move buttons
         GameManager.Instance.moveUI.DisableAllButtons();
+
+        encounterStarted = true;
 
         //Create enemy Moncarg instance for battle
         moncargDatabase = GameManager.Instance.moncargDatabase;
@@ -102,7 +105,7 @@ public class CombatHandler: MonoBehaviour
         enemyObj.SetActive(false);
 
         //auto equip moncargs if none are equipped
-        //AutoEquipMoncargs();
+        AutoEquipMoncargs();
 
         //start moncarg selection
         StartCoroutine(StartMoncargSelection());
@@ -369,7 +372,7 @@ public class CombatHandler: MonoBehaviour
             Debug.Log("Plant vs Fire, " + attacker.moncargName + " damage is decreased by 20%!");
         }
 
-        return damage;
+        return Mathf.RoundToInt(damage);
     }
     #endregion
 
@@ -471,6 +474,9 @@ public class CombatHandler: MonoBehaviour
 
     private void OnEnemyDefeated()
     {
+        //Distribute Experience
+        DistributeExpToPlayerMoncargs(enemy.level);
+
         // ADDED: Generate item drops when enemy is defeated
         GenerateItemDrops();
 
@@ -482,39 +488,50 @@ public class CombatHandler: MonoBehaviour
         {
             victoryScreen.SetActive(true);
         }
-        else{
+        else
+        {
             Cleanup();
         }
         
-        //Experience gaining logic
-        /*
-        Debug.Log("You won the battle!");
-        // Reward player with experience points
-        int expGained = enemy.exp;
-        player.exp += expGained;
-        Debug.Log(player.moncargName + " gained " + expGained + " experience points!");
 
-        // Check for level up
-        if (player.exp >= player.level * 100) // Example leveling formula
-        {
-            player.level++;
-            player.exp = 0; // Reset experience or carry over excess
-            player.maxHealth += 10; // Increase stats on level up
-            player.attack += 5;
-            player.defense += 5;
-            player.speed += 2;
-            player.maxMana += 5;
-            player.health = player.maxHealth; // Heal to full on level up
-            player.mana = player.maxMana; // Restore mana on level up
-
-            Debug.Log(player.moncargName + " leveled up to level " + player.level + "!");
-        }
-
-        Cleanup();
-        combatUI.rootVisualElement.style.display = DisplayStyle.None;
-        // Return to map or previous state
-        */
     }
+
+    #region Distribute Experience
+    private void DistributeExpToPlayerMoncargs(int enemyLevel)
+    {
+        if (PlayerInventory.Instance == null) return;
+
+        foreach (var storedMoncarg in PlayerInventory.Instance.StoredMoncargs)
+        {
+            if (storedMoncarg?.Details?.moncargData != null)
+            {
+                MoncargData data = storedMoncarg.Details.moncargData;
+                int expGained = data.GetExpForDefeating(enemyLevel);
+                bool leveledUp = data.AddExp(expGained);
+
+                Debug.Log($"{data.moncargName} gained {expGained} EXP (Total: {data.exp}/{data.expToNextLevel})");
+
+                if (leveledUp)
+                {
+                    // Show level up UI or effects
+                    ShowLevelUpEffect(data.moncargName, data.level);
+                }
+            }
+        }
+    }
+
+    private void ShowLevelUpEffect(string moncargName, int newLevel)
+    {
+        // You can implement UI popup or visual effects here
+        Debug.Log($"{moncargName} reached level {newLevel}!");
+
+        // Example: Show alert message
+        if (AlertManager.Instance != null)
+        {
+            AlertManager.Instance.ShowAlert($"{moncargName} reached level {newLevel}!", 3f);
+        }
+    }
+    #endregion
 
     // ADDED: Item drop system methods
     #region Item Drop System
@@ -644,6 +661,8 @@ public class CombatHandler: MonoBehaviour
 
     private void Cleanup()
     {
+        encounterStarted = false;
+
         combatUI.Cleanup();
         combatUI.ShowCombatUI(false);
 
@@ -804,22 +823,28 @@ public class CombatHandler: MonoBehaviour
 
     private void OnSelectionCancelled()
     {
-        // If selection was cancelled but we have equipped moncargs, use the first one
-        var equippedMoncargs = PlayerInventory.Instance.StoredMoncargs
-            .Where(m => m.IsEquipped)
-            .Select(m => m.Details)
-            .ToList();
+        //Auto selection and force equip only applies at the beginning of encounter
+        //this prevents counting a turn when player switches Moncargs mid battle
+        if (!encounterStarted)
+        {
+            // If selection was cancelled but we have equipped moncargs, use the first one
+            var equippedMoncargs = PlayerInventory.Instance.StoredMoncargs
+                .Where(m => m.IsEquipped)
+                .Select(m => m.Details)
+                .ToList();
 
-        if (equippedMoncargs.Count > 0)
-        {
-            Debug.Log("Selection cancelled, but equipped Moncargs found. Using the first one.");
-            OnMoncargSelected(equippedMoncargs[0]);
+            if (equippedMoncargs.Count > 0)
+            {
+                Debug.Log("Selection cancelled, but equipped Moncargs found. Using the first one.");
+                OnMoncargSelected(equippedMoncargs[0]);
+            }
+            else
+            {
+                // If no equipped moncargs after cancellation, force equip
+                ForcePlayerToEquipMoncarg();
+            }
         }
-        else
-        {
-            // If no equipped moncargs after cancellation, force equip
-            ForcePlayerToEquipMoncarg();
-        }
+        
     }
 
     private void OnDestroy()

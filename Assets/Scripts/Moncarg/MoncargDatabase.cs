@@ -7,6 +7,10 @@ public class MoncargDatabase : MonoBehaviour
     public GameObject[] allMoncargs;
     public List<GameObject> availableEnemyMoncargs = new List<GameObject>(); // Moncargs that can be encountered as enemies
 
+    private int currentRoomLevel = 1;
+    private const int TOTAL_ROOMS = 12;
+    private const int MAX_LEVEL = 12;
+
     //static instance that stores reference to the GameManager. public get and private set
     public static MoncargDatabase Instance { get; private set; }
 
@@ -22,6 +26,12 @@ public class MoncargDatabase : MonoBehaviour
         Instance = this;
     }
 
+    public void SetRoomLevel(int roomNumber)
+    {
+        currentRoomLevel = Mathf.Clamp(roomNumber, 1, TOTAL_ROOMS);
+        UpdateEnemyLevels();
+    }
+
     public void resetMoncargDatabase()
     {
         foreach (GameObject moncarg in allMoncargs)
@@ -29,9 +39,10 @@ public class MoncargDatabase : MonoBehaviour
             StoredMoncarg storedMoncarg = moncarg.GetComponent<StoredMoncarg>();
             if (storedMoncarg != null)
             {
-                storedMoncarg.Details.resetData();
+                storedMoncarg.Details.moncargData.InitializeBaseStats();
             }
         }
+        currentRoomLevel = 1;
         UpdateEnemyDatabase();
     }
 
@@ -60,6 +71,35 @@ public class MoncargDatabase : MonoBehaviour
         Debug.Log($"Enemy database updated. Available enemies: {availableEnemyMoncargs.Count}/{allMoncargs.Length}");
     }
 
+    private void UpdateEnemyLevels()
+    {
+        // Enemy level scales with room progression
+        // Room 1: level 1, Room 12: level 12 (linear progression)
+        int targetLevel = Mathf.Clamp(currentRoomLevel, 1, MAX_LEVEL);
+
+        foreach (GameObject moncargPrefab in availableEnemyMoncargs)
+        {
+            StoredMoncarg storedMoncarg = moncargPrefab.GetComponent<StoredMoncarg>();
+            if (storedMoncarg != null && storedMoncarg.Details != null)
+            {
+                MoncargData data = storedMoncarg.Details.moncargData;
+
+                // Don't scale bosses - they have fixed levels
+                if (!data.isBoss && !data.isMiniBoss)
+                {
+                    // Set enemy level based on room progression
+                    data.level = targetLevel;
+                    data.ScaleStatsToLevel();
+                    data.reset(); // Reset health/mana
+                }
+            }
+        }
+
+        Debug.Log($"Enemy levels updated to level {targetLevel} for room {currentRoomLevel}");
+    }
+
+
+
     private HashSet<string> GetOwnedMoncargNames()
     {
         HashSet<string> ownedNames = new HashSet<string>();
@@ -76,5 +116,60 @@ public class MoncargDatabase : MonoBehaviour
         }
 
         return ownedNames;
+    }
+
+    // Add this to MoncargDatabase.cs
+    public List<GameObject> GetStarterMoncargs()
+    {
+        if (allMoncargs.Length == 0) return null;
+
+        // Filter for starter-appropriate Moncargs (you can customize this logic)
+        List<GameObject> starterMoncargs = new List<GameObject>();
+        foreach (GameObject moncarg in allMoncargs)
+        {
+
+            StoredMoncarg stored = moncarg.GetComponent<StoredMoncarg>();
+            MoncargData data = stored.Details.moncargData;
+
+            //exclude boss and miniboss moncargs
+            if (!(data.isBoss || data.isMiniBoss))
+            {
+                starterMoncargs.Add(moncarg);
+            }
+
+        }
+
+        // If no filtered Moncargs, use all available
+        if (starterMoncargs.Count == 0)
+            starterMoncargs = allMoncargs.ToList();
+
+        List<GameObject> moncargsToChooseFrom = new List<GameObject>();
+
+        //3 starter moncargs to choose from
+        for (int i = 0; i < 3; i++)
+        {
+            int randomIndex = Random.Range(0, starterMoncargs.Count);
+
+            //make sure all moncargs are different types
+            if (moncargsToChooseFrom.Count > 0)
+            {
+                StoredMoncarg chosen = starterMoncargs[randomIndex].GetComponent<StoredMoncarg>();
+
+                for (int j = 0; j < moncargsToChooseFrom.Count; j++)
+                {
+                    //if the randomly chosen moncarg is of the same type as one already chosen, pick a new one
+                    if (chosen.Details.moncargData.type == moncargsToChooseFrom[j].GetComponent<StoredMoncarg>().Details.moncargData.type)
+                    {
+                        randomIndex = Random.Range(0, starterMoncargs.Count);
+                        chosen = starterMoncargs[randomIndex].GetComponent<StoredMoncarg>();
+                        j = -1; // Restart the check
+                    }
+                }
+            }
+
+            moncargsToChooseFrom.Add(starterMoncargs[randomIndex]);
+            starterMoncargs.RemoveAt(randomIndex); // Ensure uniqueness
+        }
+        return moncargsToChooseFrom;
     }
 }

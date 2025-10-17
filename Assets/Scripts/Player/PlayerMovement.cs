@@ -47,11 +47,26 @@ public class PlayerMovement : MonoBehaviour
         DoorDetector door = roomGrid.GetDoorAtCell(cellPos);
         if (door != null)
         {
-            // trigger the door teleport
-            door.OnPlayerEnter();
+            if (PlayerInventory.Instance.StoredMoncargs.Count == 0)
+            {
+                AlertManager.Instance.ShowAlert("You need to choose a starting Moncarg before leaving!");
+            }
+            else
+            {
+                // trigger the door teleport
+                door.OnPlayerEnter();
+            }
 
             // Return false so the player doesn’t "walk into" the door tile physically
             return false;
+        }
+
+        // Chest detection
+        ChestDetector chest = roomGrid.GetChestAtCell(cellPos);
+        if (chest != null && chest.isStartingChest)
+        {
+            chest.OnPlayerInteract();
+            return false; // Stop movement when interacting with chest
         }
 
         // Check center point
