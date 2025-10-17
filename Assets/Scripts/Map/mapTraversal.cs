@@ -78,6 +78,28 @@ public class MapTraversalOverlay : MonoBehaviour
         }
     }
 
+    // Add this new method inside the MapTraversalOverlay class in mapTraversal.cs
+
+    public void SetCurrentNode(MapGenerator.MapNode node)
+    {
+        if (node == null)
+        {
+            Debug.LogError("Attempted to set current node to null.");
+            return;
+        }
+
+        currentNode = node;
+        
+        // Ensure the new current node is marked as visited for correct coloring.
+        if (!visitedNodes.Contains(node))
+        {
+            visitedNodes.Add(node);
+        }
+
+        // Refresh the map visuals to show the change.
+        UpdateNodeColors(); 
+    }
+
     public List<int> GetTraversalPath()
     {
         return traversalPath;
@@ -85,25 +107,38 @@ public class MapTraversalOverlay : MonoBehaviour
     public void SetTraversalPath(List<int> path)
     {
         traversalPath = new List<int>(path);
+        Debug.Log($"SetTraversalPath: Replaying {traversalPath.Count} moves");
+        
         // Replay the moves to get to the correct state
-        foreach (int direction in traversalPath)
+        for (int i = 0; i < traversalPath.Count; i++)
         {
-            MoveWithoutRecording(direction); // We need a version of Move that doesn't re-add to the list
+            int direction = traversalPath[i];
+            Debug.Log($"Move {i}: direction={direction}");
+            MoveWithoutRecording(direction);
         }
+        
+        Debug.Log($"Traversal path restored. Current node: {currentNode?.Room?.Name}, Visited nodes: {visitedNodes.Count}");
     }
 
-    // A version of Move that doesn't record the path again
     private void MoveWithoutRecording(int direction)
     {
-        if (currentNode.Exits.Count == 0) return;
+        if (currentNode == null || currentNode.Exits.Count == 0) 
+        {
+            Debug.LogWarning($"Cannot move: currentNode null or no exits");
+            return;
+        }
+
         MapGenerator.MapNode nextNode = null;
+        
         if (currentNode.Exits.Count == 1)
         {
             nextNode = currentNode.Exits[0];
+            Debug.Log($"Single exit: moving to room {nextNode?.Room?.Name}");
         }
         else if (currentNode.Exits.Count == 2)
         {
             nextNode = (direction == 0) ? currentNode.Exits[0] : currentNode.Exits[1];
+            Debug.Log($"Two exits: direction={direction}, moving to room {nextNode?.Room?.Name}");
         }
 
         if (nextNode != null)
@@ -111,9 +146,13 @@ public class MapTraversalOverlay : MonoBehaviour
             currentNode = nextNode;
             visitedNodes.Add(currentNode);
             UpdateNodeColors();
+            Debug.Log($"Moved to room {currentNode.Room.Name}. Total visited: {visitedNodes.Count}");
+        }
+        else
+        {
+            Debug.LogError("Move failed: nextNode is null");
         }
     }
-
 
     private void UpdateNodeColors()
     {

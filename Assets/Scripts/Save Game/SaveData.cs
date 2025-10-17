@@ -16,8 +16,8 @@ public class RunData
     public List<SavedStoredItem> items = new List<SavedStoredItem>();
     public List<SavedStoredMoncarg> moncargs = new List<SavedStoredMoncarg>();
 
-    // Map State
-    public List<SerializableMapNode> mapNodes = new List<SerializableMapNode>();
+    // Map State - FIXED: Use MapManager.SerializableMapNode
+    public List<MapManager.SerializableMapNode> mapNodes = new List<MapManager.SerializableMapNode>();
     public List<int> traversalPath = new List<int>(); // The sequence of exit choices (0 or 1)
 }
 
@@ -39,15 +39,5 @@ public class SavedStoredMoncarg
     public bool isEquipped;
 }
 
-// Serializable version of MapGenerator.MapNode
-[Serializable]
-public class SerializableMapNode
-{
-    public int roomId;
-    public int roomType; // Storing the enum as an int
-    public Vector2 position;
-    public List<int> exitRoomIds = new List<int>();
-}
-
-// The LifetimeStats file is just the GameStats class, which is already serializable.
-// We don't need a new class for it.
+// REMOVED the duplicate SerializableMapNode class from here
+// We're using the one from MapManager.cs instead

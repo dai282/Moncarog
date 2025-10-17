@@ -50,14 +50,14 @@ public class GameManager : MonoBehaviour
         InitializeGame();
     }
     
-    public void SaveGame()
+    public void Game()
     {
         Debug.Log("Saving game data...");
         // This is the critical line that merges session stats into the lifetime record and saves it.
         StatsCollector.Instance?.SaveStats(); 
         
         // Add other save logic here (e.g., saving player position, inventory, etc.)
-        
+        SaveManager.Instance?.SaveRun();
         Debug.Log("Game Saved.");
     }
 
@@ -185,9 +185,6 @@ public class GameManager : MonoBehaviour
         Debug.Log("New game started successfully!");
     }
 
-
-
-    // ADDED: Handle game over trigger
     public void TriggerGameOver()
     {
         Debug.Log("GameManager.TriggerGameOver() called!");
@@ -211,7 +208,6 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    // ADDED: Add starting Moncarg for new game
     private void AddStartingMoncarg()
     {
         if (startingMoncargPrefab != null)
@@ -308,6 +304,9 @@ public class GameManager : MonoBehaviour
     // Add these new methods to GameManager.cs
 
     // Public method for a "Continue" button
+    // In GameManager.cs
+
+    // This is the public method a "Continue" button on your main menu would call.
     public void ContinueGame()
     {
         Debug.Log("Continue button pressed.");
@@ -328,30 +327,49 @@ public class GameManager : MonoBehaviour
     {
         Debug.Log("Loading game from saved data...");
 
-        // Hide UI during load if necessary
+        // Disable player controls during load
         if (moveUI != null) moveUI.DisableAllButtons();
 
-        // 1. Load Inventory FIRST
-        if (PlayerInventory.Instance != null && data.items != null && data.moncargs != null)
+        // 1. Load Inventory FIRST (This logic should be added if not present)
+        // ...
+
+        // 2. REBUILD THE MAP 
+        mapManager.LoadMapFromData(data.mapNodes);
+
+        // Wait until the MapManager confirms it has finished rebuilding the visuals.
+        yield return new WaitUntil(() => mapManager.isReady);
+
+        // 3. CRITICAL: Restore the traversal state BEFORE generating the room
+        if (data.traversalPath != null && data.traversalPath.Count > 0)
         {
-            PlayerInventory.Instance.LoadInventory(data.items, data.moncargs);
+            Debug.Log($"Restoring traversal path with {data.traversalPath.Count} moves");
+            mapManager.traversalOverlay.SetTraversalPath(data.traversalPath);
+        }
+        else
+        {
+            Debug.Log("No traversal path to restore");
         }
 
-        // 2. Load Map and Traversal Path
-        mapManager.LoadMapFromData(data.mapNodes);
-        yield return new WaitUntil(() => mapManager.isReady); // Wait for the map to be fully generated
-        mapManager.traversalOverlay.SetTraversalPath(data.traversalPath);
-
-        // 3. Load the correct room
+        // 4. Set current room ID and get room info
+        mapManager.currentRoomId = data.currentRoomId;
         (currentRoom, nextRooms) = mapManager.GetCurrentRoomInfo();
+
+        if (currentRoom == null)
+        {
+            Debug.LogError("Failed to get current room info after loading map");
+            yield break;
+        }
+
+        // 5. Generate the specific room the player was in
         currentRoomGrid = board.GenerateRoom(currentRoom);
         player.GetComponent<PlayerMovement>().roomGrid = currentRoomGrid;
 
-        // 4. Position the Player
+        // 6. Place the player at their saved position
         player.transform.position = data.playerPosition;
 
-        // 5. Finalize
+        // 7. Re-enable controls
         if (moveUI != null) moveUI.EnableAllButtons();
-        Debug.Log("Game load complete.");
+
+        Debug.Log($"Game load complete. Current room: {currentRoom.roomName}, Player position: {data.playerPosition}");
     }
 }

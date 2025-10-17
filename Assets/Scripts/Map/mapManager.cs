@@ -1,6 +1,8 @@
 using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
+using System.Data.Common;
 
 public class MapManager : MonoBehaviour
 {
@@ -17,13 +19,13 @@ public class MapManager : MonoBehaviour
 
     [Header("References")]
     public MapTraversalOverlay traversalOverlay;
-    private MapGenerator.MapNode _startNode;
 
     private MapGenerator mapGenerator;
     private MapGenerator.MapNode startNode;
 
     // Store prefab instances so traversalOverlay can recolor them
     private Dictionary<MapGenerator.MapNode, GameObject> nodeToGameObjectMap = new Dictionary<MapGenerator.MapNode, GameObject>();
+    private Dictionary<int, MapGenerator.MapNode> loadedNodesById = new Dictionary<int, MapGenerator.MapNode>();
 
     private HashSet<MapGenerator.MapNode> visitedNodes = new HashSet<MapGenerator.MapNode>();
     private Dictionary<MapGenerator.MapNode, Vector3> nodePositions = new Dictionary<MapGenerator.MapNode, Vector3>();
@@ -32,73 +34,58 @@ public class MapManager : MonoBehaviour
 
     public void CleanupMap()
     {
-        Debug.Log("Cleaning up existing map data");
-        
-        // Clear all tracking collections
         visitedNodes.Clear();
         nodeToGameObjectMap.Clear();
         nodePositions.Clear();
-        
-        // Destroy all existing map objects
+
         if (traversalOverlay != null)
         {
-            // Destroy all children of the traversal overlay (rooms and lines)
             for (int i = traversalOverlay.transform.childCount - 1; i >= 0; i--)
             {
                 GameObject child = traversalOverlay.transform.GetChild(i).gameObject;
-                if (Application.isPlaying)
-                {
-                    Destroy(child);
-                }
-                else
-                {
-                    DestroyImmediate(child);
-                }
+                if (Application.isPlaying) Destroy(child); else DestroyImmediate(child);
             }
         }
-        
-        // Find any objects with "Room" in the name (fallback cleanup)
+
+        // fallback cleanup for objects named "Room (...)"
+        // FIXED: Use the correct method signature for newer Unity versions
+        #if UNITY_2022_1_OR_NEWER
         GameObject[] allObjects = FindObjectsByType<GameObject>(FindObjectsSortMode.None);
+        #else
+        GameObject[] allObjects = FindObjectsOfType<GameObject>();
+        #endif
         foreach (GameObject obj in allObjects)
         {
+            if (obj == null) continue;
             if (obj.name.Contains("Room") && obj.name.Contains("("))
             {
-                if (Application.isPlaying)
-                {
-                    Destroy(obj);
-                }
-                else
-                {
-                    DestroyImmediate(obj);
-                }
+                if (Application.isPlaying) Destroy(obj); else DestroyImmediate(obj);
             }
         }
-        
+
         isReady = false;
     }
 
+    // FIXED: Make sure Init method exists and is public
     public void Init()
     {
-        // Clean up any existing map data first
         CleanupMap();
-
-        if (normalPrefab == null || grassPrefab == null || waterPrefab == null ||
-            firePrefab == null || miniBossPrefab == null || finalBossPrefab == null ||
-            linePrefab == null)
-        {
-            Debug.LogError("One or more prefabs are not assigned in MapManager!");
-            //return;
-        }
 
         mapGenerator = new MapGenerator();
         startNode = mapGenerator.GenerateMap();
 
         Debug.Log("Map generation complete! Now displaying the map in the scene.");
 
-        // Draw map
+        if (normalPrefab == null || grassPrefab == null || waterPrefab == null ||
+            firePrefab == null || miniBossPrefab == null || finalBossPrefab == null ||
+            linePrefab == null)
+        {
+            Debug.LogError("One or more prefabs are not assigned in MapManager!");
+        }
+
+        // Draw map and initialize overlay
         DisplayMap(startNode, new Vector3(0, -14, 0));
 
-        // Initialize traversalOverlay AFTER map is displayed
         if (traversalOverlay != null)
         {
             traversalOverlay.Initialize(startNode, nodeToGameObjectMap);
@@ -107,11 +94,13 @@ public class MapManager : MonoBehaviour
         {
             Debug.LogError("TraversalOverlay reference is missing in MapManager!");
         }
+
         isReady = true;
     }
 
     private void DisplayMap(MapGenerator.MapNode node, Vector3 origin)
     {
+        if (node == null) return;
         if (visitedNodes.Contains(node)) return;
         visitedNodes.Add(node);
 
@@ -119,15 +108,16 @@ public class MapManager : MonoBehaviour
         nodePositions[node] = position;
 
         GameObject selectedPrefab = GetPrefabForRoomType(node.Room.Type);
-        // Instantiate the room object as a child of the traversal overlay
-        GameObject roomObj = Instantiate(selectedPrefab, position, Quaternion.identity, traversalOverlay.transform);
+        GameObject roomObj = Instantiate(selectedPrefab, position, Quaternion.identity, traversalOverlay != null ? traversalOverlay.transform : null);
         roomObj.name = $"Room {node.Room.Name} ({node.Room.Type})";
 
         // Save reference for traversalOverlay
-        nodeToGameObjectMap[node] = roomObj;
+        if (!nodeToGameObjectMap.ContainsKey(node)) nodeToGameObjectMap[node] = roomObj;
 
+        // draw connections and recurse
         foreach (var exit in node.Exits)
         {
+            if (exit == null) continue;
             Vector3 nextPos = origin + new Vector3(exit.Position.x, exit.Position.y, 0);
 
             if (nodePositions.ContainsKey(exit))
@@ -141,14 +131,14 @@ public class MapManager : MonoBehaviour
 
     private void DrawLine(Vector3 start, Vector3 end)
     {
-        // Pass the traversal overlay transform as the parent
-        GameObject lineObj = Instantiate(linePrefab, traversalOverlay.transform);
-        LineRenderer lineRenderer = lineObj.GetComponent<LineRenderer>();
-        if (lineRenderer != null)
+        if (linePrefab == null) return;
+        GameObject lineObj = Instantiate(linePrefab, traversalOverlay != null ? traversalOverlay.transform : null);
+        LineRenderer lr = lineObj.GetComponent<LineRenderer>();
+        if (lr != null)
         {
-            lineRenderer.positionCount = 2;
-            lineRenderer.SetPosition(0, start);
-            lineRenderer.SetPosition(1, end);
+            lr.positionCount = 2;
+            lr.SetPosition(0, start);
+            lr.SetPosition(1, end);
         }
     }
 
@@ -166,19 +156,13 @@ public class MapManager : MonoBehaviour
         }
     }
 
-
     public (RoomInfo currentRoom, List<RoomInfo> nextRooms) GetCurrentRoomInfo()
     {
-        if (traversalOverlay == null)
-        {
-            Debug.LogError("TraversalOverlay not initialized!");
-            return (null, null);
-        }
+        if (traversalOverlay == null) return (null, null);
 
-        // Get current node from traversal overlay
         var currentNode = traversalOverlay.GetCurrentNode();
+        if (currentNode == null) return (null, null);
 
-        // Create RoomInfo for current room
         RoomInfo currentRoomInfo = new RoomInfo();
         currentRoomInfo.roomName = currentNode.Room.Name.ToString();
         currentRoomInfo.numDoors = currentNode.Exits.Count;
@@ -191,7 +175,6 @@ public class MapManager : MonoBehaviour
         }
         else if (currentNode.Exits.Count == 2)
         {
-            // left is first exit, right is second exit
             currentRoomInfo.doorLeft = (int)currentNode.Exits[0].Room.Type;
             currentRoomInfo.doorRight = (int)currentNode.Exits[1].Room.Type;
             currentRoomInfo.doorSingle = 0;
@@ -203,10 +186,10 @@ public class MapManager : MonoBehaviour
             currentRoomInfo.doorRight = 0;
         }
 
-        // Create list of next available rooms
         List<RoomInfo> nextRooms = new List<RoomInfo>();
         foreach (var exit in currentNode.Exits)
         {
+            if (exit == null) continue;
             RoomInfo nextRoom = new RoomInfo();
             nextRoom.roomName = exit.Room.Name.ToString();
             nextRoom.numDoors = exit.Exits.Count;
@@ -219,7 +202,6 @@ public class MapManager : MonoBehaviour
             }
             else if (exit.Exits.Count == 2)
             {
-                // left is first exit, right is second exit
                 nextRoom.doorLeft = (int)exit.Exits[0].Room.Type;
                 nextRoom.doorRight = (int)exit.Exits[1].Room.Type;
                 nextRoom.doorSingle = 0;
@@ -232,100 +214,209 @@ public class MapManager : MonoBehaviour
             }
 
             nextRooms.Add(nextRoom);
-
         }
 
         return (currentRoomInfo, nextRooms);
     }
 
-    // Add this class definition outside of MapManager class but in the same file
     [System.Serializable]
     public class RoomInfo
     {
         public string roomName;
         public int numDoors;
-        //the ID of room specifies what room type they are
         public int doorSingle;
         public int doorLeft;
         public int doorRight;
     }
 
-    public List<SerializableMapNode> GetSerializableMap()
+    public int currentRoomId;
+    public int getCurrentRoomId() { return currentRoomId; }
+
+// In MapManager.cs
+
+// REPLACE the existing GetSerializedMapData method with this new version.
+public List<SerializableMapNode> GetSerializedMapData(MapGenerator.MapNode activeNode, out int outActiveNodeId)
+{
+    outActiveNodeId = 1; // Default to the start node's ID in case of failure.
+    if (startNode == null)
     {
-        var list = new List<SerializableMapNode>();
-        if (startNode == null) return list;
-
-        var allNodes = new HashSet<MapGenerator.MapNode>();
-
-        // Traverse the entire map graph from the start node
-        void Traverse(MapGenerator.MapNode node)
-        {
-            if (node == null || allNodes.Contains(node)) return;
-            allNodes.Add(node);
-            foreach (var exit in node.Exits) Traverse(exit);
-        }
-        Traverse(startNode);
-
-        // Convert each node to its serializable version
-        foreach (var node in allNodes)
-        {
-            list.Add(new SerializableMapNode
-            {
-                roomId = node.Room.Name,
-                roomType = (int)node.Room.Type,
-                position = node.Position,
-                exitRoomIds = node.Exits.Select(exit => exit.Room.Name).ToList()
-            });
-        }
-        return list;
+        Debug.LogError("Cannot save map: startNode is null.");
+        return new List<SerializableMapNode>();
     }
+
+    List<SerializableMapNode> serializableNodes = new List<SerializableMapNode>();
+    HashSet<MapGenerator.MapNode> visited = new HashSet<MapGenerator.MapNode>();
+    Queue<MapGenerator.MapNode> queue = new Queue<MapGenerator.MapNode>();
+    Dictionary<MapGenerator.MapNode, int> nodeToId = new Dictionary<MapGenerator.MapNode, int>();
+    int nextId = 1;
+
+    // Start BFS from start node
+    queue.Enqueue(startNode);
+    visited.Add(startNode);
+    nodeToId[startNode] = nextId++;
+
+    while (queue.Count > 0)
+    {
+        var currentNode = queue.Dequeue();
+        int currentId = nodeToId[currentNode];
+
+            // *** ADDED LOGIC ***
+            // Check if the node we are processing is the player's active node.
+            if (currentNode == activeNode)
+            {
+                outActiveNodeId = currentId; // If it is, store its generated ID.
+            }
+        
+        var serializedNode = new SerializableMapNode
+        {
+            roomId = currentId,
+            originalRoomName = currentNode.Room.Name, // Save the crucial original name
+            roomType = (int)currentNode.Room.Type,
+            position = currentNode.Position
+        };
+
+        foreach (var exitNode in currentNode.Exits)
+        {
+            if (exitNode == null) continue;
+            
+            if (!nodeToId.ContainsKey(exitNode))
+            {
+                nodeToId[exitNode] = nextId++;
+                visited.Add(exitNode);
+                queue.Enqueue(exitNode);
+            }
+            
+            int exitId = nodeToId[exitNode];
+            serializedNode.exitRoomIds.Add(exitId);
+        }
+
+        serializableNodes.Add(serializedNode);
+    }
+    
+    return serializableNodes;
+}
+    public List<int> GetTraversalPath()
+    {
+        return traversalOverlay != null ? traversalOverlay.GetTraversalPath() : new List<int>();
+    }
+
 
     public void LoadMapFromData(List<SerializableMapNode> mapData)
     {
-        CleanupMap(); // Clear any existing map visuals and data
+        CleanupMap();
+        loadedNodesById.Clear(); // Clear data from any previous load.
 
-        Dictionary<int, MapGenerator.MapNode> createdNodes = new Dictionary<int, MapGenerator.MapNode>();
-
-        // First pass: create all the node objects
-        foreach(var nodeData in mapData)
+        if (mapData == null || mapData.Count == 0)
         {
-            var newNode = new MapGenerator.MapNode
-            {
-                Room = new MapGenerator.Room { Name = nodeData.roomId, Type = (MapGenerator.RoomType)nodeData.roomType },
-                Position = nodeData.position
-            };
-            createdNodes.Add(nodeData.roomId, newNode);
+            Debug.LogError("LoadMapFromData: mapData is null or empty.");
+            return;
+        }
 
-            if (nodeData.roomId == 1) // Identify the start node
+        // Use 'createdNodes' just as a temporary variable inside this method.
+        Dictionary<int, MapGenerator.MapNode> createdNodes = new Dictionary<int, MapGenerator.MapNode>();
+        Dictionary<int, GameObject> createdVisuals = new Dictionary<int, GameObject>();
+
+        // FIRST PASS: create all nodes
+        foreach (var nodeData in mapData)
+        {
+            var newNode = new MapGenerator.MapNode();
+            newNode.Exits = new List<MapGenerator.MapNode>();
+            newNode.Parents = new List<MapGenerator.MapNode>();
+            newNode.Position = nodeData.position;
+
+            // --- START MODIFICATION ---
+            // Create room - use the saved original name for gameplay logic.
+            var roomObj = new MapGenerator.Room();
+            roomObj.Name = nodeData.originalRoomName; // Restore the original name here!
+            roomObj.Type = (MapGenerator.RoomType)nodeData.roomType;
+            newNode.Room = roomObj;
+            // --- END MODIFICATION ---
+
+            createdNodes[nodeData.roomId] = newNode;
+            loadedNodesById[nodeData.roomId] = newNode;
+
+            // Create visual
+            Vector3 position = new Vector3(nodeData.position.x, nodeData.position.y, 0) + new Vector3(0, -14, 0);
+            GameObject selectedPrefab = GetPrefabForRoomType(newNode.Room.Type);
+            GameObject roomObjVis = Instantiate(selectedPrefab, position, Quaternion.identity, traversalOverlay != null ? traversalOverlay.transform : null);
+            roomObjVis.name = $"Room {nodeData.roomId} (Type:{newNode.Room.Type})";
+
+            createdVisuals[nodeData.roomId] = roomObjVis;
+
+            if (nodeData.roomId == 1)
             {
                 startNode = newNode;
             }
         }
 
-        // Second pass: connect all the exits
-        foreach(var nodeData in mapData)
-        {
-            MapGenerator.MapNode currentNode = createdNodes[nodeData.roomId];
-            foreach(int exitId in nodeData.exitRoomIds)
-            {
-                if (createdNodes.ContainsKey(exitId))
-                {
-                    currentNode.Exits.Add(createdNodes[exitId]);
-                }
-            }
-        }
+    // SECOND PASS: connect nodes using the saved exitRoomIds
+    foreach (var nodeData in mapData)
+    {
+        if (!createdNodes.ContainsKey(nodeData.roomId)) continue;
+        
+        var currentNode = createdNodes[nodeData.roomId];
+        
+        // Clear any temporary connections
+        currentNode.Exits.Clear();
+        currentNode.Parents.Clear();
 
-        // Now that the graph is rebuilt, spawn the visuals and initialize traversal
-        if (startNode != null)
+        foreach (int exitId in nodeData.exitRoomIds)
         {
-            Debug.Log("Map graph rebuilt from save data. Displaying map...");
-            DisplayMap(startNode, new Vector3(0, -14, 0));
-            traversalOverlay.Initialize(startNode, nodeToGameObjectMap);
-            isReady = true;
+            if (!createdNodes.ContainsKey(exitId)) 
+            {
+                Debug.LogWarning($"Exit node {exitId} not found for node {nodeData.roomId}");
+                continue;
+            }
+            
+            var exitNode = createdNodes[exitId];
+            
+            // Add exit connection (current -> exit)
+            if (!currentNode.Exits.Contains(exitNode))
+            {
+                currentNode.Exits.Add(exitNode);
+            }
+            
+            // Add parent connection (exit -> current)
+            if (!exitNode.Parents.Contains(currentNode))
+            {
+                exitNode.Parents.Add(currentNode);
+            }
+            
+            // Draw connection line
+            DrawLine(createdVisuals[nodeData.roomId].transform.position, createdVisuals[exitId].transform.position);
         }
-        else
+    }
+
+    // THIRD PASS: Initialize traversal
+    if (startNode != null)
+    {
+        nodeToGameObjectMap = createdNodes.ToDictionary(kvp => kvp.Value, kvp => createdVisuals[kvp.Key]);
+        traversalOverlay.Initialize(startNode, nodeToGameObjectMap);
+        
+        isReady = true;
+        Debug.Log($"Map loading complete: {createdNodes.Count} nodes loaded");
+        
+        // Log the loaded connection structure for verification
+        Debug.Log("Loaded Connection Structure:");
+        foreach (var node in mapData)
         {
-            Debug.LogError("Failed to rebuild map: Start node not found in saved data.");
+            Debug.Log($"Room {node.roomId} -> {string.Join(", ", node.exitRoomIds)}");
         }
+    }
+    else
+    {
+        Debug.LogError("Failed to rebuild map: Start node not found.");
+    }
+}
+
+
+    [System.Serializable]
+    public class SerializableMapNode
+    {
+        public int roomId; // The structural ID for connecting nodes.
+        public int originalRoomName; // The functional name used by the board generator (e.g., 2-20).
+        public int roomType;
+        public Vector2 position;
+        public List<int> exitRoomIds = new List<int>();
     }
 }

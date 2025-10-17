@@ -22,7 +22,8 @@ public class BoardManager : MonoBehaviour
     {
         int roomID = Int32.Parse(room.roomName);
 
-        if (roomID > 0) {
+        if (roomID > 0)
+        {
             currentRoom = Instantiate(roomPrefabs[roomID], Vector3.zero, Quaternion.identity);
         }
         else
@@ -48,6 +49,7 @@ public class BoardManager : MonoBehaviour
                 currentRoom = Instantiate(roomPrefabs[roomPrefabs.Length - 2], Vector3.zero, Quaternion.identity);
             }
         }
+        
 
         RoomDoorManager roomDoorManager = currentRoom.GetComponent<RoomDoorManager>();
         roomDoorManager.SpawnDoors(room.numDoors, room.doorSingle, room.doorLeft, room.doorRight);
@@ -57,7 +59,7 @@ public class BoardManager : MonoBehaviour
 
         //spawn encounter cells based on room ID here instead of immediately in RoomGrid
         roomGrid.PlaceEncounterTiles(roomID);
-
+        roomGrid.roomGridID = roomID;
         return roomGrid;
     }
 
