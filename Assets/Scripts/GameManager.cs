@@ -6,8 +6,6 @@ using System.Collections.Generic;
 
 public class GameManager : MonoBehaviour
 {
-    //Instance of PlayerController, BoardManager, and Moncarog here
-    //remember to assign instances of these classes in the inspector window (once we combine scenes)
     public Player player;
     public GameObject startingMoncargPrefab;
     public MapManager mapManager;
@@ -20,17 +18,13 @@ public class GameManager : MonoBehaviour
 
     public MoncargDatabase moncargDatabase;
 
-    //static instance that stores reference to the GameManager. public get and private set
     public static GameManager Instance { get; private set; }
 
     [SerializeField] private CombatHandler combatHandler;
 
-    // ADDED: Game Over System
     [SerializeField] private LoseScreenUI loseScreenUI;
 
-    //private bool waitingForPlayerToEquip = false; 
-
-    //Awake is called before Start when the GameObject is created
+    // Awake is called before Start when the GameObject is created
     private void Awake()
     {
         // Singleton pattern to ensure only one instance of GameManager exists
@@ -46,7 +40,6 @@ public class GameManager : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        // MODIFIED: Initialize game normally without clearing inventory
         InitializeGame();
     }
     
@@ -61,7 +54,7 @@ public class GameManager : MonoBehaviour
         Debug.Log("Game Saved.");
     }
 
-    // ADDED: Normal game initialization without clearing progress
+    // Normal game initialization without clearing progress
     private void InitializeGame()
     {
         Debug.Log("Initializing game...");
@@ -69,7 +62,7 @@ public class GameManager : MonoBehaviour
         //initialize player
         player.Init();
 
-        //reset moncarg database
+        // Reset moncarg database
         moncargDatabase.resetMoncargDatabase();
 
         // Debug existing inventory
@@ -103,17 +96,17 @@ public class GameManager : MonoBehaviour
             }
         }
 
-        //initalize the map and get current room
+        // Initalize the map and get current room
         mapManager.Init();
 
         (currentRoom, nextRooms) = mapManager.GetCurrentRoomInfo();
 
-        //Generate the room based on current room info
+        // Generate the room based on current room info
         currentRoomGrid = board.GenerateRoom(currentRoom);
-        //assign the room grid to the player so that they can move around
+        // Assign the room grid to the player so that they can move around
         player.GetComponent<PlayerMovement>().roomGrid = currentRoomGrid;
 
-        // ADDED: Reset player position to starting position
+        // Reset player position to starting position
         Vector3 startPosition = GetSpawnPositionForDoor();
         player.transform.position = startPosition;
 
@@ -126,7 +119,7 @@ public class GameManager : MonoBehaviour
         Debug.Log("Game initialized successfully!");
     }
 
-    // ADDED: Public method for UI button to call
+    // Public method for UI button to call
     public void NewGame()
     {
         Debug.Log("New Game button pressed via UI");
@@ -140,20 +133,20 @@ public class GameManager : MonoBehaviour
         StartNewGame();
     }
 
-    // ADDED: Move initialization code from Start() to this method
+    // Move initialization code from Start() to this method
     public void StartNewGame()
     {
         Debug.Log("Starting new game...");
 
-        //initialize the game components here
-
-        //initialize player
+        // Initialize player
         player.Init();
 
-        //reset moncarg database
+        // Reset moncarg database
         moncargDatabase.resetMoncargDatabase();
 
-        // ADDED: Reset inventory
+        StatsCollector.Instance?.ResetSessionStats();
+
+        // Reset inventory
         if (PlayerInventory.Instance != null)
         {
             PlayerInventory.Instance.StoredMoncargs.Clear();
@@ -161,22 +154,21 @@ public class GameManager : MonoBehaviour
             
             // Refresh UI after clearing
             PlayerInventory.Instance.RefreshAfterClear();
-            
+
             // Add starting Moncarg
             AddStartingMoncarg();
         }
 
-        //initalize the map and get current room
+        // Initalize the map and get current room
         mapManager.Init();
 
         (currentRoom, nextRooms) = mapManager.GetCurrentRoomInfo();
 
-        //Generate the room based on current room info
+        // Generate the room based on current room info
         currentRoomGrid = board.GenerateRoom(currentRoom);
-        //assign the room grid to the player so that they can move around
+        // Assign the room grid to the player so that they can move around
         player.GetComponent<PlayerMovement>().roomGrid = currentRoomGrid;
 
-        // ADDED: Enable movement UI
         if (moveUI != null)
         {
             moveUI.EnableAllButtons();
@@ -266,9 +258,9 @@ public class GameManager : MonoBehaviour
         if (nextRooms != null && doorIndex < nextRooms.Count)
         {
             MapManager.RoomInfo nextRoom = nextRooms[doorIndex];
-            //move to next node in maptraversal overlay
+            // Move to next node in maptraversal overlay
             mapManager.traversalOverlay.Move(doorIndex);
-            //load new room
+            // Load new room
             LoadNextRoom(nextRoom);
         }
     }
@@ -301,12 +293,6 @@ public class GameManager : MonoBehaviour
         return new Vector3(4, -15, -2);
     }
 
-    // Add these new methods to GameManager.cs
-
-    // Public method for a "Continue" button
-    // In GameManager.cs
-
-    // This is the public method a "Continue" button on your main menu would call.
     public void ContinueGame()
     {
         Debug.Log("Continue button pressed.");
@@ -330,16 +316,15 @@ public class GameManager : MonoBehaviour
         // Disable player controls during load
         if (moveUI != null) moveUI.DisableAllButtons();
 
-        // 1. Load Inventory FIRST (This logic should be added if not present)
-        // ...
+        StatsCollector.Instance?.SetCurrentSessionStats(data.sessionStats);
 
-        // 2. REBUILD THE MAP 
+        // 2. Then rebuild the map 
         mapManager.LoadMapFromData(data.mapNodes);
 
         // Wait until the MapManager confirms it has finished rebuilding the visuals.
         yield return new WaitUntil(() => mapManager.isReady);
 
-        // 3. CRITICAL: Restore the traversal state BEFORE generating the room
+        // 3. Restore the traversal state before generating the room
         if (data.traversalPath != null && data.traversalPath.Count > 0)
         {
             Debug.Log($"Restoring traversal path with {data.traversalPath.Count} moves");

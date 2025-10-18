@@ -2,7 +2,6 @@ using UnityEngine;
 using System;
 
 // 1. Data Structure for Stats
-// We use a separate class/struct to ensure it's easily serializable for saving.
 [Serializable]
 public class GameStats
 {
@@ -53,40 +52,40 @@ public class StatsCollector : MonoBehaviour
 
         Instance = this;
         DontDestroyOnLoad(gameObject); // Persist across scenes if needed
-        
+
         LoadLifetimeRecord();
     }
 
     private void LoadLifetimeRecord()
-{
-    // Use the SaveManager to load the data
-    LifetimeRecord = SaveManager.Instance.LoadLifetimeStats();
-    Debug.Log("[StatsCollector] Lifetime record loaded via SaveManager.");
-}
+    {
+        // Use the SaveManager to load the data
+        LifetimeRecord = SaveManager.Instance.LoadLifetimeStats();
+        Debug.Log("[StatsCollector] Lifetime record loaded via SaveManager.");
+    }
 
-// Step 2: Merge the session stats into the lifetime record and save
-public void SaveStats()
-{
-    // 1. Merge session stats into lifetime record (this logic is fine)
-    LifetimeRecord.StepsTaken += CurrentSessionStats.StepsTaken;
-    // ... (rest of the merge logic)
-    LifetimeRecord.moncargsCollected += CurrentSessionStats.moncargsCollected;
+    public void SaveStats()
+    {
+        LifetimeRecord.StepsTaken += CurrentSessionStats.StepsTaken;
+        LifetimeRecord.DamageDealt += CurrentSessionStats.DamageDealt;
+        LifetimeRecord.moncargsDefeated += CurrentSessionStats.moncargsDefeated;
+        LifetimeRecord.HPRecovered += CurrentSessionStats.HPRecovered;
+        LifetimeRecord.HPLost += CurrentSessionStats.HPLost;
+        LifetimeRecord.ManaRecovered += CurrentSessionStats.ManaRecovered;
+        LifetimeRecord.ManaSpent += CurrentSessionStats.ManaSpent;
+        LifetimeRecord.PotionsUsed += CurrentSessionStats.PotionsUsed;
+        LifetimeRecord.AbilitiesUsed += CurrentSessionStats.AbilitiesUsed;
+        LifetimeRecord.moncargsCollected += CurrentSessionStats.moncargsCollected;
 
-    // 2. Use the SaveManager to save the updated lifetime record
-    SaveManager.Instance.SaveLifetimeStats(LifetimeRecord);
+        SaveManager.Instance.SaveLifetimeStats(LifetimeRecord);
 
-    // 3. IMPORTANT: Reset session stats after merging
-    CurrentSessionStats = new GameStats();
+        CurrentSessionStats = new GameStats();
 
-    Debug.Log($"[StatsCollector] Stats saved and merged. Lifetime Steps: {LifetimeRecord.StepsTaken}");
-}
-
-    // Public Getters (for displaying stats)
+        Debug.Log($"[StatsCollector] Stats saved and merged. Lifetime Steps: {LifetimeRecord.StepsTaken}, Lifetime Damage: {LifetimeRecord.DamageDealt}");
+    }
 
     public GameStats GetCurrentSessionStats() => CurrentSessionStats;
     public GameStats GetLifetimeRecord() => LifetimeRecord;
 
-    // Public Recording Methods (called by other scripts)
 
     public void RecordStep()
     {
@@ -140,5 +139,26 @@ public void SaveStats()
     public void RecordAbilityUsed()
     {
         CurrentSessionStats.AbilitiesUsed++;
+    }
+
+    public void ResetSessionStats()
+    {
+        CurrentSessionStats = new GameStats();
+        Debug.Log("[StatsCollector] Session stats reset for new game.");
+    }
+
+    public void SetCurrentSessionStats(GameStats stats)
+    {
+        if (stats != null)
+        {
+            CurrentSessionStats = stats;
+            Debug.Log($"[StatsCollector] Session stats restored from save file. ({stats.StepsTaken} steps)");
+        }
+        else
+        {
+            // Fallback in case save data was malformed
+            CurrentSessionStats = new GameStats();
+            Debug.Log("[StatsCollector] No session stats in save file, starting fresh.");
+        }
     }
 }

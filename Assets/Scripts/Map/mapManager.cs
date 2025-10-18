@@ -47,13 +47,8 @@ public class MapManager : MonoBehaviour
             }
         }
 
-        // fallback cleanup for objects named "Room (...)"
-        // FIXED: Use the correct method signature for newer Unity versions
-        #if UNITY_2022_1_OR_NEWER
         GameObject[] allObjects = FindObjectsByType<GameObject>(FindObjectsSortMode.None);
-        #else
-        GameObject[] allObjects = FindObjectsOfType<GameObject>();
-        #endif
+        
         foreach (GameObject obj in allObjects)
         {
             if (obj == null) continue;
@@ -66,7 +61,6 @@ public class MapManager : MonoBehaviour
         isReady = false;
     }
 
-    // FIXED: Make sure Init method exists and is public
     public void Init()
     {
         CleanupMap();
@@ -232,69 +226,65 @@ public class MapManager : MonoBehaviour
     public int currentRoomId;
     public int getCurrentRoomId() { return currentRoomId; }
 
-// In MapManager.cs
-
-// REPLACE the existing GetSerializedMapData method with this new version.
-public List<SerializableMapNode> GetSerializedMapData(MapGenerator.MapNode activeNode, out int outActiveNodeId)
-{
-    outActiveNodeId = 1; // Default to the start node's ID in case of failure.
-    if (startNode == null)
+    public List<SerializableMapNode> GetSerializedMapData(MapGenerator.MapNode activeNode, out int outActiveNodeId)
     {
-        Debug.LogError("Cannot save map: startNode is null.");
-        return new List<SerializableMapNode>();
-    }
-
-    List<SerializableMapNode> serializableNodes = new List<SerializableMapNode>();
-    HashSet<MapGenerator.MapNode> visited = new HashSet<MapGenerator.MapNode>();
-    Queue<MapGenerator.MapNode> queue = new Queue<MapGenerator.MapNode>();
-    Dictionary<MapGenerator.MapNode, int> nodeToId = new Dictionary<MapGenerator.MapNode, int>();
-    int nextId = 1;
-
-    // Start BFS from start node
-    queue.Enqueue(startNode);
-    visited.Add(startNode);
-    nodeToId[startNode] = nextId++;
-
-    while (queue.Count > 0)
-    {
-        var currentNode = queue.Dequeue();
-        int currentId = nodeToId[currentNode];
-
-            // *** ADDED LOGIC ***
-            // Check if the node we are processing is the player's active node.
-            if (currentNode == activeNode)
-            {
-                outActiveNodeId = currentId; // If it is, store its generated ID.
-            }
-        
-        var serializedNode = new SerializableMapNode
+        outActiveNodeId = 1; // Default to the start node's ID in case of failure.
+        if (startNode == null)
         {
-            roomId = currentId,
-            originalRoomName = currentNode.Room.Name, // Save the crucial original name
-            roomType = (int)currentNode.Room.Type,
-            position = currentNode.Position
-        };
-
-        foreach (var exitNode in currentNode.Exits)
-        {
-            if (exitNode == null) continue;
-            
-            if (!nodeToId.ContainsKey(exitNode))
-            {
-                nodeToId[exitNode] = nextId++;
-                visited.Add(exitNode);
-                queue.Enqueue(exitNode);
-            }
-            
-            int exitId = nodeToId[exitNode];
-            serializedNode.exitRoomIds.Add(exitId);
+            Debug.LogError("Cannot save map: startNode is null.");
+            return new List<SerializableMapNode>();
         }
 
-        serializableNodes.Add(serializedNode);
+        List<SerializableMapNode> serializableNodes = new List<SerializableMapNode>();
+        HashSet<MapGenerator.MapNode> visited = new HashSet<MapGenerator.MapNode>();
+        Queue<MapGenerator.MapNode> queue = new Queue<MapGenerator.MapNode>();
+        Dictionary<MapGenerator.MapNode, int> nodeToId = new Dictionary<MapGenerator.MapNode, int>();
+        int nextId = 1;
+
+        // Start BFS from start node
+        queue.Enqueue(startNode);
+        visited.Add(startNode);
+        nodeToId[startNode] = nextId++;
+
+        while (queue.Count > 0)
+        {
+            var currentNode = queue.Dequeue();
+            int currentId = nodeToId[currentNode];
+
+                // Check if the node we are processing is the player's active node.
+                if (currentNode == activeNode)
+                {
+                    outActiveNodeId = currentId; // If it is, store its generated ID.
+                }
+            
+            var serializedNode = new SerializableMapNode
+            {
+                roomId = currentId,
+                originalRoomName = currentNode.Room.Name, // Save the crucial original name
+                roomType = (int)currentNode.Room.Type,
+                position = currentNode.Position
+            };
+
+            foreach (var exitNode in currentNode.Exits)
+            {
+                if (exitNode == null) continue;
+                
+                if (!nodeToId.ContainsKey(exitNode))
+                {
+                    nodeToId[exitNode] = nextId++;
+                    visited.Add(exitNode);
+                    queue.Enqueue(exitNode);
+                }
+                
+                int exitId = nodeToId[exitNode];
+                serializedNode.exitRoomIds.Add(exitId);
+            }
+
+            serializableNodes.Add(serializedNode);
+        }
+        
+        return serializableNodes;
     }
-    
-    return serializableNodes;
-}
     public List<int> GetTraversalPath()
     {
         return traversalOverlay != null ? traversalOverlay.GetTraversalPath() : new List<int>();
@@ -316,7 +306,7 @@ public List<SerializableMapNode> GetSerializedMapData(MapGenerator.MapNode activ
         Dictionary<int, MapGenerator.MapNode> createdNodes = new Dictionary<int, MapGenerator.MapNode>();
         Dictionary<int, GameObject> createdVisuals = new Dictionary<int, GameObject>();
 
-        // FIRST PASS: create all nodes
+        // 1. Create all nodes
         foreach (var nodeData in mapData)
         {
             var newNode = new MapGenerator.MapNode();
@@ -324,13 +314,11 @@ public List<SerializableMapNode> GetSerializedMapData(MapGenerator.MapNode activ
             newNode.Parents = new List<MapGenerator.MapNode>();
             newNode.Position = nodeData.position;
 
-            // --- START MODIFICATION ---
             // Create room - use the saved original name for gameplay logic.
             var roomObj = new MapGenerator.Room();
-            roomObj.Name = nodeData.originalRoomName; // Restore the original name here!
+            roomObj.Name = nodeData.originalRoomName;
             roomObj.Type = (MapGenerator.RoomType)nodeData.roomType;
             newNode.Room = roomObj;
-            // --- END MODIFICATION ---
 
             createdNodes[nodeData.roomId] = newNode;
             loadedNodesById[nodeData.roomId] = newNode;
@@ -349,7 +337,7 @@ public List<SerializableMapNode> GetSerializedMapData(MapGenerator.MapNode activ
             }
         }
 
-    // SECOND PASS: connect nodes using the saved exitRoomIds
+    // 2. Connect nodes using the saved exitRoomIds
     foreach (var nodeData in mapData)
     {
         if (!createdNodes.ContainsKey(nodeData.roomId)) continue;
@@ -387,7 +375,7 @@ public List<SerializableMapNode> GetSerializedMapData(MapGenerator.MapNode activ
         }
     }
 
-    // THIRD PASS: Initialize traversal
+    // 3. Initialize traversal
     if (startNode != null)
     {
         nodeToGameObjectMap = createdNodes.ToDictionary(kvp => kvp.Value, kvp => createdVisuals[kvp.Key]);

@@ -22,14 +22,11 @@ public class SaveManager : MonoBehaviour
         Instance = this;
         DontDestroyOnLoad(gameObject);
 
-        // --- CORRECTED FILE PATH LOGIC ---
 
         // 1. Application.dataPath IS the "Assets" folder in the editor.
-        // We want to create a folder inside it.
         string saveDirectory = Path.Combine(Application.dataPath, "UserData", "files");
 
         // 2. Create the directory if it doesn't already exist.
-        // This is a crucial step.
         if (!Directory.Exists(saveDirectory))
         {
             Directory.CreateDirectory(saveDirectory);
@@ -40,7 +37,7 @@ public class SaveManager : MonoBehaviour
         _runDataPath = Path.Combine(saveDirectory, "current_run.json");
         _lifetimeStatsPath = Path.Combine(saveDirectory, "lifetime_stats.json");
 
-        // 4. ADD THIS DEBUG LOG to be 100% sure the paths are correct.
+        // To be sure the paths are correct.
         Debug.Log($"SaveManager Initialized. Run data will be saved to: {_runDataPath}");
     }
 
@@ -77,17 +74,27 @@ public class SaveManager : MonoBehaviour
             Debug.Log($"Saved inventory: {data.items.Count} items, {data.moncargs.Count} moncargs");
         }
 
+        if (StatsCollector.Instance != null)
+        {
+            data.sessionStats = StatsCollector.Instance.GetCurrentSessionStats();
+            Debug.Log($"Saved session stats: {data.sessionStats.StepsTaken} steps");
+        }
+        else
+        {
+            Debug.LogWarning("SaveRun: StatsCollector.Instance was null, saving empty session stats.");
+            data.sessionStats = new GameStats();
+        }
+
         if (GameManager.Instance != null && GameManager.Instance.mapManager != null)
         {
             var mm = GameManager.Instance.mapManager;
 
-            // *** REVISED LOGIC ***
             var activeNode = mm.traversalOverlay.GetCurrentNode(); // Get the live node object.
             // Pass the active node in to get both the map data and the correct ID for that node.
-            data.mapNodes = mm.GetSerializedMapData(activeNode, out int activeNodeId); 
+            data.mapNodes = mm.GetSerializedMapData(activeNode, out int activeNodeId);
             data.traversalPath = mm.GetTraversalPath();
             data.currentRoomId = activeNodeId; // Save the correct, generated ID.
-            
+
             Debug.Log($"Saved map: {data.mapNodes.Count} nodes, {data.traversalPath.Count} path steps, currentRoomId={data.currentRoomId}");
         }
         else
@@ -107,8 +114,6 @@ public class SaveManager : MonoBehaviour
             Debug.LogError("SaveRun: file write failed: " + ex);
         }
     }
-
-    // REMOVED the duplicate SerializableMapNode class from here
 
     public RunData LoadRun()
     {

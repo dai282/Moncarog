@@ -61,12 +61,12 @@ public class MapTraversalOverlay : MonoBehaviour
 
         if (currentNode.Exits.Count == 1)
         {
-            // Only one exit → always go there
+            // Only one exit -> always go there
             nextNode = currentNode.Exits[0];
         }
         else if (currentNode.Exits.Count == 2)
         {
-            // Two exits → A = index 0, D = index 1
+            // Two exits -> A = index 0, D = index 1
             nextNode = (direction == 0) ? currentNode.Exits[0] : currentNode.Exits[1];
         }
 
@@ -77,8 +77,6 @@ public class MapTraversalOverlay : MonoBehaviour
             UpdateNodeColors();
         }
     }
-
-    // Add this new method inside the MapTraversalOverlay class in mapTraversal.cs
 
     public void SetCurrentNode(MapGenerator.MapNode node)
     {
@@ -170,7 +168,6 @@ public class MapTraversalOverlay : MonoBehaviour
         }
     }
 
-    // Add this to MapTraversalOverlay.cs
     public MapGenerator.MapNode GetCurrentNode()
     {
         return currentNode;

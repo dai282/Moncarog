@@ -32,7 +32,7 @@ public class StatsUI : MonoBehaviour
 
     private void Start()
     {
-        // Ensure the panel is hidden on start
+        // Check the panel is hidden on start
         if (statsScreenPanel != null)
         {
             statsScreenPanel.SetActive(false);

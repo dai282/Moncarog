@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class MapToggleButton : MonoBehaviour
 {
-    public GameObject mapRoot; // Assign this in the Inspector
+    public GameObject mapRoot;
 
     public void OnClickToggle()
     {

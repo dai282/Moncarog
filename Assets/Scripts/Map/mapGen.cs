@@ -7,7 +7,7 @@ public class MapGenerator
     private const int roomsToMiniBoss = 6;
     private const int roomsToFinalBoss = 5;
 
-    //reordered these 
+    // Reordered these 
     public enum RoomType { Water, Fire, Grass, Normal, FinalBoss, MiniBoss }
 
     private int currentY = 0;
