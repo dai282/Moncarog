@@ -93,6 +93,7 @@ public class SaveManager : MonoBehaviour
             // Pass the active node in to get both the map data and the correct ID for that node.
             data.mapNodes = mm.GetSerializedMapData(activeNode, out int activeNodeId);
             data.traversalPath = mm.GetTraversalPath();
+            Debug.Log("TRAVERSAL PATH HERE: " + data.traversalPath);
             data.currentRoomId = activeNodeId; // Save the correct, generated ID.
 
             Debug.Log($"Saved map: {data.mapNodes.Count} nodes, {data.traversalPath.Count} path steps, currentRoomId={data.currentRoomId}");
