@@ -86,11 +86,11 @@ public class RoomGrid : MonoBehaviour
             {
                 cellData[centerPos] = CellType.Encounter;
                 encounterTiles.Add(centerPos);
-                Debug.Log($"Boss/ Mini Boss Encounter tile placed at {centerPos}");
+                //Debug.Log($"Boss/ Mini Boss Encounter tile placed at {centerPos}");
             }
             else
             {
-                Debug.LogWarning($"Center position {centerPos} is not walkable, cannot place encounter tile.");
+                //Debug.LogWarning($"Center position {centerPos} is not walkable, cannot place encounter tile.");
             }
         }
         else
@@ -116,12 +116,12 @@ public class RoomGrid : MonoBehaviour
                         tilesAdded++;
                     }
 
-                    Debug.Log($"Encounter group {group} placed with {tilesAdded} tiles.");
+                    //Debug.Log($"Encounter group {group} placed with {tilesAdded} tiles.");
                 }
             }
             else
             {
-                Debug.Log($"No encounter cells in the first room");
+                //Debug.Log($"No encounter cells in the first room");
             }
 
         }
@@ -192,7 +192,7 @@ public class RoomGrid : MonoBehaviour
             encounterGroups.Remove(tile);
         }
 
-        Debug.Log($"Encounter group {groupID} cleared ({tilesToRemove.Count} tiles reset to Walkable).");
+        //Debug.Log($"Encounter group {groupID} cleared ({tilesToRemove.Count} tiles reset to Walkable).");
     }
 
     void PrintUnwalkableTiles()
@@ -202,7 +202,7 @@ public class RoomGrid : MonoBehaviour
             if (collisionTilemap.HasTile(pos))
             {
                 Vector3 worldPos = collisionTilemap.CellToWorld(pos);
-                Debug.Log($"Unwalkable Tile at Cell: {pos} | World Position: {worldPos}");
+                //Debug.Log($"Unwalkable Tile at Cell: {pos} | World Position: {worldPos}");
             }
         }
     }
@@ -218,7 +218,7 @@ public class RoomGrid : MonoBehaviour
                 {
                     DoorDetector door = GetDoorAtCell(cellPos);
                     string doorName = door != null ? door.gameObject.name : "NoDoorObject";
-                    Debug.Log($"Door tile at cell: {cellPos} | Door object: {doorName}");
+                    //Debug.Log($"Door tile at cell: {cellPos} | Door object: {doorName}");
                 }
             }
         }
@@ -227,7 +227,7 @@ public class RoomGrid : MonoBehaviour
     {
         cellData[cellPos] = CellType.Door;
         doors[cellPos] = door;
-        Debug.Log($"Registered door at cell {cellPos} (world {collisionTilemap.GetCellCenterWorld(cellPos)})");
+        //Debug.Log($"Registered door at cell {cellPos} (world {collisionTilemap.GetCellCenterWorld(cellPos)})");
     }
 
     public void RegisterUnwalkable(Vector3Int cellPos)
@@ -235,12 +235,12 @@ public class RoomGrid : MonoBehaviour
         if (cellData.ContainsKey(cellPos))
         {
             cellData[cellPos] = CellType.Unwalkable;
-            Debug.Log($"Registered collision at cell {cellPos} (world {collisionTilemap.GetCellCenterWorld(cellPos)})");
+            //Debug.Log($"Registered collision at cell {cellPos} (world {collisionTilemap.GetCellCenterWorld(cellPos)})");
         }
         else
         {
             cellData[cellPos] = CellType.Unwalkable;
-            Debug.LogWarning($"Cell {cellPos} was not in cellData; added as Unwalkable.");
+            //Debug.LogWarning($"Cell {cellPos} was not in cellData; added as Unwalkable.");
         }
     }
 

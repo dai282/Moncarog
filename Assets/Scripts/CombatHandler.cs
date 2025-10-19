@@ -90,6 +90,18 @@ public class CombatHandler: MonoBehaviour
         }
         else
         {
+            if (1 < roomID && roomID < 6){
+                Debug.Log($"Normal");
+            }
+            if (5 < roomID && roomID < 11){
+                Debug.Log($"Grass");
+            }
+            if (10 < roomID && roomID < 16){
+                Debug.Log($"Water");
+            }
+            if (15 < roomID && roomID < 21){
+                Debug.Log($"Fire");
+            }
             int randIndex = Random.Range(0, databaseLen - 4);
             enemyObj = Instantiate(moncargDatabase.availableEnemyMoncargs[randIndex]);
         }
