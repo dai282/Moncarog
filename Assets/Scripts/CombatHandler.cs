@@ -143,6 +143,8 @@ public class CombatHandler: MonoBehaviour
 
     private void NextTurn()
     {
+        Debug.Log($"[NextTurn] Called - Current turn: {currentTurn.moncargName}");
+        
         if (!player.active)
         {
             Debug.Log("You need to switch Moncargs!");
@@ -152,11 +154,12 @@ public class CombatHandler: MonoBehaviour
                 OnAllMoncargsDefeated();
                 return;
             }
+            Debug.Log("[NextTurn] Player has other alive Moncargs, need to switch");
             return;
         }
         if (!enemy.active)
         {
-            Debug.Log("You won the battle!");
+            Debug.Log("[NextTurn] Enemy defeated! You won the battle!");
             OnEnemyDefeated();
             return;
         }
@@ -165,43 +168,51 @@ public class CombatHandler: MonoBehaviour
 
         if (currentTurn == player)
         {
+            Debug.Log($"[NextTurn] Player's turn - Mana: {player.mana}/{player.maxMana}");
+            
             //automatic resting
             if (player.mana <=0 )
             {
-                Debug.Log(player.moncargName + " ran out of mana! Automatic resting...");
+                Debug.Log($"[NextTurn] {player.moncargName} ran out of mana! Automatic resting...");
                 Rest(player);
             }
             else
             {
-                Debug.Log("Your turn! Choose an action.");
+                Debug.Log("[NextTurn] Your turn! Choose an action.");
                 // UI buttons are active, waiting for player click
             }
         }
         else
         {
-            Debug.Log("Enemy's turn!");
+            Debug.Log($"[NextTurn] Enemy's turn - {enemy.moncargName} (Mana: {enemy.mana}/{enemy.maxMana})");
             EnemyTurn();
         }
     }
 
     private void OnAttackClicked(int attackOption)
     {
-        if (currentTurn != player) return;
+        if (currentTurn != player)
+        {
+            Debug.LogWarning($"[OnAttackClicked] Not player's turn! Current turn: {currentTurn.moncargName}");
+            return;
+        }
 
-        Debug.Log("Player chose Attack!");
+        Debug.Log($"[OnAttackClicked] Player chose attack option {attackOption}");
 
         SkillDefinition attackChoice = player.skillset[attackOption - 1];
+        Debug.Log($"[OnAttackClicked] Selected skill: {attackChoice.name} (Mana cost: {attackChoice.manaCost})");
 
         if (attackChoice.name == "Rest")
         {
+            Debug.Log("[OnAttackClicked] Rest selected, calling Rest()");
             Rest(player);
             return;
         }
         else
         {
-            ExecuteAttack(player, enemy, attackChoice, true);
+            Debug.Log($"[OnAttackClicked] Starting attack: {attackChoice.name}");
+            StartCoroutine(ExecuteAttackWithDelay(player, enemy, attackChoice, true));
         }
-        EndTurn();
     }
 
     private void OnFleeClicked()
@@ -217,27 +228,38 @@ public class CombatHandler: MonoBehaviour
 
     private void EnemyTurn()
     {
+        Debug.Log($"[EnemyTurn] Starting enemy turn for {enemy.moncargName}");
+        
         // List of moves with weights
         List<(SkillDefinition skill, float weight)> movePool = new List<(SkillDefinition, float)>();
 
         // Add Ultimate if available
         if (enemy.mana >= enemy.skillset[3].manaCost)
+        {
             movePool.Add((enemy.skillset[3], 0.2f)); // 20%
+            Debug.Log($"[EnemyTurn] Ultimate available: {enemy.skillset[3].name}");
+        }
 
         // Add Elemental if available
         if (enemy.mana >= enemy.skillset[2].manaCost)
+        {
             movePool.Add((enemy.skillset[2], 0.6f)); // 60%
+            Debug.Log($"[EnemyTurn] Elemental available: {enemy.skillset[2].name}");
+        }
 
         // Add Basic (always available, fallback)
         movePool.Add((enemy.skillset[1], 0.2f)); // 20%
+        Debug.Log($"[EnemyTurn] Basic attack available: {enemy.skillset[1].name}");
 
         // If no mana at all for any move except basic chance to rest
         if (enemy.mana < enemy.skillset[2].manaCost && enemy.mana < enemy.skillset[3].manaCost)
         {
             float restRoll = Random.value;
+            Debug.Log($"[EnemyTurn] Low mana! Rest roll: {restRoll} (need < 0.3)");
+            
             if (restRoll < 0.3f) // 30% chance to rest early
             {
-                Debug.Log(enemy.moncargName + " is low on mana and decides to Rest...");
+                Debug.Log($"[EnemyTurn] {enemy.moncargName} is low on mana and decides to Rest...");
                 Rest(enemy);
                 return;
             }
@@ -258,37 +280,55 @@ public class CombatHandler: MonoBehaviour
             if (roll <= cumulative)
             {
                 chosenSkill = move.skill;
+                Debug.Log($"[EnemyTurn] Selected: {chosenSkill.name}");
                 break;
             }
         }
 
         // Execute chosen move
-        Debug.Log(enemy.moncargName + " chose " + chosenSkill.name);
-        ExecuteAttack(enemy, player, chosenSkill, false);
-
-        EndTurn();
+        Debug.Log($"[EnemyTurn] {enemy.moncargName} chose {chosenSkill.name}");
+        StartCoroutine(ExecuteAttackWithDelay(enemy, player, chosenSkill, false));
     }
 
     private void EndTurn()
     {
+        Debug.Log($"[EndTurn] Current turn was: {currentTurn.moncargName}");
+        
         // Swap turn
         Moncarg temp = currentTurn;
         currentTurn = other;
         other = temp;
 
+        Debug.Log($"[EndTurn] Next turn is: {currentTurn.moncargName}");
+        
         NextTurn();
     }
 
     //END EVENT DRIVEN BEGIN ENCOUNTER
 
     #region Attack Execution
+    // ADDED: Coroutine to handle attack with 1-second delay
+    private IEnumerator ExecuteAttackWithDelay(Moncarg attacker, Moncarg defender, SkillDefinition attackChoice, bool isPlayerAttacking)
+    {
+        // Wait for 1 second before executing attack
+        yield return new WaitForSeconds(1f);
+        
+        // Execute the attack
+        ExecuteAttack(attacker, defender, attackChoice, isPlayerAttacking);
+        
+        // End turn after attack completes
+        EndTurn();
+    }
+
     public void ExecuteAttack(Moncarg attacker, Moncarg defender, SkillDefinition attackChoice, bool isPlayerAttacking)
     {
+        Debug.Log($"[ExecuteAttack] {attacker.moncargName} attacking {defender.moncargName} with {attackChoice.name}");
+        
         bool isDodged = TryDodge(defender);
         
         if (isDodged)
         {
-            Debug.Log($"{defender.moncargName} dodged the attack!");
+            Debug.Log($"[ExecuteAttack] {defender.moncargName} dodged the attack!");
             return;
         }
 
@@ -300,33 +340,39 @@ public class CombatHandler: MonoBehaviour
 
         // Deduct mana cost
         attacker.mana -= attackChoice.manaCost;
+        Debug.Log($"[ExecuteAttack] {attacker.moncargName} used {attackChoice.manaCost} mana. Remaining: {attacker.mana}/{attacker.maxMana}");
 
         // Calculate base damage
         float damage = attackChoice.damage + attacker.attack - defender.defense;
+        Debug.Log($"[ExecuteAttack] Base damage calculation: {attackChoice.damage} + {attacker.attack} - {defender.defense} = {damage}");
 
         damage = checkElemental(attacker, defender, attackChoice, damage);
+        Debug.Log($"[ExecuteAttack] After elemental modifier: {damage}");
 
         // Ensure damage is not negative
         if (damage < 0)
         {
             damage = 0;
+            Debug.Log($"[ExecuteAttack] Damage clamped to 0");
         }
 
         // Apply damage to defender
+        float oldHealth = defender.health;
         defender.health -= damage;
+        Debug.Log($"[ExecuteAttack] {defender.moncargName} health: {oldHealth} -> {defender.health}");
 
         // ADDED: Flash red and show damage indicator
         StartCoroutine(FlashRed(defender));
         ShowDamageIndicator(defender, damage);
 
-        Debug.Log(attacker.moncargName + " used " + attackChoice.name + " on " + defender.moncargName + " for " + damage + " damage!");
+        Debug.Log($"[ExecuteAttack] {attacker.moncargName} used {attackChoice.name} on {defender.moncargName} for {damage} damage!");
 
         // Check if defender is defeated
         if (defender.health <= 0)
         {
             defender.health = 0;
             defender.active = false;
-            Debug.Log(defender.moncargName + " has been defeated!");
+            Debug.Log($"[ExecuteAttack] {defender.moncargName} has been defeated!");
         }
 
         combatUI.UpdateMoncargStats(player, enemy);
@@ -354,7 +400,6 @@ public class CombatHandler: MonoBehaviour
         if (dmgText != null)
         {
             dmgText.Initialize(damage);
-            Debug.Log($"[CombatHandler] {moncarg.moncargName} took {damage} damage. Spawned damage text at screen pos: {screenPos}");
         }
         else
         {
@@ -382,7 +427,6 @@ public class CombatHandler: MonoBehaviour
         
         // Force set to red
         sr.color = Color.red;
-        Debug.Log($"[CombatHandler] SET {moncarg.moncargName} to RED");
         
         // Wait for flash duration
         yield return new WaitForSeconds(0.15f);
@@ -391,7 +435,6 @@ public class CombatHandler: MonoBehaviour
         if (sr != null)
         {
             sr.color = originalColor;
-            Debug.Log($"[CombatHandler] RESTORED {moncarg.moncargName} to WHITE");
         }
     }
 
@@ -546,8 +589,11 @@ public class CombatHandler: MonoBehaviour
 
     private void Rest(Moncarg moncarg)
     {
+        Debug.Log($"[Rest] {moncarg.moncargName} is resting...");
+        
         int manaRecovered = moncarg.maxMana / 4; // Recover 25% of max mana
         moncarg.mana += manaRecovered;
+        
         //in case of overheal
         if (moncarg.mana > moncarg.maxMana)
         {
@@ -556,7 +602,7 @@ public class CombatHandler: MonoBehaviour
 
         combatUI.UpdateMoncargStats(player, enemy);
 
-        Debug.Log(moncarg.moncargName + " rested and recovered " + manaRecovered + " mana.");
+        Debug.Log($"[Rest] {moncarg.moncargName} recovered {manaRecovered} mana. Current: {moncarg.mana}/{moncarg.maxMana}");
         EndTurn();
     }
 
