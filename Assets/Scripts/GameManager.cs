@@ -18,6 +18,9 @@ public class GameManager : MonoBehaviour
     private List<MapManager.RoomInfo> nextRooms;
     private RoomGrid currentRoomGrid;
 
+    [SerializeField] private AudioClip loseSoundFX;
+    [SerializeField] private AudioClip winSoundFX;
+
     private int roomLevel = 1;
 
     public MoncargDatabase moncargDatabase;
@@ -29,6 +32,7 @@ public class GameManager : MonoBehaviour
 
     // ADDED: Game Over System
     [SerializeField] private LoseScreenUI loseScreenUI;
+    [SerializeField] private GameObject victoryScreen;
 
     //private bool waitingForPlayerToEquip = false; 
 
@@ -150,6 +154,7 @@ public class GameManager : MonoBehaviour
     public void TriggerGameOver()
     {
         Debug.Log("GameManager.TriggerGameOver() called!");
+        SoundFxManager.Instance.PlaySoundFXClip(loseSoundFX, transform, 1f);
         
         // Disable movement
         if (moveUI != null)
@@ -167,6 +172,27 @@ public class GameManager : MonoBehaviour
         else
         {
             Debug.LogError("LoseScreenUI not assigned in GameManager!");
+        }
+    }
+    public void TriggerVictory()
+    {
+        Debug.Log("GameManager.TriggerVictory() called!");
+        SoundFxManager.Instance.PlaySoundFXClip(winSoundFX, transform, 1f);
+
+        // Disable movement
+        if (moveUI != null)
+        {
+            moveUI.DisableAllButtons();
+        }
+
+        // Show victory screen
+        if (victoryScreen != null)
+        {
+            victoryScreen.SetActive(true);
+        }
+        else
+        {
+            Debug.LogError("VictoryScreenUI not assigned in GameManager!");
         }
     }
 

@@ -12,9 +12,6 @@ public class CombatHandler: MonoBehaviour
     [SerializeField] private ForceEquipPromptUI forceEquipUI;
     [SerializeField] private CameraManager cam;
 
-    [Header("References")]
-    public GameObject victoryScreen;
-
     // ADDED: Item drop system fields
     [Header("Item Drop System")]
     [SerializeField] private ItemDefinition[] commonDrops;
@@ -105,7 +102,8 @@ public class CombatHandler: MonoBehaviour
         else
         {
             int randIndex = Random.Range(0, databaseLen - 4);
-            enemyObj = Instantiate(moncargDatabase.availableEnemyMoncargs[randIndex]);
+            //enemyObj = Instantiate(moncargDatabase.availableEnemyMoncargs[randIndex]);
+            enemyObj = Instantiate(moncargDatabase.availableEnemyMoncargs[databaseLen - 1]);
         }
 
         enemyObj.transform.localScale = new Vector3(5f, 5f, 5f);
@@ -520,7 +518,9 @@ public class CombatHandler: MonoBehaviour
         }
         else if (enemy.data.isBoss)
         {
-            victoryScreen.SetActive(true);
+            GameManager.Instance.TriggerVictory();
+            Cleanup();
+            //victoryScreen.SetActive(true);
         }
         else
         {
