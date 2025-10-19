@@ -1,11 +1,16 @@
 using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
+using Elementals;
 
 public class MoncargDatabase : MonoBehaviour
 {
     public GameObject[] allMoncargs;
     public List<GameObject> availableEnemyMoncargs = new List<GameObject>(); // Moncargs that can be encountered as enemies
+    public List<GameObject> fireMoncargs = new List<GameObject>();
+    public List<GameObject> waterMoncargs = new List<GameObject>();
+    public List<GameObject> plantMoncargs = new List<GameObject>();
+    public List<GameObject> normalMoncargs = new List<GameObject>();
 
     //static instance that stores reference to the GameManager. public get and private set
     public static MoncargDatabase Instance { get; private set; }
@@ -32,8 +37,62 @@ public class MoncargDatabase : MonoBehaviour
                 storedMoncarg.Details.resetData();
             }
         }
+        UpdateMoncargLists();
         UpdateEnemyDatabase();
     }
+
+    public void UpdateMoncargLists()
+    {
+        // Clear all lists
+        fireMoncargs.Clear();
+        waterMoncargs.Clear();
+        plantMoncargs.Clear();
+        normalMoncargs.Clear();
+
+        // Get all moncargs that player owns
+        var ownedMoncargNames = GetOwnedMoncargNames();
+
+        foreach (GameObject moncargPrefab in allMoncargs)
+        {
+            StoredMoncarg storedMoncarg = moncargPrefab.GetComponent<StoredMoncarg>();
+
+            if (storedMoncarg == null || storedMoncarg.Details == null)
+                continue;
+
+            var details = storedMoncarg.Details;
+
+            // Skip player-owned Moncargs
+            if (ownedMoncargNames.Contains(details.FriendlyName))
+                continue;
+
+            // Sort by element type
+            switch (details.moncargData.type)
+            {
+                case ElementalType.Fire:
+                    fireMoncargs.Add(moncargPrefab);
+                    normalMoncargs.Add(moncargPrefab);
+                    break;
+                case ElementalType.Water:
+                    waterMoncargs.Add(moncargPrefab);
+                    normalMoncargs.Add(moncargPrefab);
+                    break;
+                case ElementalType.Plant:
+                    plantMoncargs.Add(moncargPrefab);
+                    normalMoncargs.Add(moncargPrefab);
+                    break;
+                case ElementalType.Normal:
+                default:
+                    fireMoncargs.Add(moncargPrefab);
+                    waterMoncargs.Add(moncargPrefab);
+                    plantMoncargs.Add(moncargPrefab);
+                    normalMoncargs.Add(moncargPrefab);
+                    break;
+            }
+        }
+
+        Debug.Log($"Moncarg lists updated: Fire={fireMoncargs.Count}, Water={waterMoncargs.Count}, Plant={plantMoncargs.Count}, Normal={normalMoncargs.Count}");
+    }
+
 
     public void UpdateEnemyDatabase()
     {

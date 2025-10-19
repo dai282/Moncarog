@@ -60,6 +60,10 @@ public class CombatHandler: MonoBehaviour
         //Create enemy Moncarg instance for battle
         moncargDatabase = GameManager.Instance.moncargDatabase;
         int databaseLen = moncargDatabase.availableEnemyMoncargs.Count;
+        int databaseF = moncargDatabase.fireMoncargs.Count;
+        int databaseP = moncargDatabase.plantMoncargs.Count;
+        int databaseW = moncargDatabase.waterMoncargs.Count;
+        int databaseN = moncargDatabase.normalMoncargs.Count;
         //boss and miniboss rooms
         if (roomID < 0)
         {
@@ -91,19 +95,25 @@ public class CombatHandler: MonoBehaviour
         else
         {
             if (1 < roomID && roomID < 6){
-                Debug.Log($"Normal");
+                int randIndex = Random.Range(0, databaseN);
+                enemyObj = Instantiate(moncargDatabase.normalMoncargs[randIndex]);
+                //Debug.Log($"Normal");
             }
             if (5 < roomID && roomID < 11){
-                Debug.Log($"Grass");
+                int randIndex = Random.Range(0, databaseP);
+                enemyObj = Instantiate(moncargDatabase.plantMoncargs[randIndex]);
+                //Debug.Log($"Grass");
             }
             if (10 < roomID && roomID < 16){
-                Debug.Log($"Water");
+                int randIndex = Random.Range(0, databaseW);
+                enemyObj = Instantiate(moncargDatabase.waterMoncargs[randIndex]);
+                //Debug.Log($"Water");
             }
             if (15 < roomID && roomID < 21){
-                Debug.Log($"Fire");
+                int randIndex = Random.Range(0, databaseF);
+                enemyObj = Instantiate(moncargDatabase.fireMoncargs[randIndex]);
+                //Debug.Log($"Fire");
             }
-            int randIndex = Random.Range(0, databaseLen - 4);
-            enemyObj = Instantiate(moncargDatabase.availableEnemyMoncargs[randIndex]);
         }
 
         enemyObj.transform.localScale = new Vector3(5f, 5f, 5f);
