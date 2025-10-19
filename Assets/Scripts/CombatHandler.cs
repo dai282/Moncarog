@@ -102,8 +102,8 @@ public class CombatHandler: MonoBehaviour
         else
         {
             int randIndex = Random.Range(0, databaseLen - 4);
-            //enemyObj = Instantiate(moncargDatabase.availableEnemyMoncargs[randIndex]);
-            enemyObj = Instantiate(moncargDatabase.availableEnemyMoncargs[databaseLen - 1]);
+            enemyObj = Instantiate(moncargDatabase.availableEnemyMoncargs[randIndex]);
+            //enemyObj = Instantiate(moncargDatabase.availableEnemyMoncargs[databaseLen - 1]);
         }
 
         enemyObj.transform.localScale = new Vector3(5f, 5f, 5f);
@@ -658,24 +658,25 @@ public class CombatHandler: MonoBehaviour
         }
         else
         {
-            Debug.Log("Failed to catch " + enemy.moncargName + "!");
+            AlertManager.Instance.ShowAlert("Failed to catch " + enemy.moncargName + "!");
             Cleanup();
         }
     }
 
     private void OnCatchSussess()
     {
-        Debug.Log("Successfully caught " + enemy.moncargName + "!");
+        
         
         // ADDED: Check if Moncarg inventory is full before adding
         if (PlayerInventory.Instance.IsMoncargInventoryFull())
         {
-            Debug.Log($"Cannot store {enemy.moncargName} - Moncarg inventory is full! Consider releasing some Moncargs first.");
             // You could show a UI message here instead of just logging
+            AlertManager.Instance.ShowAlert("Moncarg inventory is full! Cannot catch " + enemy.moncargName + "!");
             Cleanup();
             return;
         }
-        
+
+        AlertManager.Instance.ShowNotification("Successfully caught " + enemy.moncargName + "!");
         enemy.role = Moncarg.moncargRole.PlayerOwned;
 
         //Retrieve enemy moncarg game object and StoredMoncarg component

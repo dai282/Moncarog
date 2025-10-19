@@ -9,6 +9,12 @@ public class AlertManager : MonoBehaviour
     [Header("Alert UI")]
     public TextMeshProUGUI alertText;
     public GameObject alertPanel;
+    public GameObject notificationPanel;
+    public TextMeshProUGUI notificationText;
+
+    [Header("Alert SoundFx")]
+    [SerializeField] private AudioClip alertSoundFX;
+    [SerializeField] private AudioClip notificationSoundFX;
 
     private void Awake()
     {
@@ -25,10 +31,12 @@ public class AlertManager : MonoBehaviour
         // Hide alert at start
         if (alertPanel != null)
             alertPanel.SetActive(false);
+        notificationPanel.SetActive(false);
     }
 
     public void ShowAlert(string message, float duration = 2f)
     {
+        SoundFxManager.Instance.PlaySoundFXClip(alertSoundFX, transform, 1f);
         if (alertText != null)
         {
             alertText.text = message.ToUpper();
@@ -37,17 +45,32 @@ public class AlertManager : MonoBehaviour
         if (alertPanel != null)
         {
             alertPanel.SetActive(true);
-            StartCoroutine(HideAlertAfterDelay(duration));
+            StartCoroutine(HideAlertAfterDelay(alertPanel, duration));
         }
     }
 
-    private IEnumerator HideAlertAfterDelay(float delay)
+    public void ShowNotification(string message, float duration = 2f)
+    {
+        SoundFxManager.Instance.PlaySoundFXClip(notificationSoundFX, transform, 1f);
+        if (notificationText != null)
+        {
+            notificationText.text = message.ToUpper();
+        }
+
+        if (notificationPanel != null)
+        {
+            notificationPanel.SetActive(true);
+            StartCoroutine(HideAlertAfterDelay(notificationPanel, duration));
+        }
+    }
+
+    private IEnumerator HideAlertAfterDelay(GameObject panel, float delay)
     {
         yield return new WaitForSeconds(delay);
 
-        if (alertPanel != null)
+        if (panel != null)
         {
-            alertPanel.SetActive(false);
+            panel.SetActive(false);
         }
     }
 }

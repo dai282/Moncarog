@@ -20,6 +20,7 @@ public class GameManager : MonoBehaviour
 
     [SerializeField] private AudioClip loseSoundFX;
     [SerializeField] private AudioClip winSoundFX;
+    [SerializeField] private AudioClip doorEnterSoundFX;
 
     private int roomLevel = 1;
 
@@ -212,6 +213,7 @@ public class GameManager : MonoBehaviour
     public void PlayerEnteredDoor(DoorDetector door)
     {
         Debug.Log($"PlayerEnteredDoor Called!");
+        SoundFxManager.Instance.PlaySoundFXClip(doorEnterSoundFX, transform, 1f);
 
         int doorIndex = door.doorIndex;
 

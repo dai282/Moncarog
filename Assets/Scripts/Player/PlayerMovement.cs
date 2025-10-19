@@ -13,6 +13,7 @@ public class PlayerMovement : MonoBehaviour
     private SpriteRenderer spriteRenderer;
 
     [SerializeField] private AudioClip walkingClip;
+    [SerializeField] private AudioClip encounterSoundFX;
 
     void Start()
     {
@@ -94,6 +95,7 @@ public class PlayerMovement : MonoBehaviour
         {
             Debug.Log($"Encounter triggered at {encounterCell}");
 
+            SoundFxManager.Instance.PlaySoundFXClip(encounterSoundFX, transform, 1f);
             // Trigger combat
             FindFirstObjectByType<CombatHandler>().BeginEncounter(roomGrid.roomGridID);
 

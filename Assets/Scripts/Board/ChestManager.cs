@@ -17,6 +17,8 @@ public class ChestManager : MonoBehaviour
 
     private List<GameObject> availableMoncargs = new List<GameObject>();
 
+    [SerializeField] private AudioClip chestOpenSoundFx;
+
     private ChestDetector currentChest;
 
     private void Awake()
@@ -39,6 +41,8 @@ public class ChestManager : MonoBehaviour
 
     public void ShowMoncargSelection()
     {
+        SoundFxManager.Instance.PlaySoundFXClip(chestOpenSoundFx, transform, 1f);
+
         // Get 3 random unique Moncargs
         availableMoncargs = MoncargDatabase.Instance.GetStarterMoncargs();
 
@@ -95,7 +99,7 @@ public class ChestManager : MonoBehaviour
             Debug.Log($"Added {storedMoncarg.Details.FriendlyName} to inventory as starter!");
         }
 
-        AlertManager.Instance.ShowAlert($"Added {storedMoncarg.Details.FriendlyName} to inventory as starter!");
+        AlertManager.Instance.ShowNotification($"Added {storedMoncarg.Details.FriendlyName} to inventory as starter!");
 
         Destroy(moncargInstance);
 
