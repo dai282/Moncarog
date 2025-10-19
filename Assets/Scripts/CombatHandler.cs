@@ -3,6 +3,7 @@ using Elementals; //for elemental types
 using UnityEngine.UIElements;
 using System.Collections.Generic;
 using System.Linq;
+using System.Collections;
 
 public class CombatHandler: MonoBehaviour
 {
@@ -12,6 +13,15 @@ public class CombatHandler: MonoBehaviour
 
     [Header("References")]
     public GameObject victoryScreen;
+
+    [Header("Slash Effect")]
+    [SerializeField] private Animator slashAnimator;
+    [SerializeField] private Transform slashTransform;
+    [SerializeField] private float slashDuration = 0.3f;
+
+    [Header("Damage Indicator")]
+    [SerializeField] private Canvas combatCanvas; // assign your combat UI canvas here
+    [SerializeField] private GameObject damageIndicatorPrefab; // assign your prefab
 
     // ADDED: Item drop system fields
     [Header("Item Drop System")]
@@ -189,7 +199,7 @@ public class CombatHandler: MonoBehaviour
         }
         else
         {
-            ExecuteAttack(player, enemy, attackChoice);
+            ExecuteAttack(player, enemy, attackChoice, true);
         }
         EndTurn();
     }
@@ -254,7 +264,7 @@ public class CombatHandler: MonoBehaviour
 
         // Execute chosen move
         Debug.Log(enemy.moncargName + " chose " + chosenSkill.name);
-        ExecuteAttack(enemy, player, chosenSkill);
+        ExecuteAttack(enemy, player, chosenSkill, false);
 
         EndTurn();
     }
@@ -272,12 +282,20 @@ public class CombatHandler: MonoBehaviour
     //END EVENT DRIVEN BEGIN ENCOUNTER
 
     #region Attack Execution
-    public void ExecuteAttack(Moncarg attacker, Moncarg defender, SkillDefinition attackChoice)
+    public void ExecuteAttack(Moncarg attacker, Moncarg defender, SkillDefinition attackChoice, bool isPlayerAttacking)
     {
-        if (TryDodge(defender))
+        bool isDodged = TryDodge(defender);
+        
+        if (isDodged)
         {
             Debug.Log($"{defender.moncargName} dodged the attack!");
             return;
+        }
+
+        // Play slash animation only if not Rest and not dodged
+        if (attackChoice.name != "Rest")
+        {
+            PlaySlashAnimation(isPlayerAttacking, attacker.transform, defender.transform);
         }
 
         // Deduct mana cost
@@ -297,6 +315,10 @@ public class CombatHandler: MonoBehaviour
         // Apply damage to defender
         defender.health -= damage;
 
+        // ADDED: Flash red and show damage indicator
+        StartCoroutine(FlashRed(defender));
+        ShowDamageIndicator(defender, damage);
+
         Debug.Log(attacker.moncargName + " used " + attackChoice.name + " on " + defender.moncargName + " for " + damage + " damage!");
 
         // Check if defender is defeated
@@ -308,6 +330,116 @@ public class CombatHandler: MonoBehaviour
         }
 
         combatUI.UpdateMoncargStats(player, enemy);
+    }
+
+    // ==========================================
+    // DAMAGE INDICATOR + SPRITE FLASH SECTION
+    // ==========================================
+    private void ShowDamageIndicator(Moncarg moncarg, float damage)
+    {
+        if (moncarg == null || damageIndicatorPrefab == null || combatCanvas == null)
+        {
+            Debug.LogWarning("[CombatHandler] Missing references for damage indicator!");
+            return;
+        }
+        
+        // Convert world position to screen position
+        Vector3 screenPos = Camera.main.WorldToScreenPoint(moncarg.transform.position + Vector3.up * 1f);
+        
+        // Instantiate as child of combat canvas
+        GameObject indicator = Instantiate(damageIndicatorPrefab, combatCanvas.transform);
+        indicator.transform.position = screenPos;
+        
+        FloatingDamageText dmgText = indicator.GetComponent<FloatingDamageText>();
+        if (dmgText != null)
+        {
+            dmgText.Initialize(damage);
+            Debug.Log($"[CombatHandler] {moncarg.moncargName} took {damage} damage. Spawned damage text at screen pos: {screenPos}");
+        }
+        else
+        {
+            Debug.LogError("[CombatHandler] FloatingDamageText component not found on prefab!");
+        }
+    }
+    
+    private IEnumerator FlashRed(Moncarg moncarg)
+    {
+        if (moncarg == null)
+        {
+            Debug.LogWarning("[CombatHandler] FlashRed: Moncarg is null");
+            yield break;
+        }
+        
+        SpriteRenderer sr = moncarg.GetComponent<SpriteRenderer>();
+        if (sr == null)
+        {
+            Debug.LogWarning($"[CombatHandler] No SpriteRenderer found on {moncarg.moncargName}");
+            yield break;
+        }
+        
+        // Store the ORIGINAL color (should be white)
+        Color originalColor = Color.white;
+        
+        // Force set to red
+        sr.color = Color.red;
+        Debug.Log($"[CombatHandler] SET {moncarg.moncargName} to RED");
+        
+        // Wait for flash duration
+        yield return new WaitForSeconds(0.15f);
+        
+        // Restore to white (default sprite color)
+        if (sr != null)
+        {
+            sr.color = originalColor;
+            Debug.Log($"[CombatHandler] RESTORED {moncarg.moncargName} to WHITE");
+        }
+    }
+
+    // Slash animation method
+    private void PlaySlashAnimation(bool isPlayerAttacking, Transform attackerTransform, Transform defenderTransform)
+    {
+        if (slashAnimator != null && slashTransform != null && attackerTransform != null && defenderTransform != null)
+        {
+            Vector3 startPos = attackerTransform.position;
+            Vector3 endPos = defenderTransform.position;
+
+            slashTransform.position = startPos;
+
+            Vector3 scale = slashTransform.localScale;
+            scale.x = isPlayerAttacking ? Mathf.Abs(scale.x) : -Mathf.Abs(scale.x);
+            slashTransform.localScale = scale;
+
+            float angle = isPlayerAttacking ? -45f : 45f;
+            slashTransform.rotation = Quaternion.Euler(0, 0, angle);
+
+            slashTransform.gameObject.SetActive(true);
+            StartCoroutine(PlaySlashMoveCoroutine(startPos, endPos));
+        }
+    }
+
+    private IEnumerator PlaySlashMoveCoroutine(Vector3 start, Vector3 end)
+    {
+        int timesToPlay = 2;
+        for (int i = 0; i < timesToPlay; i++)
+        {
+            slashAnimator.SetBool("isSlashing", true);
+
+            float timer = 0f;
+            while (timer < slashDuration)
+            {
+                slashTransform.position = Vector3.Lerp(start, end, timer / slashDuration);
+                timer += Time.deltaTime;
+                yield return null;
+            }
+
+            slashTransform.position = end;
+            slashAnimator.SetBool("isSlashing", false);
+            yield return new WaitForSeconds(0.05f);
+        }
+
+        slashTransform.position = new Vector3(1000f, 1000f, 0f);
+        slashTransform.gameObject.SetActive(false);
+        slashTransform.rotation = Quaternion.identity;
     }
 
     public bool TryDodge(Moncarg defender)
@@ -461,34 +593,6 @@ public class CombatHandler: MonoBehaviour
             victoryScreen.SetActive(true);
         }
         Cleanup();
-        //Experience gaining logic
-        /*
-        Debug.Log("You won the battle!");
-        // Reward player with experience points
-        int expGained = enemy.exp;
-        player.exp += expGained;
-        Debug.Log(player.moncargName + " gained " + expGained + " experience points!");
-
-        // Check for level up
-        if (player.exp >= player.level * 100) // Example leveling formula
-        {
-            player.level++;
-            player.exp = 0; // Reset experience or carry over excess
-            player.maxHealth += 10; // Increase stats on level up
-            player.attack += 5;
-            player.defense += 5;
-            player.speed += 2;
-            player.maxMana += 5;
-            player.health = player.maxHealth; // Heal to full on level up
-            player.mana = player.maxMana; // Restore mana on level up
-
-            Debug.Log(player.moncargName + " leveled up to level " + player.level + "!");
-        }
-
-        Cleanup();
-        combatUI.rootVisualElement.style.display = DisplayStyle.None;
-        // Return to map or previous state
-        */
     }
 
     // ADDED: Item drop system methods
@@ -810,10 +914,3 @@ public class CombatHandler: MonoBehaviour
     }
     #endregion
 }
-
-// Get the StoredMoncarg component from the Moncarg GameObject
-//StoredMoncarg storedMoncarg = moncargGameObject.GetComponent<StoredMoncarg>();
-//if (storedMoncarg != null)
-//{
-//    storedMoncarg.AddToInventory();
-//}
