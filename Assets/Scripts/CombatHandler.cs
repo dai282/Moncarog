@@ -117,6 +117,9 @@ public class CombatHandler: MonoBehaviour
 
         //start moncarg selection
         StartCoroutine(StartMoncargSelection());
+
+        //play combat music
+        MusicManager.Instance.SwapTrack();
     }
 
     public void BeginBattle()
@@ -723,6 +726,9 @@ public class CombatHandler: MonoBehaviour
 
         //Return camera to player
         cam.ResumeFollowing();
+
+        //Play background music
+        MusicManager.Instance.SwapTrack();
     }
 
     private void resetEnemy()

@@ -11543,6 +11543,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2004973184}
   - component: {fileID: 2004973183}
+  - component: {fileID: 2004973185}
   m_Layer: 0
   m_Name: Music
   m_TagString: Untagged
@@ -11662,6 +11663,20 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2004973185
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2004973182}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 238c045328e45ab4b83d8fe091d8f61c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MusicManager
+  bgMusic: {fileID: 8300000, guid: b63ba4f354d19e847a078d7abb3a0214, type: 3}
+  combatMusic: {fileID: 8300000, guid: 641f8e44338ed05488beeea47dfa7fdb, type: 3}
 --- !u!1 &2016109638
 GameObject:
   m_ObjectHideFlags: 0
