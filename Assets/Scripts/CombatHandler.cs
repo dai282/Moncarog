@@ -71,7 +71,7 @@ public class CombatHandler: MonoBehaviour
         //Create enemy Moncarg instance for battle
         moncargDatabase = GameManager.Instance.moncargDatabase;
         int databaseLen = moncargDatabase.availableEnemyMoncargs.Count;
-        //boss and miniboss rooms
+        // Instantiate moncarg and check if they're boss or miniboss rooms
         if (roomID < 0)
         {
             switch (roomID)
@@ -99,11 +99,11 @@ public class CombatHandler: MonoBehaviour
                     break;
             }
         }
+        //otherwise just spawn a normal moncarg
         else
         {
             int randIndex = Random.Range(0, databaseLen - 4);
             enemyObj = Instantiate(moncargDatabase.availableEnemyMoncargs[randIndex]);
-            //enemyObj = Instantiate(moncargDatabase.availableEnemyMoncargs[databaseLen - 1]);
         }
 
         enemyObj.transform.localScale = new Vector3(5f, 5f, 5f);
@@ -312,25 +312,17 @@ public class CombatHandler: MonoBehaviour
             return;
         }
 
+        // Use the testable calculation method
+        float damage = CalculateDamage(attacker, defender, attackChoice);
+        
         // Deduct mana cost
         attacker.mana -= attackChoice.manaCost;
-
-        // Calculate base damage
-        float damage = attackChoice.damage + attacker.attack - defender.defense;
-
-        damage = checkElemental(attacker, defender, attackChoice, damage);
-
-        // Ensure damage is not negative
-        if (damage < 0)
-        {
-            damage = 0;
-        }
 
         // Apply damage to defender
         defender.health -= damage;
 
         Debug.Log(attacker.moncargName + " used " + attackChoice.name + " on " + defender.moncargName + " for " + damage + " damage!");
-        combatUI.UpdateCombatTerminal(attacker.moncargName + " used " + attackChoice.name + " on " + defender.moncargName + " for " + damage + " damage!");
+        combatUI?.UpdateCombatTerminal(attacker.moncargName + " used " + attackChoice.name + " on " + defender.moncargName + " for " + damage + " damage!");
 
         // Check if defender is defeated
         if (defender.health <= 0)
@@ -349,6 +341,20 @@ public class CombatHandler: MonoBehaviour
     {
         float roll = Random.value; // random number between 0.0 and 1.0
         return roll < defender.dodgeChance;
+    }
+
+    public float CalculateDamage(Moncarg attacker, Moncarg defender, SkillDefinition attackChoice)
+    {
+        // Pure damage calculation logic - easily testable!
+        float damage = attackChoice.damage + attacker.attack - defender.defense;
+        damage = checkElemental(attacker, defender, attackChoice, damage);
+
+        if (damage < 0)
+        {
+            damage = 0;
+        }
+
+        return damage;
     }
 
     public float checkElemental(Moncarg attacker, Moncarg defender, SkillDefinition attackChoice, float damage)
