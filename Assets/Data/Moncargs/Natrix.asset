@@ -16,14 +16,14 @@ MonoBehaviour:
   Icon: {fileID: -5714527108496226148, guid: 6b8c3d32043ec124f9e75e2e1b839f68, type: 3}
   moncargData:
     moncargName: Natrix
-    baseMaxHealth: 280.37
-    baseAttack: 232.81664
-    baseDefense: 25.41
+    baseMaxHealth: 280
+    baseAttack: 232
+    baseDefense: 25
     baseSpeed: 44
     baseMaxMana: 305
-    maxHealth: 280.37
-    health: 280.37
-    attack: 232.81664
+    maxHealth: 280
+    health: 280
+    attack: 233
     defense: 25.41
     speed: 44
     exp: 0

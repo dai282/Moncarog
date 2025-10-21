@@ -16,20 +16,20 @@ MonoBehaviour:
   Icon: {fileID: 6363573771445966535, guid: 89eab50d2e0da374782ec54cc07885a6, type: 3}
   moncargData:
     moncargName: Zagen
-    baseMaxHealth: 0
-    baseAttack: 0
-    baseDefense: 0
-    baseSpeed: 0
-    baseMaxMana: 0
-    maxHealth: 1000
-    health: 1000
-    attack: 100
+    baseMaxHealth: 500
+    baseAttack: 60
+    baseDefense: 30
+    baseSpeed: 1
+    baseMaxMana: 150
+    maxHealth: 0
+    health: 0
+    attack: 0
     defense: 0
     speed: 0
-    exp: 50
+    exp: 0
     level: 1
-    mana: 100
-    maxMana: 100
+    mana: 0
+    maxMana: 0
     catchChance: 1
     dodgeChance: 0.2
     type: 2

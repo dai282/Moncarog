@@ -16,15 +16,20 @@ MonoBehaviour:
   Icon: {fileID: -4861139540325970476, guid: b6adbfd3c7f7abb439a1a3ad103d2ede, type: 3}
   moncargData:
     moncargName: Sepio
-    maxHealth: 80
-    health: 80
-    attack: 80
-    defense: 10
-    speed: 20
+    baseMaxHealth: 80
+    baseAttack: 80
+    baseDefense: 10
+    baseSpeed: 20
+    baseMaxMana: 0
+    maxHealth: 0
+    health: 0
+    attack: 0
+    defense: 0
+    speed: 0
     exp: 0
     level: 1
-    mana: 120
-    maxMana: 120
+    mana: 0
+    maxMana: 0
     catchChance: 0.1
     dodgeChance: 0.6
     type: 1
@@ -36,6 +41,7 @@ MonoBehaviour:
     - {fileID: 11400000, guid: 8e2369e9803aa844cb6493fee4c23d99, type: 2}
     isBoss: 0
     isMiniBoss: 0
+    expToNextLevel: 100
   SlotDimension:
     Height: 1
     Width: 1

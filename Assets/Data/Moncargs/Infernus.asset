@@ -16,24 +16,32 @@ MonoBehaviour:
   Icon: {fileID: -8123697642921866063, guid: 6df7c20d749ba134490a7cbdabba0f20, type: 3}
   moncargData:
     moncargName: Infernus
-    maxHealth: 100
-    health: 100
-    attack: 30
-    defense: 10
-    speed: 10
+    baseMaxHealth: 100
+    baseAttack: 30
+    baseDefense: 10
+    baseSpeed: 10
+    baseMaxMana: 100
+    maxHealth: 0
+    health: 0
+    attack: 0
+    defense: 0
+    speed: 0
     exp: 0
-    level: 0
-    mana: 100
-    maxMana: 100
+    level: 1
+    mana: 0
+    maxMana: 0
     catchChance: 0.5
     dodgeChance: 0.5
     type: 0
-    active: 0
+    active: 1
     skillset:
     - {fileID: 11400000, guid: 411e2c1d2e0c3e847a9c8fa5794f907d, type: 2}
     - {fileID: 11400000, guid: 720ea51bd46724e479a4139bfe6d8b36, type: 2}
     - {fileID: 11400000, guid: a1d873551fb28104882311a8e35a430f, type: 2}
     - {fileID: 11400000, guid: d69bf7ad7978f924cab1f0c3a0f6bb38, type: 2}
+    isBoss: 0
+    isMiniBoss: 0
+    expToNextLevel: 100
   SlotDimension:
     Height: 1
     Width: 1

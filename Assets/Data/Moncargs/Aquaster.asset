@@ -16,15 +16,20 @@ MonoBehaviour:
   Icon: {fileID: 5726396820227772254, guid: a41cd386782ca1e4386e6da46034a4c7, type: 3}
   moncargData:
     moncargName: Aquaster
-    maxHealth: 700
-    health: 700
-    attack: 50
-    defense: 40
-    speed: 20
+    baseMaxHealth: 700
+    baseAttack: 50
+    baseDefense: 40
+    baseSpeed: 20
+    baseMaxMana: 250
+    maxHealth: 0
+    health: 0
+    attack: 0
+    defense: 0
+    speed: 0
     exp: 0
     level: 1
-    mana: 250
-    maxMana: 250
+    mana: 0
+    maxMana: 0
     catchChance: 0
     dodgeChance: 0.5
     type: 1
@@ -36,6 +41,7 @@ MonoBehaviour:
     - {fileID: 11400000, guid: 8e2369e9803aa844cb6493fee4c23d99, type: 2}
     isBoss: 0
     isMiniBoss: 1
+    expToNextLevel: 100
   SlotDimension:
     Height: 1
     Width: 1

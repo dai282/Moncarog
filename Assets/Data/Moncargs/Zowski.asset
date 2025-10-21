@@ -16,15 +16,15 @@ MonoBehaviour:
   Icon: {fileID: -9046366044295607711, guid: cd6a5a0c6cbb52a46a2e1acecc717477, type: 3}
   moncargData:
     moncargName: Zowski
-    baseMaxHealth: 322.4255
-    baseAttack: 260.75464
-    baseDefense: 27.951
+    baseMaxHealth: 322
+    baseAttack: 260
+    baseDefense: 27
     baseSpeed: 48
     baseMaxMana: 336
-    maxHealth: 322.4255
-    health: 322.4255
-    attack: 260.75464
-    defense: 27.951
+    maxHealth: 322
+    health: 322
+    attack: 261
+    defense: 28
     speed: 48
     exp: 0
     level: 1
