@@ -98,3 +98,5 @@ InitTestScene*.unity*
 # Auto-generated scenes by play mode tests
 /[Aa]ssets/[Ii]nit[Tt]est[Ss]cene*.unity*
 window_positions.json
+Assets/UserData/files/lifetime_stats.json
+Assets/UserData/files/current_run.json
