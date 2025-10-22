@@ -199,7 +199,7 @@ public class MapGenerator
         {
             MapNode eventNode = new MapNode { Room = new Room { Name = -10, Type = RoomType.Event } };
             float y = currentY * -verticalSpacing;
-            eventNode.Position = new Vector2(0, y);
+            eventNode.Position = new Vector2(0, y + 2);
             currentY++;
 
             foreach (var end in newPathEnds)
@@ -214,12 +214,11 @@ public class MapGenerator
             //Debug.Log("Placed pre-miniboss Event Room at Y = " + currentY);
         }
 
-        // After minibosses (once currentY > roomsToMiniBoss)
-        else if (!postMiniEventPlaced && currentY > roomsToMiniBoss && Random.value < 0.9f) // 20% chance per layer
+        else if (postMiniEventPlaced && Random.value < 0.9f) // 20% chance per layer
         {
             MapNode eventNode = new MapNode { Room = new Room { Name = -11, Type = RoomType.Event } };
             float y = currentY * -verticalSpacing;
-            eventNode.Position = new Vector2(0, y);
+            eventNode.Position = new Vector2(0, y + 2);
             currentY++;
 
             foreach (var end in newPathEnds)
@@ -229,7 +228,7 @@ public class MapGenerator
             }
 
             newPathEnds = new List<MapNode> { eventNode };
-            postMiniEventPlaced = true;
+            postMiniEventPlaced = false;
 
             //Debug.Log("Placed post-miniboss Event Room at Y = " + currentY);
         }
@@ -249,6 +248,7 @@ public class MapGenerator
         miniBosses[1].Position = new Vector2(centerX, y);
         miniBosses[2].Position = new Vector2(maxX, y);
         currentY++;
+        postMiniEventPlaced = true;
 
         foreach (var endNode in pathEndNodes)
         {
