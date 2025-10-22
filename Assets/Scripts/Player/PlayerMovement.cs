@@ -73,7 +73,10 @@ public class PlayerMovement : MonoBehaviour
         if (roomGrid.IsEventTile(position, out Vector3Int eventCell))
         {
             Debug.Log($"Event triggered at {eventCell}");
-            // Reset tile to walkable after use
+
+            int randomPercentage = Random.Range(-20, 21);
+            PlayerInventory.Instance.AdjustAllMoncargsStats(randomPercentage);
+            
             roomGrid.ResetEventTile(eventCell);
         }
 

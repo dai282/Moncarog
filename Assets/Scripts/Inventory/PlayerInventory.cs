@@ -724,6 +724,33 @@ public sealed class PlayerInventory : MonoBehaviour
     {
         return MaxMoncargs - GetCurrentMoncargCount();
     }
+
+    public void AdjustAllMoncargsStats(float percentage)
+    {
+        float multiplier = 1f + (percentage / 100f);
+
+        foreach (var storedMoncarg in StoredMoncargs)
+        {
+            if (storedMoncarg?.Details?.moncargData == null) 
+                continue;
+
+            var data = storedMoncarg.Details.moncargData;
+
+            data.attack *= multiplier;
+            data.defense *= multiplier;
+            data.health *= multiplier;
+            data.maxHealth *= multiplier;
+            data.speed = Mathf.RoundToInt(data.speed * multiplier);
+            data.mana = Mathf.RoundToInt(data.mana * multiplier);
+            data.maxMana = Mathf.RoundToInt(data.maxMana * multiplier);
+
+            if (data.health > data.maxHealth)
+                data.health = data.maxHealth;
+
+            if (data.mana > data.maxMana)
+                data.mana = data.maxMana;
+        }
+    }
     #endregion
 
     #region Utility Methods
