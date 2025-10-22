@@ -10,6 +10,7 @@ public class MapManager : MonoBehaviour
     public GameObject firePrefab;
     public GameObject miniBossPrefab;
     public GameObject finalBossPrefab;
+    public GameObject eventPrefab;
 
     [Header("Line Prefab")]
     public GameObject linePrefab;
@@ -161,6 +162,7 @@ public class MapManager : MonoBehaviour
             case MapGenerator.RoomType.Fire: return firePrefab;
             case MapGenerator.RoomType.MiniBoss: return miniBossPrefab;
             case MapGenerator.RoomType.FinalBoss: return finalBossPrefab;
+            case MapGenerator.RoomType.Event: return eventPrefab;
             default: return normalPrefab;
         }
     }

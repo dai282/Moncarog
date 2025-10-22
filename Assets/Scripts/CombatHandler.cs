@@ -85,6 +85,10 @@ public class CombatHandler: MonoBehaviour
                     //final boss
                     enemyObj = Instantiate(moncargDatabase.availableEnemyMoncargs[databaseLen - 1]);
                     break;
+                case -10:
+                    break;
+                case -11:
+                    break;
                 default:
                     Debug.LogError("Invalid miniboss/boss room ID: " + roomID);
                     int randIndex = Random.Range(0, databaseLen - 4);

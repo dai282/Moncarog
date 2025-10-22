@@ -66,6 +66,12 @@ public class MoncargDatabase : MonoBehaviour
                 continue;
 
             // Sort by element type
+            if (details.moncargData.isMiniBoss == true)
+                continue;
+
+            if (details.moncargData.isBoss == true)
+                continue;
+
             switch (details.moncargData.type)
             {
                 case ElementalType.Fire:

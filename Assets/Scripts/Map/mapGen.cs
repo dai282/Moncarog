@@ -8,11 +8,13 @@ public class MapGenerator
     private const int roomsToFinalBoss = 5;
 
     //reordered these 
-    public enum RoomType { Water, Fire, Grass, Normal, FinalBoss, MiniBoss }
+    public enum RoomType { Water, Fire, Grass, Normal, FinalBoss, MiniBoss, Event }
 
     private int currentY = 0;
     private float horizontalSpacing = 2f;
     private float verticalSpacing = -2f;
+    private bool preMiniEventPlaced = false;
+    private bool postMiniEventPlaced = false;
 
     public class Room
     {
@@ -191,6 +193,45 @@ public class MapGenerator
             {
                 newPathEnds[i].Position = new Vector2(startX + i * horizontalSpacing, currentY * -verticalSpacing);
             }
+        }
+
+        if (!preMiniEventPlaced && currentY < roomsToMiniBoss && Random.value < 0.9f) // 20% chance per layer
+        {
+            MapNode eventNode = new MapNode { Room = new Room { Name = -10, Type = RoomType.Event } };
+            float y = currentY * -verticalSpacing;
+            eventNode.Position = new Vector2(0, y);
+            currentY++;
+
+            foreach (var end in newPathEnds)
+            {
+                end.Exits.Add(eventNode);
+                eventNode.Parents.Add(end);
+            }
+
+            newPathEnds = new List<MapNode> { eventNode };
+            preMiniEventPlaced = true;
+
+            //Debug.Log("Placed pre-miniboss Event Room at Y = " + currentY);
+        }
+
+        // After minibosses (once currentY > roomsToMiniBoss)
+        else if (!postMiniEventPlaced && currentY > roomsToMiniBoss && Random.value < 0.9f) // 20% chance per layer
+        {
+            MapNode eventNode = new MapNode { Room = new Room { Name = -11, Type = RoomType.Event } };
+            float y = currentY * -verticalSpacing;
+            eventNode.Position = new Vector2(0, y);
+            currentY++;
+
+            foreach (var end in newPathEnds)
+            {
+                end.Exits.Add(eventNode);
+                eventNode.Parents.Add(end);
+            }
+
+            newPathEnds = new List<MapNode> { eventNode };
+            postMiniEventPlaced = true;
+
+            //Debug.Log("Placed post-miniboss Event Room at Y = " + currentY);
         }
 
         currentY++;

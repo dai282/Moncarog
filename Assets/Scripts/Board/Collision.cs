@@ -7,6 +7,7 @@ using System.Collections.Generic;
 
 public class RoomGrid : MonoBehaviour
 {
+    public bool Event = false;
     public Tilemap collisionTilemap;
     public Tilemap decorations;
     public Tilemap floor;
@@ -20,7 +21,8 @@ public class RoomGrid : MonoBehaviour
         Walkable,
         Unwalkable,
         Door,
-        Encounter
+        Encounter,
+        Event
     }
 
     private Dictionary<Vector3Int, CellType> cellData = new Dictionary<Vector3Int, CellType>();
@@ -60,7 +62,7 @@ public class RoomGrid : MonoBehaviour
                 }
             }
         }
-        //PlaceEncounterTiles();
+       
     }
 
     public void PlaceEncounterTiles(int roomID)
@@ -75,7 +77,26 @@ public class RoomGrid : MonoBehaviour
         }
 
         //if boss or mini boss room, only 1 encounter tile at the middle of the room
-        if (roomID < 0)
+        if( roomID == -10 || roomID == -11)
+        {
+            if (Event)
+            {
+                Vector3Int eventTilePos = new Vector3Int(4, -3, 0);
+
+                if (cellData.ContainsKey(eventTilePos) && cellData[eventTilePos] == CellType.Walkable)
+                {
+                    cellData[eventTilePos] = CellType.Event;
+
+                    Debug.Log($"Event tile placed at {eventTilePos}");
+                }
+                else
+                {
+                    Debug.LogWarning($"Event tile position {eventTilePos} not valid or not walkable.");
+                }
+            }
+
+        }
+        else if (roomID < 0)
         {
             BoundsInt bounds = collisionTilemap.cellBounds;
 
@@ -168,6 +189,18 @@ public class RoomGrid : MonoBehaviour
         return encounterTiles.Contains(cellPos);
     }
 
+    public bool IsEventTile(Vector3 worldPos, out Vector3Int cellPos)
+    {
+        cellPos = collisionTilemap.WorldToCell(worldPos);
+
+        if (cellData.TryGetValue(cellPos, out CellType type))
+        {
+            return type == CellType.Event;
+        }
+
+        return false;
+    }
+
     public void ResetEncounterTile(Vector3Int cellPos)
     {
         if (!encounterTiles.Contains(cellPos))
@@ -193,6 +226,27 @@ public class RoomGrid : MonoBehaviour
         }
 
         //Debug.Log($"Encounter group {groupID} cleared ({tilesToRemove.Count} tiles reset to Walkable).");
+    }
+
+    public void ResetEventTile(Vector3Int cellPos)
+    {
+        if (cellData.TryGetValue(cellPos, out CellType type) && type == CellType.Event)
+        {
+            // Remove or reset event type
+            cellData[cellPos] = CellType.Walkable;
+
+            // Optional: Clear the tile visually if your tilemap uses event tiles
+            if (collisionTilemap != null)
+            {
+                collisionTilemap.SetTile(cellPos, null);
+            }
+
+            Debug.Log($"Removed event tile at {cellPos}");
+        }
+        else
+        {
+            Debug.LogWarning($"No event tile found at {cellPos} to remove.");
+        }
     }
 
     void PrintUnwalkableTiles()
