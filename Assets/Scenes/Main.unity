@@ -6643,6 +6643,8 @@ MonoBehaviour:
   - {fileID: 4965383374475707827, guid: 1cf41939deb1b4f659ed38db5edd0544, type: 3}
   - {fileID: 4965383374475707827, guid: d6ce91955cb1242808dc62f45d5a8810, type: 3}
   - {fileID: 4965383374475707827, guid: 6ac94777930b140db86e8c2ee0ff8720, type: 3}
+  - {fileID: 4965383374475707827, guid: 2317df6407f4b4c40961cbe86a592121, type: 3}
+  - {fileID: 4965383374475707827, guid: eaaa13dbe5c8b41ccbe8892d40507779, type: 3}
   - {fileID: 4965383374475707827, guid: 05cb5224f26a94a79b3d524221b3910b, type: 3}
   - {fileID: 4965383374475707827, guid: 5e008688698bd4eb2bc86a85d47ebfcd, type: 3}
   - {fileID: 4965383374475707827, guid: a8815b6fc66e4402d9f1d40151bf0c33, type: 3}
@@ -8088,6 +8090,10 @@ MonoBehaviour:
   - {fileID: 4959577150352375591, guid: 49c8737ffb4c0124e8d386575dfbc8e6, type: 3}
   - {fileID: 4049488232862808857, guid: d76d030792aa4684885112385ecf9d99, type: 3}
   availableEnemyMoncargs: []
+  fireMoncargs: []
+  waterMoncargs: []
+  plantMoncargs: []
+  normalMoncargs: []
 --- !u!4 &1635567585
 Transform:
   m_ObjectHideFlags: 0

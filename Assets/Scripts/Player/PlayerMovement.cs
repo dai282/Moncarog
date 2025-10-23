@@ -83,6 +83,15 @@ public class PlayerMovement : MonoBehaviour
             // Reset tile to walkable after use
             roomGrid.ResetEncounterTile(encounterCell);
         }
+        if (roomGrid.IsEventTile(position, out Vector3Int eventCell))
+        {
+            Debug.Log($"Event triggered at {eventCell}");
+
+            int randomPercentage = Random.Range(-20, 21);
+            PlayerInventory.Instance.AdjustAllMoncargsStats(randomPercentage);
+            
+            roomGrid.ResetEventTile(eventCell);
+        }
 
         // Check edges based on movement direction
         if (movementDirection.x > 0) // Moving right

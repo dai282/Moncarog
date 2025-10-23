@@ -48,6 +48,16 @@ public class BoardManager : MonoBehaviour
             {
                 currentRoom = Instantiate(roomPrefabs[roomPrefabs.Length - 2], Vector3.zero, Quaternion.identity);
             }
+            // event
+            if (roomID == -10)
+            {
+                currentRoom = Instantiate(roomPrefabs[roomPrefabs.Length - 5], Vector3.zero, Quaternion.identity);
+            }
+            // event
+            if (roomID == -11)
+            {
+                currentRoom = Instantiate(roomPrefabs[roomPrefabs.Length - 6], Vector3.zero, Quaternion.identity);
+            }
         }
         
 
