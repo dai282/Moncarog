@@ -104,11 +104,12 @@ public class CombatHandler: MonoBehaviour
             enemyObj = Instantiate(moncargDatabase.availableEnemyMoncargs[randIndex]);
         }
 
-        enemyObj.transform.localScale = new Vector3(5f, 5f, 5f);
-        enemy = enemyObj.GetComponent<Moncarg>();
-        enemy.InitStats();
-        //hide until combat starts
-        enemyObj.SetActive(false);
+       enemyObj.transform.localScale = new Vector3(15f, 15f, 0f);
+       enemyObj.transform.position = new Vector3(15f, 0f, 0f);
+       enemy = enemyObj.GetComponent<Moncarg>();   
+       enemy.InitStats();
+       //hide until combat starts
+       enemyObj.SetActive(false);
 
         //auto equip moncargs if none are equipped
         //AutoEquipMoncargs();
@@ -308,17 +309,24 @@ public class CombatHandler: MonoBehaviour
 
     #region Attack Execution
     // ADDED: Coroutine to handle attack with 1-second delay
-    private IEnumerator ExecuteAttackWithDelay(Moncarg attacker, Moncarg defender, SkillDefinition attackChoice, bool isPlayerAttacking)
+ private IEnumerator ExecuteAttackWithDelay(Moncarg attacker, Moncarg defender, SkillDefinition attackChoice, bool isPlayerAttacking)
+{
+    // Wait for 1 second before executing attack
+    yield return new WaitForSeconds(1f);
+    
+    // Check if objects still exist before executing attack
+    if (attacker == null || defender == null || attacker.gameObject == null || defender.gameObject == null)
     {
-        // Wait for 1 second before executing attack
-        yield return new WaitForSeconds(1f);
-        
-        // Execute the attack
-        ExecuteAttack(attacker, defender, attackChoice, isPlayerAttacking);
-        
-        // End turn after attack completes
-        EndTurn();
+        Debug.LogWarning("[ExecuteAttackWithDelay] Attacker or Defender was destroyed before attack could execute");
+        yield break;
     }
+    
+    // Execute the attack
+    ExecuteAttack(attacker, defender, attackChoice, isPlayerAttacking);
+    
+    // End turn after attack completes
+    EndTurn();
+}
 
     public void ExecuteAttack(Moncarg attacker, Moncarg defender, SkillDefinition attackChoice, bool isPlayerAttacking)
     {
@@ -381,31 +389,32 @@ public class CombatHandler: MonoBehaviour
     // ==========================================
     // DAMAGE INDICATOR + SPRITE FLASH SECTION
     // ==========================================
-    private void ShowDamageIndicator(Moncarg moncarg, float damage)
+private void ShowDamageIndicator(Moncarg moncarg, float damage)
+{
+    if (moncarg == null || damageIndicatorPrefab == null || combatCanvas == null)
     {
-        if (moncarg == null || damageIndicatorPrefab == null || combatCanvas == null)
-        {
-            Debug.LogWarning("[CombatHandler] Missing references for damage indicator!");
-            return;
-        }
-        
-        // Convert world position to screen position
-        Vector3 screenPos = Camera.main.WorldToScreenPoint(moncarg.transform.position + Vector3.up * 1f);
-        
-        // Instantiate as child of combat canvas
-        GameObject indicator = Instantiate(damageIndicatorPrefab, combatCanvas.transform);
-        indicator.transform.position = screenPos;
-        
-        FloatingDamageText dmgText = indicator.GetComponent<FloatingDamageText>();
-        if (dmgText != null)
-        {
-            dmgText.Initialize(damage);
-        }
-        else
-        {
-            Debug.LogError("[CombatHandler] FloatingDamageText component not found on prefab!");
-        }
+        Debug.LogWarning("[CombatHandler] Missing references for damage indicator!");
+        return;
     }
+    
+    // Convert world position to screen position
+    Vector3 screenPos = Camera.main.WorldToScreenPoint(moncarg.transform.position + Vector3.up * 1f);
+    
+    // Instantiate as child of combat canvas
+    GameObject indicator = Instantiate(damageIndicatorPrefab, combatCanvas.transform);
+    indicator.transform.position = screenPos;
+    indicator.transform.localScale = new Vector3(5f, 5f, 1f);
+    
+    FloatingDamageText dmgText = indicator.GetComponent<FloatingDamageText>();
+    if (dmgText != null)
+    {
+        dmgText.Initialize(damage);
+    }
+    else
+    {
+        Debug.LogError("[CombatHandler] FloatingDamageText component not found on prefab!");
+    }
+}
     
     private IEnumerator FlashRed(Moncarg moncarg)
     {
@@ -439,26 +448,26 @@ public class CombatHandler: MonoBehaviour
     }
 
     // Slash animation method
-    private void PlaySlashAnimation(bool isPlayerAttacking, Transform attackerTransform, Transform defenderTransform)
+private void PlaySlashAnimation(bool isPlayerAttacking, Transform attackerTransform, Transform defenderTransform)
+{
+    if (slashAnimator != null && slashTransform != null && attackerTransform != null && defenderTransform != null)
     {
-        if (slashAnimator != null && slashTransform != null && attackerTransform != null && defenderTransform != null)
-        {
-            Vector3 startPos = attackerTransform.position;
-            Vector3 endPos = defenderTransform.position;
+        Vector3 startPos = attackerTransform.position;
+        Vector3 endPos = defenderTransform.position;
 
-            slashTransform.position = startPos;
+        slashTransform.position = startPos;
 
-            Vector3 scale = slashTransform.localScale;
-            scale.x = isPlayerAttacking ? Mathf.Abs(scale.x) : -Mathf.Abs(scale.x);
-            slashTransform.localScale = scale;
+        Vector3 scale = new Vector3(10f, 10f, 1f);
+        scale.x = isPlayerAttacking ? Mathf.Abs(scale.x) : -Mathf.Abs(scale.x);
+        slashTransform.localScale = scale;
 
-            float angle = isPlayerAttacking ? -45f : 45f;
-            slashTransform.rotation = Quaternion.Euler(0, 0, angle);
+        float angle = isPlayerAttacking ? -45f : 45f;
+        slashTransform.rotation = Quaternion.Euler(0, 0, angle);
 
-            slashTransform.gameObject.SetActive(true);
-            StartCoroutine(PlaySlashMoveCoroutine(startPos, endPos));
-        }
+        slashTransform.gameObject.SetActive(true);
+        StartCoroutine(PlaySlashMoveCoroutine(startPos, endPos));
     }
+}
 
     private IEnumerator PlaySlashMoveCoroutine(Vector3 start, Vector3 end)
     {
@@ -917,6 +926,8 @@ public class CombatHandler: MonoBehaviour
 
         // Spawn the selected moncarg for battle
         GameObject playerMoncargObj = selectedMoncarg.CreateMoncargGameObject();
+        playerMoncargObj.transform.localScale = new Vector3(15f, 15f, 0f);
+        playerMoncargObj.transform.position = new Vector3(-15f, 0f, 0f);
         player = playerMoncargObj.GetComponent<Moncarg>();
         player.InitStats();
 
