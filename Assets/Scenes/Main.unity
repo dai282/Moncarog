@@ -5444,7 +5444,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0.09738652, y: 0.16862944}
-  m_AnchoredPosition: {x: 502.53116, y: 250.45078}
+  m_AnchoredPosition: {x: 502.53107, y: 250.45078}
   m_SizeDelta: {x: -26.197815, y: -53.864075}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1035303862
@@ -10122,6 +10122,7 @@ MonoBehaviour:
   firePrefab: {fileID: 830683634}
   miniBossPrefab: {fileID: 341262991}
   finalBossPrefab: {fileID: 341262991}
+  eventPrefab: {fileID: 341262991}
   linePrefab: {fileID: 1754114238}
   traversalOverlay: {fileID: 986445524}
   currentRoomId: 0

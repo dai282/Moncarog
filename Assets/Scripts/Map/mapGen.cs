@@ -211,7 +211,7 @@ public class MapGenerator
             newPathEnds = new List<MapNode> { eventNode };
             preMiniEventPlaced = true;
 
-            //Debug.Log("Placed pre-miniboss Event Room at Y = " + currentY);
+            Debug.Log("Placed pre-miniboss Event Room at Y = " + currentY);
         }
 
         else if (postMiniEventPlaced && Random.value < 0.9f) // 20% chance per layer
