@@ -17,6 +17,12 @@ public class GameManager : MonoBehaviour
     private List<MapManager.RoomInfo> nextRooms;
     private RoomGrid currentRoomGrid;
 
+    [SerializeField] private AudioClip loseSoundFX;
+    [SerializeField] private AudioClip winSoundFX;
+    [SerializeField] private AudioClip doorEnterSoundFX;
+
+    private int roomLevel = 1;
+
     public MoncargDatabase moncargDatabase;
 
     public static GameManager Instance { get; private set; }
@@ -24,6 +30,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private CombatHandler combatHandler;
 
     [SerializeField] private LoseScreenUI loseScreenUI;
+    [SerializeField] private GameObject victoryScreen;
 
     // Awake is called before Start when the GameObject is created
     private void Awake()
@@ -69,36 +76,6 @@ public class GameManager : MonoBehaviour
         // Reset moncarg database
         moncargDatabase.resetMoncargDatabase();
 
-        // Debug existing inventory
-        if (PlayerInventory.Instance != null)
-        {
-            int moncargCount = PlayerInventory.Instance.GetCurrentMoncargCount();
-            int equippedCount = PlayerInventory.Instance.StoredMoncargs.Count(m => m?.Details != null && m.IsEquipped);
-
-            Debug.Log($"Existing Moncargs in inventory: {moncargCount}");
-            Debug.Log($"Equipped Moncargs: {equippedCount}");
-
-            // List all Moncargs
-            for (int i = 0; i < PlayerInventory.Instance.StoredMoncargs.Count; i++)
-            {
-                var moncarg = PlayerInventory.Instance.StoredMoncargs[i];
-                if (moncarg?.Details != null)
-                {
-                    Debug.Log($"Moncarg {i}: {moncarg.Details.FriendlyName}, Equipped: {moncarg.IsEquipped}");
-                }
-            }
-
-            // Only add starting Moncarg if player has no Moncargs
-            if (moncargCount == 0)
-            {
-                Debug.Log("No Moncargs found, adding starting Moncarg");
-                AddStartingMoncarg();
-            }
-            else
-            {
-                Debug.Log("Existing Moncargs found, skipping starting Moncarg");
-            }
-        }
 
         // Initalize the map and get current room
         mapManager.Init();
@@ -159,9 +136,7 @@ public class GameManager : MonoBehaviour
             
             // Refresh UI after clearing
             PlayerInventory.Instance.RefreshAfterClear();
-
-            // Add starting Moncarg
-            AddStartingMoncarg();
+            
         }
 
         // Initalize the map and get current room
@@ -185,6 +160,7 @@ public class GameManager : MonoBehaviour
     public void TriggerGameOver()
     {
         Debug.Log("GameManager.TriggerGameOver() called!");
+        SoundFxManager.Instance.PlaySoundFXClip(loseSoundFX, transform, 1f);
         
         // Disable movement
         if (moveUI != null)
@@ -204,42 +180,28 @@ public class GameManager : MonoBehaviour
             Debug.LogError("LoseScreenUI not assigned in GameManager!");
         }
     }
-
-    private void AddStartingMoncarg()
+    public void TriggerVictory()
     {
-        if (startingMoncargPrefab != null)
+        Debug.Log("GameManager.TriggerVictory() called!");
+        SoundFxManager.Instance.PlaySoundFXClip(winSoundFX, transform, 1f);
+
+        // Disable movement
+        if (moveUI != null)
         {
-            GameObject startingMoncargObj = Instantiate(startingMoncargPrefab);
-            
-            // Convert to player-owned
-            Moncarg startingMoncarg = startingMoncargObj.GetComponent<Moncarg>();
-            if (startingMoncarg != null)
-            {
-                startingMoncarg.role = Moncarg.moncargRole.PlayerOwned;
-                
-                // Reset stats to full
-                startingMoncarg.InitStats();
-                startingMoncarg.health = startingMoncarg.maxHealth;
-                startingMoncarg.mana = startingMoncarg.maxMana;
-                
-                // Add to inventory
-                StoredMoncarg storedMoncarg = startingMoncargObj.GetComponent<StoredMoncarg>();
-                if (storedMoncarg != null)
-                {
-                    PlayerInventory.Instance.AddMoncargToInventory(storedMoncarg.Details, true); // Auto-equip
-                }
-            }
-            
-            // Destroy the temporary object
-            DestroyImmediate(startingMoncargObj);
-            
-            Debug.Log("Added starting Moncarg to player inventory");
+            moveUI.DisableAllButtons();
+        }
+
+        // Show victory screen
+        if (victoryScreen != null)
+        {
+            victoryScreen.SetActive(true);
         }
         else
         {
-            Debug.LogWarning("No starting Moncarg prefab assigned!");
+            Debug.LogError("VictoryScreenUI not assigned in GameManager!");
         }
     }
+
 
     void Update()
     {
@@ -262,6 +224,7 @@ public class GameManager : MonoBehaviour
     public void PlayerEnteredDoor(DoorDetector door)
     {
         Debug.Log($"PlayerEnteredDoor Called!");
+        SoundFxManager.Instance.PlaySoundFXClip(doorEnterSoundFX, transform, 1f);
 
         int doorIndex = door.doorIndex;
 
@@ -278,6 +241,9 @@ public class GameManager : MonoBehaviour
 
     private void LoadNextRoom(MapManager.RoomInfo nextRoom)
     {
+        // Update enemy levels for the new room
+        MoncargDatabase.Instance.SetRoomLevel(roomLevel++);
+
         // Destroy current room
         if (currentRoomGrid != null)
         {

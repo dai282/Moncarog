@@ -16,24 +16,32 @@ MonoBehaviour:
   Icon: {fileID: 1704421316843047190, guid: 7feb58fac09c8034286fce580bb04e6f, type: 3}
   moncargData:
     moncargName: Grapsus
-    maxHealth: 130
-    health: 130
-    attack: 20
-    defense: 50
-    speed: 5
+    baseMaxHealth: 130
+    baseAttack: 20
+    baseDefense: 50
+    baseSpeed: 5
+    baseMaxMana: 100
+    maxHealth: 0
+    health: 0
+    attack: 0
+    defense: 0
+    speed: 0
     exp: 0
     level: 1
-    mana: 100
-    maxMana: 100
+    mana: 0
+    maxMana: 0
     catchChance: 0.3
     dodgeChance: 0.1
     type: 1
-    active: 0
+    active: 1
     skillset:
     - {fileID: 11400000, guid: 411e2c1d2e0c3e847a9c8fa5794f907d, type: 2}
     - {fileID: 11400000, guid: 720ea51bd46724e479a4139bfe6d8b36, type: 2}
     - {fileID: 11400000, guid: a2fbcbfc5258abd4c9bdef3930b5f0b9, type: 2}
     - {fileID: 11400000, guid: 8e2369e9803aa844cb6493fee4c23d99, type: 2}
+    isBoss: 0
+    isMiniBoss: 0
+    expToNextLevel: 100
   SlotDimension:
     Height: 1
     Width: 1

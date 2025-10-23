@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
+using System.Collections;
 
 public class PlayerMovement : MonoBehaviour
 {
@@ -11,6 +12,9 @@ public class PlayerMovement : MonoBehaviour
     private Vector2 movementDirection = Vector2.zero;
     private SpriteRenderer spriteRenderer;
     private Vector3Int lastCellPos;
+
+    [SerializeField] private AudioClip walkingClip;
+    [SerializeField] private AudioClip encounterSoundFX;
 
     void Start()
     {
@@ -47,10 +51,20 @@ public class PlayerMovement : MonoBehaviour
                 {
                     StatsCollector.Instance?.RecordStep();
                     lastCellPos = currentCellPos;
+                //play walking sound
+                if (walkingClip != null)
+                {
+                    SoundFxManager.Instance.PlayWalkingSoundFXClip(walkingClip, transform, 1f);
                 }
             }
         }
+        else
+        {
+            // Stop walking sound when not moving
+            SoundFxManager.Instance.StopWalkingSound();
+        }
     }
+
 
     bool IsPositionWalkable(Vector2 position)
     {
@@ -60,11 +74,26 @@ public class PlayerMovement : MonoBehaviour
         DoorDetector door = roomGrid.GetDoorAtCell(cellPos);
         if (door != null)
         {
-            // trigger the door teleport
-            door.OnPlayerEnter();
+            if (PlayerInventory.Instance.StoredMoncargs.Count == 0)
+            {
+                AlertManager.Instance.ShowAlert("You need to choose a starting Moncarg before leaving!");
+            }
+            else
+            {
+                // trigger the door teleport
+                door.OnPlayerEnter();
+            }
 
             // Return false so the player doesn’t "walk into" the door tile physically
             return false;
+        }
+
+        // Chest detection
+        ChestDetector chest = roomGrid.GetChestAtCell(cellPos);
+        if (chest != null && chest.isStartingChest)
+        {
+            chest.OnPlayerInteract();
+            return false; // Stop movement when interacting with chest
         }
 
         // Check center point
@@ -77,6 +106,7 @@ public class PlayerMovement : MonoBehaviour
         {
             Debug.Log($"Encounter triggered at {encounterCell}");
 
+            SoundFxManager.Instance.PlaySoundFXClip(encounterSoundFX, transform, 1f);
             // Trigger combat
             FindFirstObjectByType<CombatHandler>().BeginEncounter(roomGrid.roomGridID);
 
