@@ -71,10 +71,7 @@ public class StatsUI : MonoBehaviour
 
     GameStats lifetimeStats = StatsCollector.Instance.GetLifetimeRecord();
     GameStats sessionStats = StatsCollector.Instance.GetCurrentSessionStats();
-
-    // --- THIS LINE IS REMOVED ---
-    // StatsCollector.Instance.SaveStats();  // <-- THIS WAS THE BUG. DO NOT CALL THIS HERE.
-
+    
     // Populate Lifetime UI
     lifetimeStepsText.text = $"Steps Taken:\t\t {lifetimeStats.StepsTaken}";
     lifetimeDamageDealtText.text = $"Damage Dealt:\t\t {lifetimeStats.DamageDealt:F0}";

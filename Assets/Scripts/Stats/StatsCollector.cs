@@ -61,7 +61,6 @@ private GameStats DeepCopy(GameStats original)
 
         _lastSavedSessionStats = DeepCopy(CurrentSessionStats);
 
-        // Subscribe to the time event HERE
         GameManager.OnTimeTick += RecordTimeTick; 
     }
 
@@ -72,7 +71,6 @@ private GameStats DeepCopy(GameStats original)
     }
 
     // This method now directly updates the stats object.
-    // No more _sessionTimeElapsed.
     public void RecordTimeTick(float deltaTime, float timeScale)
     {
         if (timeScale > 0f)
@@ -103,7 +101,7 @@ private GameStats DeepCopy(GameStats original)
             PotionsUsed = CurrentSessionStats.PotionsUsed - _lastSavedSessionStats.PotionsUsed,
             AbilitiesUsed = CurrentSessionStats.AbilitiesUsed - _lastSavedSessionStats.AbilitiesUsed,
             timeSpentIngame = CurrentSessionStats.timeSpentIngame - _lastSavedSessionStats.timeSpentIngame
-        }; // <-- The object initializer block is correct and will now compile.
+        };
 
         // 2. Add the Delta (only the new progress) to the LifetimeRecord
         LifetimeRecord.StepsTaken += delta.StepsTaken;
@@ -201,7 +199,7 @@ private GameStats DeepCopy(GameStats original)
         }
     }
 
-    // Updated: Reset snapshot when a new run begins
+    // Reset snapshot when a new run begins
     public void ResetSessionStats()
     {
         CurrentSessionStats = new GameStats();
@@ -209,18 +207,4 @@ private GameStats DeepCopy(GameStats original)
         _lastSavedSessionStats = new GameStats(); 
         Debug.Log("[StatsCollector] Session stats reset for new game.");
     }
-    // Cleaned up.
-    // public void SetCurrentSessionStats(GameStats stats)
-    // {
-    //     if (stats != null)
-    //     {
-    //         CurrentSessionStats = stats;
-    //         Debug.Log($"[StatsCollector] Session stats restored from save file. ({stats.StepsTaken} steps)");
-    //     }
-    //     else
-    //     {
-    //         CurrentSessionStats = new GameStats();
-    //         Debug.Log("[StatsCollector] No session stats in save file, starting fresh.");
-    //     }
-    // }
 }

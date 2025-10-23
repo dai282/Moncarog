@@ -12,7 +12,6 @@ public class PauseMenu : MonoBehaviour
     {
         pauseMenu.SetActive(false);
         Time.timeScale = 1f; 
-        Debug.Log("TIMESCALE SET TO 1 - " + Time.timeScale);
         isPaused = false;
     }
 
@@ -21,7 +20,6 @@ public class PauseMenu : MonoBehaviour
     {
         pauseMenu.SetActive(true);
         Time.timeScale = 0f;
-        Debug.Log("TIMESCALE SET TO 0 - " + Time.timeScale);
         isPaused = true;
         pauseButton.SetActive(false);
     }
@@ -31,7 +29,6 @@ public class PauseMenu : MonoBehaviour
     {
         pauseMenu.SetActive(false);
         Time.timeScale = 1f;
-        Debug.Log("TIMESCALE SET TO 1 - " + Time.timeScale);
         isPaused = false;
         pauseButton.SetActive(true);
     }
