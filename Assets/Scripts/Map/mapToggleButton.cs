@@ -4,12 +4,18 @@ public class MapToggleButton : MonoBehaviour
 {
     public GameObject mapRoot;
 
-    public void OnClickToggle()
+    private void Start()
     {
+        // Check the panel is hidden on start
         if (mapRoot != null)
         {
-            // Toggles the active state of the mapRoot GameObject
-            mapRoot.SetActive(!mapRoot.activeSelf);
+            mapRoot.SetActive(false);
         }
+    }
+
+    public void OnClickToggle()
+    {
+        // Toggles the active state of the mapRoot GameObject
+        mapRoot.SetActive(!mapRoot.activeSelf);
     }
 }

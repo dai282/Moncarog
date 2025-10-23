@@ -1,12 +1,13 @@
 {
-    "StepsTaken": 721,
-    "DamageDealt": 704.0,
-    "moncargsDefeated": 5,
+    "StepsTaken": 282,
+    "DamageDealt": 696.0,
+    "moncargsDefeated": 2,
     "HPRecovered": 0.0,
-    "HPLost": 260.0,
+    "HPLost": 110.0,
     "ManaRecovered": 0.0,
-    "ManaSpent": 490.0,
+    "ManaSpent": 350.0,
     "PotionsUsed": 0,
-    "AbilitiesUsed": 7,
-    "moncargsCollected": 0
+    "AbilitiesUsed": 5,
+    "moncargsCollected": 0,
+    "timeSpentIngame": 25.272809982299806
 }

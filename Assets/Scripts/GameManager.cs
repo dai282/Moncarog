@@ -3,6 +3,7 @@ using UnityEngine.UIElements;
 using System.Collections;
 using System.Linq;
 using System.Collections.Generic;
+using System;
 
 public class GameManager : MonoBehaviour
 {
@@ -11,7 +12,7 @@ public class GameManager : MonoBehaviour
     public MapManager mapManager;
     public BoardManager board;
     public MovementUI moveUI;
-
+    public static Action<float, float> OnTimeTick;
     private MapManager.RoomInfo currentRoom;
     private List<MapManager.RoomInfo> nextRooms;
     private RoomGrid currentRoomGrid;
@@ -43,17 +44,20 @@ public class GameManager : MonoBehaviour
         //InitializeGame();
     }
     
+    // In GameManager.cs
+
     public void Game()
     {
         Debug.Log("Saving game data...");
-        // This is the critical line that merges session stats into the lifetime record and saves it.
+        
+        // 1. Save the current run data FIRST (while session stats are still full)
+        SaveManager.Instance?.SaveRun(); 
+        
+        // 2. NOW, merge those stats into lifetime and reset the session.
         StatsCollector.Instance?.SaveStats(); 
         
-        // Add other save logic here (e.g., saving player position, inventory, etc.)
-        SaveManager.Instance?.SaveRun();
         Debug.Log("Game Saved.");
     }
-
     // Normal game initialization without clearing progress
     private void InitializeGame()
     {
@@ -141,6 +145,7 @@ public class GameManager : MonoBehaviour
         // Initialize player
         player.Init();
 
+        Time.timeScale = 1f;
         // Reset moncarg database
         moncargDatabase.resetMoncargDatabase();
 
@@ -246,6 +251,12 @@ public class GameManager : MonoBehaviour
                 Debug.Log($"Next Room(s): {nextRoom.roomName}");
             }
         }
+        // Check if anyone is subscribed before invoking
+        if (OnTimeTick != null)
+        {
+            // Pass Time.deltaTime and Time.timeScale to the subscribers
+            OnTimeTick.Invoke(Time.deltaTime, Time.timeScale);
+        }
     }
 
     public void PlayerEnteredDoor(DoorDetector door)
@@ -296,6 +307,7 @@ public class GameManager : MonoBehaviour
     public void ContinueGame()
     {
         Debug.Log("Continue button pressed.");
+        Time.timeScale = 1f;
         RunData data = SaveManager.Instance.LoadRun();
         if (data != null)
         {
