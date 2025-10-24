@@ -64,7 +64,7 @@ public class RoomGrid : MonoBehaviour
                 }
             }
         }
-       
+
     }
 
     public void PlaceEncounterTiles(int roomID)
@@ -79,7 +79,7 @@ public class RoomGrid : MonoBehaviour
         }
 
         //if boss or mini boss room, only 1 encounter tile at the middle of the room
-        if( roomID == -10 || roomID == -11)
+        if (roomID == -10 || roomID == -11)
         {
             if (Event)
             {
@@ -148,7 +148,7 @@ public class RoomGrid : MonoBehaviour
             }
 
         }
-        
+
     }
 
     private void AddEncounterTile(Vector3Int pos, int groupID)
@@ -264,20 +264,20 @@ public class RoomGrid : MonoBehaviour
     }
 
     public void PrintDoorTiles()
+    {
+        foreach (var kvp in cellData)
         {
-            foreach (var kvp in cellData)
-            {
-                Vector3Int cellPos = kvp.Key;
-                CellType type = kvp.Value;
+            Vector3Int cellPos = kvp.Key;
+            CellType type = kvp.Value;
 
-                if (type == CellType.Door)
-                {
-                    DoorDetector door = GetDoorAtCell(cellPos);
-                    string doorName = door != null ? door.gameObject.name : "NoDoorObject";
-                    //Debug.Log($"Door tile at cell: {cellPos} | Door object: {doorName}");
-                }
+            if (type == CellType.Door)
+            {
+                DoorDetector door = GetDoorAtCell(cellPos);
+                string doorName = door != null ? door.gameObject.name : "NoDoorObject";
+                //Debug.Log($"Door tile at cell: {cellPos} | Door object: {doorName}");
             }
         }
+    }
 
     public void RegisterDoor(Vector3Int cellPos, DoorDetector door)
     {
@@ -336,11 +336,12 @@ public class RoomGrid : MonoBehaviour
             Gizmos.DrawCube(worldPos, new Vector3(0.8f, 0.8f, 0.1f));
 
             // Optional: draw group label above tile
-    #if UNITY_EDITOR
+#if UNITY_EDITOR
             UnityEditor.Handles.color = gizmoColor;
             UnityEditor.Handles.Label(worldPos + Vector3.up * 0.4f, $"G{groupID}");
-    #endif
+#endif
         }
+    }
     public void AutoRegisterChests()
     {
         // Find all ChestDetector components in this room
@@ -366,4 +367,5 @@ public class RoomGrid : MonoBehaviour
         chests.TryGetValue(cellPos, out ChestDetector chest);
         return chest;
     }
+    
 }

@@ -51,20 +51,20 @@ public class PlayerMovement : MonoBehaviour
                 {
                     StatsCollector.Instance?.RecordStep();
                     lastCellPos = currentCellPos;
-                //play walking sound
-                if (walkingClip != null)
-                {
-                    SoundFxManager.Instance.PlayWalkingSoundFXClip(walkingClip, transform, 1f);
+                    //play walking sound
+                    if (walkingClip != null)
+                    {
+                        SoundFxManager.Instance.PlayWalkingSoundFXClip(walkingClip, transform, 1f);
+                    }
                 }
             }
-        }
-        else
-        {
-            // Stop walking sound when not moving
-            SoundFxManager.Instance.StopWalkingSound();
+            else
+            {
+                // Stop walking sound when not moving
+                SoundFxManager.Instance.StopWalkingSound();
+            }
         }
     }
-
 
     bool IsPositionWalkable(Vector2 position)
     {
@@ -119,7 +119,7 @@ public class PlayerMovement : MonoBehaviour
 
             int randomPercentage = Random.Range(-20, 21);
             PlayerInventory.Instance.AdjustAllMoncargsStats(randomPercentage);
-            
+
             roomGrid.ResetEventTile(eventCell);
         }
 
@@ -156,4 +156,5 @@ public class PlayerMovement : MonoBehaviour
     public void MoveLeft() { movementDirection = Vector2.left; }
     public void MoveRight() { movementDirection = Vector2.right; }
     public void StopMovement() { movementDirection = Vector2.zero; }
+    
 }

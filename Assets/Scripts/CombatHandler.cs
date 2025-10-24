@@ -351,17 +351,6 @@ public class CombatHandler: MonoBehaviour
             StatsCollector.Instance?.RecordAbilityUsed(); // Record that an ability was used
         }
 
-        // Calculate base damage
-        float damage = attackChoice.damage + attacker.attack - defender.defense;
-
-        damage = checkElemental(attacker, defender, attackChoice, damage);
-
-        // Ensure damage is not negative
-        if (damage < 0)
-        {
-            damage = 0;
-        }
-
         // Apply damage to defender
         defender.health -= damage;
 

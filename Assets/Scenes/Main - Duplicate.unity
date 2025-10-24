@@ -3712,7 +3712,7 @@ MonoBehaviour:
   combatUI: {fileID: 1010655243}
   selectionUI: {fileID: 462797780}
   forceEquipUI: {fileID: 1587555431}
-  victoryScreen: {fileID: 835464287}
+  cam: {fileID: 0}
   commonDrops:
   - {fileID: 11400000, guid: ff6f9fbed549bd04f848cb39fcad9805, type: 2}
   rareDrops: []
@@ -3720,6 +3720,11 @@ MonoBehaviour:
   dropChance: 0.7
   rareDropChance: 0.15
   legendaryDropChance: 0.05
+  normalAttackSoundFX: {fileID: 0}
+  fireAttackSoundFX: {fileID: 0}
+  waterAttackSoundFX: {fileID: 0}
+  plantAttackSoundFX: {fileID: 0}
+  levelUpSoundFX: {fileID: 0}
 --- !u!4 &717188820
 Transform:
   m_ObjectHideFlags: 0
@@ -4757,9 +4762,13 @@ MonoBehaviour:
   mapManager: {fileID: 2016109640}
   board: {fileID: 1272354574}
   moveUI: {fileID: 188735417}
+  loseSoundFX: {fileID: 0}
+  winSoundFX: {fileID: 0}
+  doorEnterSoundFX: {fileID: 0}
   moncargDatabase: {fileID: 1635567584}
   combatHandler: {fileID: 717188819}
   loseScreenUI: {fileID: 940294205}
+  victoryScreen: {fileID: 0}
 --- !u!4 &940294201
 Transform:
   m_ObjectHideFlags: 0
@@ -5444,7 +5453,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0.09738652, y: 0.16862944}
-  m_AnchoredPosition: {x: 502.53107, y: 250.45078}
+  m_AnchoredPosition: {x: 502.53094, y: 250.45078}
   m_SizeDelta: {x: -26.197815, y: -53.864075}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1035303862
@@ -10307,6 +10316,8 @@ MonoBehaviour:
   moveSpeed: 15
   roomGrid: {fileID: 0}
   collisionOffset: 0
+  walkingClip: {fileID: 0}
+  encounterSoundFX: {fileID: 0}
 --- !u!4 &2020702137
 Transform:
   m_ObjectHideFlags: 0

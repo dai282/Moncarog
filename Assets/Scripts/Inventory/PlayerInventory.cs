@@ -252,7 +252,10 @@ public sealed class PlayerInventory : MonoBehaviour
 
     public void HideInventory()
     {
-        SoundFxManager.Instance.PlayButtonFXClip();
+        if (SoundFxManager.Instance != null)
+        {
+            SoundFxManager.Instance.PlayButtonFXClip();
+        }
         if (m_Root != null)
         {
             m_Root.style.display = DisplayStyle.None;
