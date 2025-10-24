@@ -3,6 +3,7 @@ using Elementals; //for elemental types
 using UnityEngine.UIElements;
 using System.Collections.Generic;
 using System.Linq;
+using System.Collections;
 
 public class CombatHandler: MonoBehaviour
 {
@@ -11,6 +12,15 @@ public class CombatHandler: MonoBehaviour
     [SerializeField] private MoncargSelectionUI selectionUI;
     [SerializeField] private ForceEquipPromptUI forceEquipUI;
     [SerializeField] private CameraManager cam;
+
+    [Header("Slash Effect")]
+    [SerializeField] private Animator slashAnimator;
+    [SerializeField] private Transform slashTransform;
+    [SerializeField] private float slashDuration = 0.3f;
+
+    [Header("Damage Indicator")]
+    [SerializeField] private Canvas combatCanvas; // assign your combat UI canvas here
+    [SerializeField] private GameObject damageIndicatorPrefab; // assign your prefab
 
     // ADDED: Item drop system fields
     [Header("Item Drop System")]
@@ -133,11 +143,12 @@ public class CombatHandler: MonoBehaviour
             }
         }
 
-        enemyObj.transform.localScale = new Vector3(5f, 5f, 5f);
-        enemy = enemyObj.GetComponent<Moncarg>();
-        enemy.InitStats();
-        //hide until combat starts
-        enemyObj.SetActive(false);
+       enemyObj.transform.localScale = new Vector3(15f, 15f, 0f);
+       enemyObj.transform.position = new Vector3(15f, 0f, 0f);
+       enemy = enemyObj.GetComponent<Moncarg>();   
+       enemy.InitStats();
+       //hide until combat starts
+       enemyObj.SetActive(false);
 
         //auto equip moncargs if none are equipped
         AutoEquipMoncargs();
@@ -178,6 +189,8 @@ public class CombatHandler: MonoBehaviour
 
     private void NextTurn()
     {
+        Debug.Log($"[NextTurn] Called - Current turn: {currentTurn.moncargName}");
+        
         if (!player.active)
         {
             Debug.Log("You need to switch Moncargs!");
@@ -189,6 +202,7 @@ public class CombatHandler: MonoBehaviour
                 OnAllMoncargsDefeated();
                 return;
             }
+            Debug.Log("[NextTurn] Player has other alive Moncargs, need to switch");
             return;
         }
         if (!enemy.active)
@@ -196,6 +210,7 @@ public class CombatHandler: MonoBehaviour
             Debug.Log("You won the battle!");
             combatUI.UpdateCombatTerminal("You won the battle!");
 
+            Debug.Log("[NextTurn] Enemy defeated! You won the battle!");
             OnEnemyDefeated();
             return;
         }
@@ -204,12 +219,15 @@ public class CombatHandler: MonoBehaviour
 
         if (currentTurn == player)
         {
+            Debug.Log($"[NextTurn] Player's turn - Mana: {player.mana}/{player.maxMana}");
+            
             //automatic resting
             if (player.mana <=0 )
             {
                 Debug.Log(player.moncargName + " ran out of mana! Automatic resting...");
                 combatUI.UpdateCombatTerminal("Ran out of mana! Automatic resting...");
 
+                Debug.Log($"[NextTurn] {player.moncargName} ran out of mana! Automatic resting...");
                 Rest(player);
             }
             else
@@ -222,29 +240,35 @@ public class CombatHandler: MonoBehaviour
         }
         else
         {
-            Debug.Log("Enemy's turn!");
+            Debug.Log($"[NextTurn] Enemy's turn - {enemy.moncargName} (Mana: {enemy.mana}/{enemy.maxMana})");
             EnemyTurn();
         }
     }
 
     private void OnAttackClicked(int attackOption)
     {
-        if (currentTurn != player) return;
+        if (currentTurn != player)
+        {
+            Debug.LogWarning($"[OnAttackClicked] Not player's turn! Current turn: {currentTurn.moncargName}");
+            return;
+        }
 
-        Debug.Log("Player chose Attack!");
+        Debug.Log($"[OnAttackClicked] Player chose attack option {attackOption}");
 
         SkillDefinition attackChoice = player.skillset[attackOption - 1];
+        Debug.Log($"[OnAttackClicked] Selected skill: {attackChoice.name} (Mana cost: {attackChoice.manaCost})");
 
         if (attackChoice.name == "Rest")
         {
+            Debug.Log("[OnAttackClicked] Rest selected, calling Rest()");
             Rest(player);
             return;
         }
         else
         {
-            ExecuteAttack(player, enemy, attackChoice);
+            Debug.Log($"[OnAttackClicked] Starting attack: {attackChoice.name}");
+            StartCoroutine(ExecuteAttackWithDelay(player, enemy, attackChoice, true));
         }
-        EndTurn();
     }
 
     private void OnFleeClicked()
@@ -260,24 +284,35 @@ public class CombatHandler: MonoBehaviour
 
     private void EnemyTurn()
     {
+        Debug.Log($"[EnemyTurn] Starting enemy turn for {enemy.moncargName}");
+        
         // List of moves with weights
         List<(SkillDefinition skill, float weight)> movePool = new List<(SkillDefinition, float)>();
 
         // Add Ultimate if available
         if (enemy.mana >= enemy.skillset[3].manaCost)
+        {
             movePool.Add((enemy.skillset[3], 0.2f)); // 20%
+            Debug.Log($"[EnemyTurn] Ultimate available: {enemy.skillset[3].name}");
+        }
 
         // Add Elemental if available
         if (enemy.mana >= enemy.skillset[2].manaCost)
+        {
             movePool.Add((enemy.skillset[2], 0.6f)); // 60%
+            Debug.Log($"[EnemyTurn] Elemental available: {enemy.skillset[2].name}");
+        }
 
         // Add Basic (always available, fallback)
         movePool.Add((enemy.skillset[1], 0.2f)); // 20%
+        Debug.Log($"[EnemyTurn] Basic attack available: {enemy.skillset[1].name}");
 
         // If no mana at all for any move except basic chance to rest
         if (enemy.mana < enemy.skillset[2].manaCost && enemy.mana < enemy.skillset[3].manaCost)
         {
             float restRoll = Random.value;
+            Debug.Log($"[EnemyTurn] Low mana! Rest roll: {restRoll} (need < 0.3)");
+            
             if (restRoll < 0.3f) // 30% chance to rest early
             {
                 Debug.Log(enemy.moncargName + " is low on mana and decides to Rest...");
@@ -303,31 +338,41 @@ public class CombatHandler: MonoBehaviour
             if (roll <= cumulative)
             {
                 chosenSkill = move.skill;
+                Debug.Log($"[EnemyTurn] Selected: {chosenSkill.name}");
                 break;
             }
         }
 
         // Execute chosen move
-        Debug.Log(enemy.moncargName + " chose " + chosenSkill.name);
-        ExecuteAttack(enemy, player, chosenSkill);
-
-        EndTurn();
+        Debug.Log($"[EnemyTurn] {enemy.moncargName} chose {chosenSkill.name}");
+        StartCoroutine(ExecuteAttackWithDelay(enemy, player, chosenSkill, false));
     }
 
     private void EndTurn()
     {
+        Debug.Log($"[EndTurn] Current turn was: {currentTurn.moncargName}");
+        
         // Swap turn
         Moncarg temp = currentTurn;
         currentTurn = other;
         other = temp;
 
+        Debug.Log($"[EndTurn] Next turn is: {currentTurn.moncargName}");
+        
         NextTurn();
     }
 
     //END EVENT DRIVEN BEGIN ENCOUNTER
 
     #region Attack Execution
-    public void ExecuteAttack(Moncarg attacker, Moncarg defender, SkillDefinition attackChoice)
+    // ADDED: Coroutine to handle attack with 1-second delay
+ private IEnumerator ExecuteAttackWithDelay(Moncarg attacker, Moncarg defender, SkillDefinition attackChoice, bool isPlayerAttacking)
+{
+    // Wait for 1 second before executing attack
+    yield return new WaitForSeconds(1f);
+    
+    // Check if objects still exist before executing attack
+    if (attacker == null || defender == null || attacker.gameObject == null || defender.gameObject == null)
     {
         PlayAttackSoundFX(attackChoice);
 
@@ -342,17 +387,61 @@ public class CombatHandler: MonoBehaviour
         // Use the testable calculation method
         float damage = CalculateDamage(attacker, defender, attackChoice);
         
+        Debug.LogWarning("[ExecuteAttackWithDelay] Attacker or Defender was destroyed before attack could execute");
+        yield break;
+    }
+    
+    // Execute the attack
+    ExecuteAttack(attacker, defender, attackChoice, isPlayerAttacking);
+    
+    // End turn after attack completes
+    EndTurn();
+}
+
+    public void ExecuteAttack(Moncarg attacker, Moncarg defender, SkillDefinition attackChoice, bool isPlayerAttacking)
+    {
+        Debug.Log($"[ExecuteAttack] {attacker.moncargName} attacking {defender.moncargName} with {attackChoice.name}");
+        
+        bool isDodged = TryDodge(defender);
+        
+        if (isDodged)
+        {
+            Debug.Log($"[ExecuteAttack] {defender.moncargName} dodged the attack!");
+            return;
+        }
+
+        // Play slash animation only if not Rest and not dodged
+        if (attackChoice.name != "Rest")
+        {
+            PlaySlashAnimation(isPlayerAttacking, attacker.transform, defender.transform);
+        }
+
         // Deduct mana cost
         attacker.mana -= attackChoice.manaCost;
+        Debug.Log($"[ExecuteAttack] {attacker.moncargName} used {attackChoice.manaCost} mana. Remaining: {attacker.mana}/{attacker.maxMana}");
 
         if (attacker == player)
         {
             StatsCollector.Instance?.RecordManaChange(attackChoice.manaCost, false); // Record mana spent
             StatsCollector.Instance?.RecordAbilityUsed(); // Record that an ability was used
+        // Calculate base damage
+        float damage = attackChoice.damage + attacker.attack - defender.defense;
+        Debug.Log($"[ExecuteAttack] Base damage calculation: {attackChoice.damage} + {attacker.attack} - {defender.defense} = {damage}");
+
+        damage = checkElemental(attacker, defender, attackChoice, damage);
+        Debug.Log($"[ExecuteAttack] After elemental modifier: {damage}");
+
+        // Ensure damage is not negative
+        if (damage < 0)
+        {
+            damage = 0;
+            Debug.Log($"[ExecuteAttack] Damage clamped to 0");
         }
 
         // Apply damage to defender
+        float oldHealth = defender.health;
         defender.health -= damage;
+        Debug.Log($"[ExecuteAttack] {defender.moncargName} health: {oldHealth} -> {defender.health}");
 
         if (attacker == player && damage > 0)
         {
@@ -365,6 +454,11 @@ public class CombatHandler: MonoBehaviour
 
         Debug.Log(attacker.moncargName + " used " + attackChoice.name + " on " + defender.moncargName + " for " + damage + " damage!");
         combatUI?.UpdateCombatTerminal(attacker.moncargName + " used " + attackChoice.name + " on " + defender.moncargName + " for " + damage + " damage!");
+        // ADDED: Flash red and show damage indicator
+        StartCoroutine(FlashRed(defender));
+        ShowDamageIndicator(defender, damage);
+
+        Debug.Log($"[ExecuteAttack] {attacker.moncargName} used {attackChoice.name} on {defender.moncargName} for {damage} damage!");
 
         // Check if defender is defeated
         if (defender.health <= 0)
@@ -377,6 +471,114 @@ public class CombatHandler: MonoBehaviour
         }
 
         combatUI.UpdateMoncargStats(player, enemy);
+    }
+
+    // ==========================================
+    // DAMAGE INDICATOR + SPRITE FLASH SECTION
+    // ==========================================
+private void ShowDamageIndicator(Moncarg moncarg, float damage)
+{
+    if (moncarg == null || damageIndicatorPrefab == null || combatCanvas == null)
+    {
+        Debug.LogWarning("[CombatHandler] Missing references for damage indicator!");
+        return;
+    }
+    
+    // Convert world position to screen position
+    Vector3 screenPos = Camera.main.WorldToScreenPoint(moncarg.transform.position + Vector3.up * 1f);
+    
+    // Instantiate as child of combat canvas
+    GameObject indicator = Instantiate(damageIndicatorPrefab, combatCanvas.transform);
+    indicator.transform.position = screenPos;
+    indicator.transform.localScale = new Vector3(5f, 5f, 1f);
+    
+    FloatingDamageText dmgText = indicator.GetComponent<FloatingDamageText>();
+    if (dmgText != null)
+    {
+        dmgText.Initialize(damage);
+    }
+    else
+    {
+        Debug.LogError("[CombatHandler] FloatingDamageText component not found on prefab!");
+    }
+}
+    
+    private IEnumerator FlashRed(Moncarg moncarg)
+    {
+        if (moncarg == null)
+        {
+            Debug.LogWarning("[CombatHandler] FlashRed: Moncarg is null");
+            yield break;
+        }
+        
+        SpriteRenderer sr = moncarg.GetComponent<SpriteRenderer>();
+        if (sr == null)
+        {
+            Debug.LogWarning($"[CombatHandler] No SpriteRenderer found on {moncarg.moncargName}");
+            yield break;
+        }
+        
+        // Store the ORIGINAL color (should be white)
+        Color originalColor = Color.white;
+        
+        // Force set to red
+        sr.color = Color.red;
+        
+        // Wait for flash duration
+        yield return new WaitForSeconds(0.15f);
+        
+        // Restore to white (default sprite color)
+        if (sr != null)
+        {
+            sr.color = originalColor;
+        }
+    }
+
+    // Slash animation method
+private void PlaySlashAnimation(bool isPlayerAttacking, Transform attackerTransform, Transform defenderTransform)
+{
+    if (slashAnimator != null && slashTransform != null && attackerTransform != null && defenderTransform != null)
+    {
+        Vector3 startPos = attackerTransform.position;
+        Vector3 endPos = defenderTransform.position;
+
+        slashTransform.position = startPos;
+
+        Vector3 scale = new Vector3(10f, 10f, 1f);
+        scale.x = isPlayerAttacking ? Mathf.Abs(scale.x) : -Mathf.Abs(scale.x);
+        slashTransform.localScale = scale;
+
+        float angle = isPlayerAttacking ? -45f : 45f;
+        slashTransform.rotation = Quaternion.Euler(0, 0, angle);
+
+        slashTransform.gameObject.SetActive(true);
+        StartCoroutine(PlaySlashMoveCoroutine(startPos, endPos));
+    }
+}
+
+    private IEnumerator PlaySlashMoveCoroutine(Vector3 start, Vector3 end)
+    {
+        int timesToPlay = 2;
+        for (int i = 0; i < timesToPlay; i++)
+        {
+            slashAnimator.SetBool("isSlashing", true);
+
+            float timer = 0f;
+            while (timer < slashDuration)
+            {
+                slashTransform.position = Vector3.Lerp(start, end, timer / slashDuration);
+                timer += Time.deltaTime;
+                yield return null;
+            }
+
+            slashTransform.position = end;
+            slashAnimator.SetBool("isSlashing", false);
+            yield return new WaitForSeconds(0.05f);
+        }
+
+        slashTransform.position = new Vector3(1000f, 1000f, 0f);
+        slashTransform.gameObject.SetActive(false);
+        slashTransform.rotation = Quaternion.identity;
     }
 
     public bool TryDodge(Moncarg defender)
@@ -517,8 +719,11 @@ public class CombatHandler: MonoBehaviour
 
     private void Rest(Moncarg moncarg)
     {
+        Debug.Log($"[Rest] {moncarg.moncargName} is resting...");
+        
         int manaRecovered = moncarg.maxMana / 4; // Recover 25% of max mana
         moncarg.mana += manaRecovered;
+        
         //in case of overheal
         if (moncarg.mana > moncarg.maxMana)
         {
@@ -915,6 +1120,8 @@ public class CombatHandler: MonoBehaviour
 
         // Spawn the selected moncarg for battle
         GameObject playerMoncargObj = selectedMoncarg.CreateMoncargGameObject();
+        playerMoncargObj.transform.localScale = new Vector3(15f, 15f, 0f);
+        playerMoncargObj.transform.position = new Vector3(-15f, 0f, 0f);
         player = playerMoncargObj.GetComponent<Moncarg>();
         player.InitStats();
 
@@ -964,10 +1171,3 @@ public class CombatHandler: MonoBehaviour
     }
     #endregion
 }
-
-// Get the StoredMoncarg component from the Moncarg GameObject
-//StoredMoncarg storedMoncarg = moncargGameObject.GetComponent<StoredMoncarg>();
-//if (storedMoncarg != null)
-//{
-//    storedMoncarg.AddToInventory();
-//}

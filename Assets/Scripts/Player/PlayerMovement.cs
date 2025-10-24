@@ -7,6 +7,7 @@ public class PlayerMovement : MonoBehaviour
     public float moveSpeed = 5f;
     public RoomGrid roomGrid;
     public float collisionOffset; // Adjust based on your sprite size
+    public Animator animator;
 
     private Rigidbody2D rb;
     private Vector2 movementDirection = Vector2.zero;
@@ -20,6 +21,12 @@ public class PlayerMovement : MonoBehaviour
     {
         rb = GetComponent<Rigidbody2D>();
         spriteRenderer = GetComponent<SpriteRenderer>();
+
+        // Auto-get animator if not assigned
+        if (animator == null)
+        {
+            animator = GetComponent<Animator>();
+        }
 
         // Auto-calculate offset based on sprite size if not set
         if (collisionOffset <= 0 && spriteRenderer != null)
@@ -64,6 +71,14 @@ public class PlayerMovement : MonoBehaviour
                 SoundFxManager.Instance.StopWalkingSound();
             }
         }
+
+        // Update animator based on movement
+        if (animator != null)
+        {
+            animator.SetBool("isWalking", movementDirection.y > 0);
+            animator.SetBool("isWalkingRL", movementDirection.x != 0);
+            animator.SetBool("isWalkingB", movementDirection.y < 0);
+        }
     }
 
     bool IsPositionWalkable(Vector2 position)
@@ -84,7 +99,7 @@ public class PlayerMovement : MonoBehaviour
                 door.OnPlayerEnter();
             }
 
-            // Return false so the player doesn’t "walk into" the door tile physically
+            // Return false so the player doesn't "walk into" the door tile physically
             return false;
         }
 
