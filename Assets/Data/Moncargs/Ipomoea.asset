@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Ipomoea
   m_EditorClassIdentifier: Assembly-CSharp::MoncargInventoryAdapter
   FriendlyName: Ipomoea
-  Icon: {fileID: 7483905059943912335, guid: a254d745386739c49b168113572c477d, type: 3}
+  Icon: {fileID: 21300000, guid: a254d745386739c49b168113572c477d, type: 3}
   moncargData:
     moncargName: Ipomoea
     baseMaxHealth: 100
@@ -21,15 +21,15 @@ MonoBehaviour:
     baseDefense: 10
     baseSpeed: 10
     baseMaxMana: 100
-    maxHealth: 0
-    health: 0
-    attack: 0
-    defense: 0
-    speed: 0
+    maxHealth: 100
+    health: 100
+    attack: 30
+    defense: 10
+    speed: 10
     exp: 0
     level: 1
-    mana: 0
-    maxMana: 0
+    mana: 100
+    maxMana: 100
     catchChance: 0.5
     dodgeChance: 0.5
     type: 2
