@@ -133,6 +133,14 @@ public class PlayerMovement : MonoBehaviour
             Debug.Log($"Event triggered at {eventCell}");
 
             int randomPercentage = Random.Range(-20, 21);
+            if (randomPercentage >= 0)
+            {
+                AlertManager.Instance.ShowNotification($"Your Moncargs feel stronger! +{randomPercentage}% to all stats.");
+            }
+            else
+            {
+                AlertManager.Instance.ShowNotification($"Your Moncargs feel weaker... {randomPercentage}% to all stats.");
+            }
             PlayerInventory.Instance.AdjustAllMoncargsStats(randomPercentage);
 
             roomGrid.ResetEventTile(eventCell);

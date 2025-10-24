@@ -5,6 +5,8 @@ using Elementals;
 public class CombatHandlerUI : MonoBehaviour
 {
     [SerializeField] private UIDocument combatUI;
+    [SerializeField] private GameObject combatBG;
+    [SerializeField] private GameObject outerInventoryButton;
 
     private VisualElement root;
     private VisualElement optionsContainer;
@@ -48,6 +50,8 @@ public class CombatHandlerUI : MonoBehaviour
     private void InitializeUI()
     {
         if (combatUI == null) return;
+
+        combatBG.SetActive(false);
 
         root = combatUI.rootVisualElement;
         root.style.display = DisplayStyle.None;
@@ -129,6 +133,8 @@ public class CombatHandlerUI : MonoBehaviour
     // Public methods to update UI
     public void ShowCombatUI(bool show)
     {
+        outerInventoryButton.SetActive(!show);
+        combatBG.SetActive(show);
         root.style.display = show ? DisplayStyle.Flex : DisplayStyle.None;
     }
 
