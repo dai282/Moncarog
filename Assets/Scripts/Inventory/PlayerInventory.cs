@@ -745,10 +745,10 @@ public sealed class PlayerInventory : MonoBehaviour
 
             var data = storedMoncarg.Details.moncargData;
 
-            data.attack *= multiplier;
-            data.defense *= multiplier;
-            data.health *= multiplier;
-            data.maxHealth *= multiplier;
+            data.attack = Mathf.RoundToInt(data.attack * multiplier);
+            data.defense = Mathf.RoundToInt(data.defense * multiplier);
+            data.health = Mathf.RoundToInt(data.health * multiplier);
+            data.maxHealth = Mathf.RoundToInt(data.maxHealth * multiplier);
             data.speed = Mathf.RoundToInt(data.speed * multiplier);
             data.mana = Mathf.RoundToInt(data.mana * multiplier);
             data.maxMana = Mathf.RoundToInt(data.maxMana * multiplier);
