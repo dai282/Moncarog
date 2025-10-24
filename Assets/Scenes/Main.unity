@@ -2123,6 +2123,18 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+      - m_Target: {fileID: 1946754956}
+        m_TargetAssemblyTypeName: StatsCollector, Assembly-CSharp
+        m_MethodName: SaveStats
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &396591913
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8688,7 +8700,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -34.399998, y: -6.9}
+  m_AnchoredPosition: {x: 0, y: -8}
   m_SizeDelta: {x: 15, y: 1}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1765536410
@@ -8824,7 +8836,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -6.9}
+  m_AnchoredPosition: {x: 0, y: -8}
   m_SizeDelta: {x: 15, y: 1}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1774231074
@@ -9151,6 +9163,41 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1866197107}
   m_CullTransparentMesh: 1
+--- !u!1 &1882624453
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1882624454}
+  m_Layer: 5
+  m_Name: Stats GameObject
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &1882624454
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1882624453}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1906264973}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 100, y: 100}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1906264972
 GameObject:
   m_ObjectHideFlags: 0
@@ -9184,6 +9231,7 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 36691654}
+  - {fileID: 1882624454}
   m_Father: {fileID: 1035303861}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
@@ -9749,7 +9797,7 @@ MonoBehaviour:
   lifetimePotionsUsedText: {fileID: 2071054090}
   lifetimeAbilitiesUsedText: {fileID: 708958544}
   lifetimeMoncargsCollectedText: {fileID: 1716273258}
-  lifetimeTimeSpentText: {fileID: 0}
+  lifetimeTimeSpentText: {fileID: 1774231074}
   sessionStepsText: {fileID: 1740032742}
   sessionDamageDealtText: {fileID: 1755614397}
   sessionMoncargsDefeatedText: {fileID: 2137005815}
@@ -9760,7 +9808,7 @@ MonoBehaviour:
   sessionPotionsUsedText: {fileID: 618264125}
   sessionAbilitiesUsedText: {fileID: 1592122144}
   sessionMoncargsCollectedText: {fileID: 365648052}
-  sessionTimeSpentText: {fileID: 0}
+  sessionTimeSpentText: {fileID: 1765536410}
 --- !u!114 &1946754956
 MonoBehaviour:
   m_ObjectHideFlags: 0
