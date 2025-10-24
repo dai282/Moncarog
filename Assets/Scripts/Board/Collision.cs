@@ -110,6 +110,7 @@ public class RoomGrid : MonoBehaviour
                 cellData[centerPos] = CellType.Encounter;
                 encounterTiles.Add(centerPos);
                 //Debug.Log($"Boss/ Mini Boss Encounter tile placed at {centerPos}");
+                encounterGroups[centerPos] = roomID;
             }
             else
             {
@@ -119,7 +120,7 @@ public class RoomGrid : MonoBehaviour
         else
         {
             //no encounter in first room
-            if (roomID != 1)
+            if (roomID != 1 && roomID > 0)
             {
                 // Randomly pick encounter tiles
                 for (int group = 0; group < groupsToPlace; group++)
