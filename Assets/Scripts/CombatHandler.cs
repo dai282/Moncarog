@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Collections;
 
-public class CombatHandler: MonoBehaviour
+public class CombatHandler : MonoBehaviour
 {
     #region Variables
     [SerializeField] private CombatHandlerUI combatUI;
@@ -27,9 +27,9 @@ public class CombatHandler: MonoBehaviour
     [SerializeField] private ItemDefinition[] commonDrops;
     [SerializeField] private ItemDefinition[] rareDrops;
     [SerializeField] private ItemDefinition[] legendaryDrops;
-    [SerializeField] [Range(0f, 1f)] private float dropChance = 0.7f; // 70% chance to drop something
-    [SerializeField] [Range(0f, 1f)] private float rareDropChance = 0.15f; // 15% chance for rare
-    [SerializeField] [Range(0f, 1f)] private float legendaryDropChance = 0.05f; // 5% chance for legendary
+    [SerializeField][Range(0f, 1f)] private float dropChance = 0.7f; // 70% chance to drop something
+    [SerializeField][Range(0f, 1f)] private float rareDropChance = 0.15f; // 15% chance for rare
+    [SerializeField][Range(0f, 1f)] private float legendaryDropChance = 0.05f; // 5% chance for legendary
 
     [Header("Sound Effects")]
     [SerializeField] private AudioClip normalAttackSoundFX;
@@ -69,7 +69,7 @@ public class CombatHandler: MonoBehaviour
             selectionUI.OnSelectionCancelled += OnSelectionCancelled;
         }
     }
-    
+
     //START EVENT DRIVEN BEGIN ENCOUNTER
     public void BeginEncounter(int roomID)
     {
@@ -121,34 +121,34 @@ public class CombatHandler: MonoBehaviour
         //otherwise just spawn a normal moncarg
         else
         {
-            if (1 < roomID && roomID < 6){
+            if (1 < roomID && roomID < 6) {
                 int randIndex = Random.Range(0, databaseN);
                 enemyObj = Instantiate(moncargDatabase.normalMoncargs[randIndex]);
                 //Debug.Log($"Normal");
             }
-            if (5 < roomID && roomID < 11){
+            if (5 < roomID && roomID < 11) {
                 int randIndex = Random.Range(0, databaseP);
                 enemyObj = Instantiate(moncargDatabase.plantMoncargs[randIndex]);
                 //Debug.Log($"Grass");
             }
-            if (10 < roomID && roomID < 16){
+            if (10 < roomID && roomID < 16) {
                 int randIndex = Random.Range(0, databaseW);
                 enemyObj = Instantiate(moncargDatabase.waterMoncargs[randIndex]);
                 //Debug.Log($"Water");
             }
-            if (15 < roomID && roomID < 21){
+            if (15 < roomID && roomID < 21) {
                 int randIndex = Random.Range(0, databaseF);
                 enemyObj = Instantiate(moncargDatabase.fireMoncargs[randIndex]);
                 //Debug.Log($"Fire");
             }
         }
 
-       enemyObj.transform.localScale = new Vector3(15f, 15f, 0f);
-       enemyObj.transform.position = new Vector3(15f, 0f, 0f);
-       enemy = enemyObj.GetComponent<Moncarg>();   
-       enemy.InitStats();
-       //hide until combat starts
-       enemyObj.SetActive(false);
+        enemyObj.transform.localScale = new Vector3(15f, 15f, 0f);
+        enemyObj.transform.position = new Vector3(15f, 0f, 0f);
+        enemy = enemyObj.GetComponent<Moncarg>();
+        enemy.InitStats();
+        //hide until combat starts
+        enemyObj.SetActive(false);
 
         //auto equip moncargs if none are equipped
         AutoEquipMoncargs();
@@ -190,12 +190,12 @@ public class CombatHandler: MonoBehaviour
     private void NextTurn()
     {
         Debug.Log($"[NextTurn] Called - Current turn: {currentTurn.moncargName}");
-        
+
         if (!player.active)
         {
             Debug.Log("You need to switch Moncargs!");
             combatUI.UpdateCombatTerminal("You need to switch Moncargs!");
-            
+
             // ADDED: Check if all player Moncargs are dead
             if (!HasAnyAliveMoncargs())
             {
@@ -220,9 +220,9 @@ public class CombatHandler: MonoBehaviour
         if (currentTurn == player)
         {
             Debug.Log($"[NextTurn] Player's turn - Mana: {player.mana}/{player.maxMana}");
-            
+
             //automatic resting
-            if (player.mana <=0 )
+            if (player.mana <= 0)
             {
                 Debug.Log(player.moncargName + " ran out of mana! Automatic resting...");
                 combatUI.UpdateCombatTerminal("Ran out of mana! Automatic resting...");
@@ -285,7 +285,7 @@ public class CombatHandler: MonoBehaviour
     private void EnemyTurn()
     {
         Debug.Log($"[EnemyTurn] Starting enemy turn for {enemy.moncargName}");
-        
+
         // List of moves with weights
         List<(SkillDefinition skill, float weight)> movePool = new List<(SkillDefinition, float)>();
 
@@ -312,7 +312,7 @@ public class CombatHandler: MonoBehaviour
         {
             float restRoll = Random.value;
             Debug.Log($"[EnemyTurn] Low mana! Rest roll: {restRoll} (need < 0.3)");
-            
+
             if (restRoll < 0.3f) // 30% chance to rest early
             {
                 Debug.Log(enemy.moncargName + " is low on mana and decides to Rest...");
@@ -351,14 +351,14 @@ public class CombatHandler: MonoBehaviour
     private void EndTurn()
     {
         Debug.Log($"[EndTurn] Current turn was: {currentTurn.moncargName}");
-        
+
         // Swap turn
         Moncarg temp = currentTurn;
         currentTurn = other;
         other = temp;
 
         Debug.Log($"[EndTurn] Next turn is: {currentTurn.moncargName}");
-        
+
         NextTurn();
     }
 
@@ -366,47 +366,40 @@ public class CombatHandler: MonoBehaviour
 
     #region Attack Execution
     // ADDED: Coroutine to handle attack with 1-second delay
- private IEnumerator ExecuteAttackWithDelay(Moncarg attacker, Moncarg defender, SkillDefinition attackChoice, bool isPlayerAttacking)
-{
-    // Wait for 1 second before executing attack
-    yield return new WaitForSeconds(1f);
-    
-    // Check if objects still exist before executing attack
-    if (attacker == null || defender == null || attacker.gameObject == null || defender.gameObject == null)
+    private IEnumerator ExecuteAttackWithDelay(Moncarg attacker, Moncarg defender, SkillDefinition attackChoice, bool isPlayerAttacking)
     {
-        PlayAttackSoundFX(attackChoice);
+        // Wait for 1 second before executing attack
+        yield return new WaitForSeconds(1f);
 
-        if (TryDodge(defender))
+        // Check if objects still exist before executing attack
+        if (attacker == null || defender == null || attacker.gameObject == null || defender.gameObject == null)
         {
-            Debug.Log($"{defender.moncargName} dodged the attack!");
-            combatUI.UpdateCombatTerminal($"{defender.moncargName} dodged the attack!");
 
-            return;
+            
+
+            Debug.LogWarning("[ExecuteAttackWithDelay] Attacker or Defender was destroyed before attack could execute");
+            yield break;
         }
 
-        // Use the testable calculation method
-        float damage = CalculateDamage(attacker, defender, attackChoice);
-        
-        Debug.LogWarning("[ExecuteAttackWithDelay] Attacker or Defender was destroyed before attack could execute");
-        yield break;
+        // Execute the attack
+        ExecuteAttack(attacker, defender, attackChoice, isPlayerAttacking);
+
+        // End turn after attack completes
+        EndTurn();
     }
-    
-    // Execute the attack
-    ExecuteAttack(attacker, defender, attackChoice, isPlayerAttacking);
-    
-    // End turn after attack completes
-    EndTurn();
-}
 
     public void ExecuteAttack(Moncarg attacker, Moncarg defender, SkillDefinition attackChoice, bool isPlayerAttacking)
     {
+        PlayAttackSoundFX(attackChoice);
+
         Debug.Log($"[ExecuteAttack] {attacker.moncargName} attacking {defender.moncargName} with {attackChoice.name}");
-        
+
         bool isDodged = TryDodge(defender);
-        
+
         if (isDodged)
         {
             Debug.Log($"[ExecuteAttack] {defender.moncargName} dodged the attack!");
+            combatUI.UpdateCombatTerminal($"{defender.moncargName} dodged the attack!");
             return;
         }
 
@@ -424,85 +417,77 @@ public class CombatHandler: MonoBehaviour
         {
             StatsCollector.Instance?.RecordManaChange(attackChoice.manaCost, false); // Record mana spent
             StatsCollector.Instance?.RecordAbilityUsed(); // Record that an ability was used
-        // Calculate base damage
-        float damage = attackChoice.damage + attacker.attack - defender.defense;
-        Debug.Log($"[ExecuteAttack] Base damage calculation: {attackChoice.damage} + {attacker.attack} - {defender.defense} = {damage}");
+                                                          // Calculate base damage
 
-        damage = checkElemental(attacker, defender, attackChoice, damage);
-        Debug.Log($"[ExecuteAttack] After elemental modifier: {damage}");
+            // Use the testable calculation method
+            float damage = CalculateDamage(attacker, defender, attackChoice);
 
-        // Ensure damage is not negative
-        if (damage < 0)
-        {
-            damage = 0;
-            Debug.Log($"[ExecuteAttack] Damage clamped to 0");
+            // Apply damage to defender
+            float oldHealth = defender.health;
+            defender.health -= damage;
+            Debug.Log($"[ExecuteAttack] {defender.moncargName} health: {oldHealth} -> {defender.health}");
+
+            if (attacker == player && damage > 0)
+            {
+                StatsCollector.Instance?.RecordDamageDealt(damage); // Record damage dealt BY player
+            }
+            else if (defender == player && damage > 0)
+            {
+                StatsCollector.Instance?.RecordHPChange(damage, false); // Record HP lost BY player
+            }
+
+            Debug.Log(attacker.moncargName + " used " + attackChoice.name + " on " + defender.moncargName + " for " + damage + " damage!");
+            combatUI?.UpdateCombatTerminal(attacker.moncargName + " used " + attackChoice.name + " on " + defender.moncargName + " for " + damage + " damage!");
+            // ADDED: Flash red and show damage indicator
+            StartCoroutine(FlashRed(defender));
+            ShowDamageIndicator(defender, damage);
+
+            Debug.Log($"[ExecuteAttack] {attacker.moncargName} used {attackChoice.name} on {defender.moncargName} for {damage} damage!");
+
+            // Check if defender is defeated
+            if (defender.health <= 0)
+            {
+                defender.health = 0;
+                defender.active = false;
+                Debug.Log(defender.moncargName + " has been defeated!");
+                combatUI.UpdateCombatTerminal(defender.moncargName + " has been defeated!");
+
+            }
+
+            combatUI.UpdateMoncargStats(player, enemy);
         }
 
-        // Apply damage to defender
-        float oldHealth = defender.health;
-        defender.health -= damage;
-        Debug.Log($"[ExecuteAttack] {defender.moncargName} health: {oldHealth} -> {defender.health}");
-
-        if (attacker == player && damage > 0)
-        {
-            StatsCollector.Instance?.RecordDamageDealt(damage); // Record damage dealt BY player
-        }
-        else if (defender == player && damage > 0)
-        {
-            StatsCollector.Instance?.RecordHPChange(damage, false); // Record HP lost BY player
-        }
-
-        Debug.Log(attacker.moncargName + " used " + attackChoice.name + " on " + defender.moncargName + " for " + damage + " damage!");
-        combatUI?.UpdateCombatTerminal(attacker.moncargName + " used " + attackChoice.name + " on " + defender.moncargName + " for " + damage + " damage!");
-        // ADDED: Flash red and show damage indicator
-        StartCoroutine(FlashRed(defender));
-        ShowDamageIndicator(defender, damage);
-
-        Debug.Log($"[ExecuteAttack] {attacker.moncargName} used {attackChoice.name} on {defender.moncargName} for {damage} damage!");
-
-        // Check if defender is defeated
-        if (defender.health <= 0)
-        {
-            defender.health = 0;
-            defender.active = false;
-            Debug.Log(defender.moncargName + " has been defeated!");
-            combatUI.UpdateCombatTerminal(defender.moncargName + " has been defeated!");
-
-        }
-
-        combatUI.UpdateMoncargStats(player, enemy);
     }
-
-    // ==========================================
-    // DAMAGE INDICATOR + SPRITE FLASH SECTION
-    // ==========================================
-private void ShowDamageIndicator(Moncarg moncarg, float damage)
-{
-    if (moncarg == null || damageIndicatorPrefab == null || combatCanvas == null)
+        // ==========================================
+        // DAMAGE INDICATOR + SPRITE FLASH SECTION
+        // ==========================================
+    private void ShowDamageIndicator(Moncarg moncarg, float damage)
     {
-        Debug.LogWarning("[CombatHandler] Missing references for damage indicator!");
-        return;
+        if (moncarg == null || damageIndicatorPrefab == null || combatCanvas == null)
+        {
+            Debug.LogWarning("[CombatHandler] Missing references for damage indicator!");
+            return;
+        }
+
+        // Convert world position to screen position
+        Vector3 screenPos = Camera.main.WorldToScreenPoint(moncarg.transform.position + Vector3.up * 1f);
+
+        // Instantiate as child of combat canvas
+        GameObject indicator = Instantiate(damageIndicatorPrefab, combatCanvas.transform);
+        indicator.transform.position = screenPos;
+        indicator.transform.localScale = new Vector3(5f, 5f, 1f);
+
+        FloatingDamageText dmgText = indicator.GetComponent<FloatingDamageText>();
+        if (dmgText != null)
+        {
+            dmgText.Initialize(damage);
+        }
+        else
+        {
+            Debug.LogError("[CombatHandler] FloatingDamageText component not found on prefab!");
+        }
     }
-    
-    // Convert world position to screen position
-    Vector3 screenPos = Camera.main.WorldToScreenPoint(moncarg.transform.position + Vector3.up * 1f);
-    
-    // Instantiate as child of combat canvas
-    GameObject indicator = Instantiate(damageIndicatorPrefab, combatCanvas.transform);
-    indicator.transform.position = screenPos;
-    indicator.transform.localScale = new Vector3(5f, 5f, 1f);
-    
-    FloatingDamageText dmgText = indicator.GetComponent<FloatingDamageText>();
-    if (dmgText != null)
-    {
-        dmgText.Initialize(damage);
-    }
-    else
-    {
-        Debug.LogError("[CombatHandler] FloatingDamageText component not found on prefab!");
-    }
-}
-    
+
     private IEnumerator FlashRed(Moncarg moncarg)
     {
         if (moncarg == null)
@@ -510,23 +495,23 @@ private void ShowDamageIndicator(Moncarg moncarg, float damage)
             Debug.LogWarning("[CombatHandler] FlashRed: Moncarg is null");
             yield break;
         }
-        
+
         SpriteRenderer sr = moncarg.GetComponent<SpriteRenderer>();
         if (sr == null)
         {
             Debug.LogWarning($"[CombatHandler] No SpriteRenderer found on {moncarg.moncargName}");
             yield break;
         }
-        
+
         // Store the ORIGINAL color (should be white)
         Color originalColor = Color.white;
-        
+
         // Force set to red
         sr.color = Color.red;
-        
+
         // Wait for flash duration
         yield return new WaitForSeconds(0.15f);
-        
+
         // Restore to white (default sprite color)
         if (sr != null)
         {
@@ -535,26 +520,26 @@ private void ShowDamageIndicator(Moncarg moncarg, float damage)
     }
 
     // Slash animation method
-private void PlaySlashAnimation(bool isPlayerAttacking, Transform attackerTransform, Transform defenderTransform)
-{
-    if (slashAnimator != null && slashTransform != null && attackerTransform != null && defenderTransform != null)
+    private void PlaySlashAnimation(bool isPlayerAttacking, Transform attackerTransform, Transform defenderTransform)
     {
-        Vector3 startPos = attackerTransform.position;
-        Vector3 endPos = defenderTransform.position;
+        if (slashAnimator != null && slashTransform != null && attackerTransform != null && defenderTransform != null)
+        {
+            Vector3 startPos = attackerTransform.position;
+            Vector3 endPos = defenderTransform.position;
 
-        slashTransform.position = startPos;
+            slashTransform.position = startPos;
 
-        Vector3 scale = new Vector3(10f, 10f, 1f);
-        scale.x = isPlayerAttacking ? Mathf.Abs(scale.x) : -Mathf.Abs(scale.x);
-        slashTransform.localScale = scale;
+            Vector3 scale = new Vector3(10f, 10f, 1f);
+            scale.x = isPlayerAttacking ? Mathf.Abs(scale.x) : -Mathf.Abs(scale.x);
+            slashTransform.localScale = scale;
 
-        float angle = isPlayerAttacking ? -45f : 45f;
-        slashTransform.rotation = Quaternion.Euler(0, 0, angle);
+            float angle = isPlayerAttacking ? -45f : 45f;
+            slashTransform.rotation = Quaternion.Euler(0, 0, angle);
 
-        slashTransform.gameObject.SetActive(true);
-        StartCoroutine(PlaySlashMoveCoroutine(startPos, endPos));
+            slashTransform.gameObject.SetActive(true);
+            StartCoroutine(PlaySlashMoveCoroutine(startPos, endPos));
+        }
     }
-}
 
     private IEnumerator PlaySlashMoveCoroutine(Vector3 start, Vector3 end)
     {
@@ -683,10 +668,10 @@ private void PlaySlashAnimation(bool isPlayerAttacking, Transform attackerTransf
     private void OnAllMoncargsDefeated()
     {
         Debug.Log("OnAllMoncargsDefeated() called!");
-        
+
         // Hide combat UI
         combatUI.ShowCombatUI(false);
-        
+
         // Trigger game over through GameManager
         if (GameManager.Instance != null)
         {
@@ -697,7 +682,7 @@ private void PlaySlashAnimation(bool isPlayerAttacking, Transform attackerTransf
         {
             Debug.LogError("GameManager.Instance is null!");
         }
-        
+
         // Clean up combat objects
         Cleanup();
     }
@@ -720,10 +705,10 @@ private void PlaySlashAnimation(bool isPlayerAttacking, Transform attackerTransf
     private void Rest(Moncarg moncarg)
     {
         Debug.Log($"[Rest] {moncarg.moncargName} is resting...");
-        
+
         int manaRecovered = moncarg.maxMana / 4; // Recover 25% of max mana
         moncarg.mana += manaRecovered;
-        
+
         //in case of overheal
         if (moncarg.mana > moncarg.maxMana)
         {
@@ -753,9 +738,9 @@ private void PlaySlashAnimation(bool isPlayerAttacking, Transform attackerTransf
         SoundFxManager.Instance.PlayButtonFXClip();
 
         var equippedMoncargs = PlayerInventory.Instance.StoredMoncargs
-           .Where(m => m.IsEquipped)
-           .Select(m => m.Details)
-           .ToList();
+            .Where(m => m.IsEquipped)
+            .Select(m => m.Details)
+            .ToList();
 
         // Show selection UI for multiple equipped moncargs
         selectionUI.Show(equippedMoncargs);
@@ -789,7 +774,7 @@ private void PlaySlashAnimation(bool isPlayerAttacking, Transform attackerTransf
         {
             Cleanup();
         }
-        
+
 
     }
 
@@ -928,8 +913,8 @@ private void PlaySlashAnimation(bool isPlayerAttacking, Transform attackerTransf
 
     private void OnCatchSussess()
     {
-        
-        
+
+
         // ADDED: Check if Moncarg inventory is full before adding
         if (PlayerInventory.Instance.IsMoncargInventoryFull())
         {
@@ -938,7 +923,7 @@ private void PlaySlashAnimation(bool isPlayerAttacking, Transform attackerTransf
             Cleanup();
             return;
         }
-        
+
         StatsCollector.Instance?.RecordMoncarogCollected();
 
 
@@ -1152,7 +1137,7 @@ private void PlaySlashAnimation(bool isPlayerAttacking, Transform attackerTransf
                 ForcePlayerToEquipMoncarg();
             }
         }
-        
+
     }
 
     private void OnDestroy()
@@ -1170,4 +1155,5 @@ private void PlaySlashAnimation(bool isPlayerAttacking, Transform attackerTransf
         waitingForPlayerToEquip = false;
     }
     #endregion
+    
 }
