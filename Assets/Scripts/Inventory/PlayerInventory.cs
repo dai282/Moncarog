@@ -252,6 +252,10 @@ public sealed class PlayerInventory : MonoBehaviour
 
     public void HideInventory()
     {
+        if (SoundFxManager.Instance != null)
+        {
+            SoundFxManager.Instance.PlayButtonFXClip();
+        }
         if (m_Root != null)
         {
             m_Root.style.display = DisplayStyle.None;
@@ -267,6 +271,7 @@ public sealed class PlayerInventory : MonoBehaviour
     #region Button Actions
     private void OnEquipButtonClicked()
     {
+        SoundFxManager.Instance.PlayButtonFXClip();
         if (m_CurrentMode == InventoryMode.Items && m_CurrentSelectedItem != null)
         {
             if (m_CurrentSelectedItem.isPowerup)
@@ -439,6 +444,7 @@ public sealed class PlayerInventory : MonoBehaviour
     private void SwitchToItemsMode()
     {
         Debug.Log("Switching to Items mode");
+        SoundFxManager.Instance.PlayButtonFXClip();
         m_CurrentMode = InventoryMode.Items;
         SetActiveButton(m_ItemsButton);
         RefreshInventoryDisplay();
@@ -449,6 +455,7 @@ public sealed class PlayerInventory : MonoBehaviour
     public void SwitchToMoncargMode()
     {
         Debug.Log("Switching to Moncargs mode");
+        SoundFxManager.Instance.PlayButtonFXClip();
         m_CurrentMode = InventoryMode.Moncargs;
         SetActiveButton(m_MoncargButton);
         RefreshInventoryDisplay();
@@ -725,6 +732,33 @@ public sealed class PlayerInventory : MonoBehaviour
     public int GetRemainingMoncargSlots()
     {
         return MaxMoncargs - GetCurrentMoncargCount();
+    }
+
+    public void AdjustAllMoncargsStats(float percentage)
+    {
+        float multiplier = 1f + (percentage / 100f);
+
+        foreach (var storedMoncarg in StoredMoncargs)
+        {
+            if (storedMoncarg?.Details?.moncargData == null) 
+                continue;
+
+            var data = storedMoncarg.Details.moncargData;
+
+            data.attack = Mathf.RoundToInt(data.attack * multiplier);
+            data.defense = Mathf.RoundToInt(data.defense * multiplier);
+            data.health = Mathf.RoundToInt(data.health * multiplier);
+            data.maxHealth = Mathf.RoundToInt(data.maxHealth * multiplier);
+            data.speed = Mathf.RoundToInt(data.speed * multiplier);
+            data.mana = Mathf.RoundToInt(data.mana * multiplier);
+            data.maxMana = Mathf.RoundToInt(data.maxMana * multiplier);
+
+            if (data.health > data.maxHealth)
+                data.health = data.maxHealth;
+
+            if (data.mana > data.maxMana)
+                data.mana = data.maxMana;
+        }
     }
     #endregion
 

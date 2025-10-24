@@ -16,15 +16,20 @@ MonoBehaviour:
   Icon: {fileID: -3478766669378677403, guid: 5ca5306ca483e8c4693fedd6186cb2ea, type: 3}
   moncargData:
     moncargName: Firezard
-    maxHealth: 500
-    health: 500
-    attack: 50
-    defense: 10
-    speed: 50
-    exp: 200
+    baseMaxHealth: 500
+    baseAttack: 50
+    baseDefense: 10
+    baseSpeed: 50
+    baseMaxMana: 500
+    maxHealth: 0
+    health: 0
+    attack: 0
+    defense: 0
+    speed: 0
+    exp: 0
     level: 5
-    mana: 360
-    maxMana: 500
+    mana: 0
+    maxMana: 0
     catchChance: 5
     dodgeChance: 5
     type: 0
@@ -36,6 +41,7 @@ MonoBehaviour:
     - {fileID: 11400000, guid: d69bf7ad7978f924cab1f0c3a0f6bb38, type: 2}
     isBoss: 0
     isMiniBoss: 1
+    expToNextLevel: 100
   SlotDimension:
     Height: 1
     Width: 1

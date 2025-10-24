@@ -10,6 +10,7 @@ public class CombatHandlerUI : MonoBehaviour
     private VisualElement optionsContainer;
     private VisualElement fightContainer;
     private VisualElement catchContainer;
+    private VisualElement combatTerminal;
 
     private Button fightButton;
     private Button fleeButton;
@@ -19,6 +20,7 @@ public class CombatHandlerUI : MonoBehaviour
     private Button cancelCatchButton;
     private Button backButton;
     private Button[] skillButtons = new Button[4];
+    private Label[] eventLabels = new Label[5];
 
     private ProgressBar playerHealth;
     private ProgressBar playerMana;
@@ -53,6 +55,7 @@ public class CombatHandlerUI : MonoBehaviour
         optionsContainer = root.Q<VisualElement>("OptionsContainer");
         fightContainer = root.Q<VisualElement>("FightContainer");
         catchContainer = root.Q<VisualElement>("CatchContainer");
+        combatTerminal = root.Q<VisualElement>("CombatTerminal");
 
         // Get buttons
         fightButton = root.Q<Button>("FightButton");
@@ -68,6 +71,15 @@ public class CombatHandlerUI : MonoBehaviour
         skillButtons[2] = root.Q<Button>("Move2");
         skillButtons[3] = root.Q<Button>("Move3");
 
+        //get combat terminal labels
+        eventLabels[0] = root.Q<Label>("First");
+        eventLabels[1] = root.Q<Label>("Second");
+        eventLabels[2] = root.Q<Label>("Third");
+        eventLabels[3] = root.Q<Label>("Fourth");
+        eventLabels[4] = root.Q<Label>("Fifth");
+
+
+
         // Get progress bars
         playerHealth = root.Q<ProgressBar>("PlayerHealth");
         playerMana = root.Q<ProgressBar>("PlayerMana");
@@ -75,7 +87,7 @@ public class CombatHandlerUI : MonoBehaviour
         enemyMana = root.Q<ProgressBar>("EnemyMana");
 
         // Set up colors
-        SetupProgressBarColors();
+        //SetupProgressBarColors();
 
         // Register callbacks
         RegisterCallbacks();
@@ -95,6 +107,7 @@ public class CombatHandlerUI : MonoBehaviour
         var enemyManaProgress = enemyMana.Q(className: "unity-progress-bar__progress");
         enemyManaProgress.style.backgroundColor = new StyleColor(Color.blue);
     }
+
 
     private void RegisterCallbacks()
     {
@@ -154,6 +167,17 @@ public class CombatHandlerUI : MonoBehaviour
         }
     }
 
+    public void UpdateCombatTerminal(string text)
+    {
+        for (int i = 4; i > 0; i--)
+        {
+            eventLabels[i].text = eventLabels[i - 1].text;
+        }
+
+        eventLabels[0].text = text;
+
+    }
+
     // New method to refresh UI after powerup changes
     public void RefreshUI()
     {
@@ -165,6 +189,7 @@ public class CombatHandlerUI : MonoBehaviour
 
     public void ShowFightPanel()
     {
+        SoundFxManager.Instance.PlayButtonFXClip();
         optionsContainer.style.display = DisplayStyle.None;
         fightContainer.style.display = DisplayStyle.Flex;
         catchContainer.style.display = DisplayStyle.None;
@@ -172,6 +197,7 @@ public class CombatHandlerUI : MonoBehaviour
 
     public void ShowOptionsPanel()
     {
+        SoundFxManager.Instance.PlayButtonFXClip();
         fightContainer.style.display = DisplayStyle.None;
         optionsContainer.style.display = DisplayStyle.Flex;
         catchContainer.style.display = DisplayStyle.None;
@@ -179,6 +205,8 @@ public class CombatHandlerUI : MonoBehaviour
 
     public void ShowCatchPanel()
     {
+        SoundFxManager.Instance.PlayButtonFXClip();
+        Debug.Log("Showing Catch Panel");
         optionsContainer.style.display = DisplayStyle.None;
         fightContainer.style.display = DisplayStyle.None;
         catchContainer.style.display = DisplayStyle.Flex;
@@ -197,6 +225,12 @@ public class CombatHandlerUI : MonoBehaviour
         switchButton.clicked -= () => OnSwitchClicked?.Invoke();
         catchButton.clicked -= () => OnCatchClicked?.Invoke();
         cancelCatchButton.clicked -= () => OnCancelCatchClicked?.Invoke();
+
+        //clears combat terminal
+        for (int i = 0; i < 5; i++)
+        {
+            eventLabels[i].text = " ";
+        }
 
         for (int i = 0; i < 4; i++)
         {

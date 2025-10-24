@@ -3382,6 +3382,9 @@ MonoBehaviour:
   collisionTilemap: {fileID: 3887283334654385345}
   decorations: {fileID: 1247073850806134414}
   floor: {fileID: 8285451073506177213}
+  roomGridID: 0
+  groupsToPlace: 5
+  tilesPerGroup: 5
 --- !u!114 &4004448042440219848
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3404,6 +3407,7 @@ MonoBehaviour:
   - {fileID: 2532129221966103024, guid: 423330ce9a0eb4d99b20cf0efec5a506, type: 3}
   - {fileID: 2532129221966103024, guid: 5d0f9e5234f8b4e15a212f70c4d7d0d0, type: 3}
   - {fileID: 2532129221966103024, guid: fbad6cff786f6413ca02e1f5ae058343, type: 3}
+  - {fileID: 2532129221966103024, guid: 58f2ba0ac42a74184802d4a4b375c83c, type: 3}
   fillerLeft: {fileID: 903226278908052251, guid: a985237d8f6ed4fa5a3d61ee2f271555, type: 3}
   fillerMiddle: {fileID: 405438142527589524, guid: 74d67861cf12c406486eb847911de565, type: 3}
   fillerRight: {fileID: 6107851590028795885, guid: de4c2b8ba08b7457496d3b656c2c20a3, type: 3}

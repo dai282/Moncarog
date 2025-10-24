@@ -1,21 +1,32 @@
 using UnityEngine;
 using UnityEngine.UI;
+using System.Collections;
 
 public class PlayerMovement : MonoBehaviour
 {
     public float moveSpeed = 5f;
     public RoomGrid roomGrid;
     public float collisionOffset; // Adjust based on your sprite size
+    public Animator animator;
 
     private Rigidbody2D rb;
     private Vector2 movementDirection = Vector2.zero;
     private SpriteRenderer spriteRenderer;
     private Vector3Int lastCellPos;
 
+    [SerializeField] private AudioClip walkingClip;
+    [SerializeField] private AudioClip encounterSoundFX;
+
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
         spriteRenderer = GetComponent<SpriteRenderer>();
+
+        // Auto-get animator if not assigned
+        if (animator == null)
+        {
+            animator = GetComponent<Animator>();
+        }
 
         // Auto-calculate offset based on sprite size if not set
         if (collisionOffset <= 0 && spriteRenderer != null)
@@ -47,8 +58,26 @@ public class PlayerMovement : MonoBehaviour
                 {
                     StatsCollector.Instance?.RecordStep();
                     lastCellPos = currentCellPos;
+                    //play walking sound
+                    if (walkingClip != null)
+                    {
+                        SoundFxManager.Instance.PlayWalkingSoundFXClip(walkingClip, transform, 1f);
+                    }
                 }
             }
+            else
+            {
+                // Stop walking sound when not moving
+                SoundFxManager.Instance.StopWalkingSound();
+            }
+        }
+
+        // Update animator based on movement
+        if (animator != null)
+        {
+            animator.SetBool("isWalking", movementDirection.y > 0);
+            animator.SetBool("isWalkingRL", movementDirection.x != 0);
+            animator.SetBool("isWalkingB", movementDirection.y < 0);
         }
     }
 
@@ -60,11 +89,26 @@ public class PlayerMovement : MonoBehaviour
         DoorDetector door = roomGrid.GetDoorAtCell(cellPos);
         if (door != null)
         {
-            // trigger the door teleport
-            door.OnPlayerEnter();
+            if (PlayerInventory.Instance.StoredMoncargs.Count == 0)
+            {
+                AlertManager.Instance.ShowAlert("You need to choose a starting Moncarg before leaving!");
+            }
+            else
+            {
+                // trigger the door teleport
+                door.OnPlayerEnter();
+            }
 
-            // Return false so the player doesn’t "walk into" the door tile physically
+            // Return false so the player doesn't "walk into" the door tile physically
             return false;
+        }
+
+        // Chest detection
+        ChestDetector chest = roomGrid.GetChestAtCell(cellPos);
+        if (chest != null && chest.isStartingChest)
+        {
+            chest.OnPlayerInteract();
+            return false; // Stop movement when interacting with chest
         }
 
         // Check center point
@@ -77,11 +121,21 @@ public class PlayerMovement : MonoBehaviour
         {
             Debug.Log($"Encounter triggered at {encounterCell}");
 
+            SoundFxManager.Instance.PlaySoundFXClip(encounterSoundFX, transform, 1f);
             // Trigger combat
             FindFirstObjectByType<CombatHandler>().BeginEncounter(roomGrid.roomGridID);
 
             // Reset tile to walkable after use
             roomGrid.ResetEncounterTile(encounterCell);
+        }
+        if (roomGrid.IsEventTile(position, out Vector3Int eventCell))
+        {
+            Debug.Log($"Event triggered at {eventCell}");
+
+            int randomPercentage = Random.Range(-20, 21);
+            PlayerInventory.Instance.AdjustAllMoncargsStats(randomPercentage);
+
+            roomGrid.ResetEventTile(eventCell);
         }
 
         // Check edges based on movement direction
@@ -117,4 +171,5 @@ public class PlayerMovement : MonoBehaviour
     public void MoveLeft() { movementDirection = Vector2.left; }
     public void MoveRight() { movementDirection = Vector2.right; }
     public void StopMovement() { movementDirection = Vector2.zero; }
+    
 }

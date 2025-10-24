@@ -16,17 +16,22 @@ MonoBehaviour:
   Icon: {fileID: -5714527108496226148, guid: 6b8c3d32043ec124f9e75e2e1b839f68, type: 3}
   moncargData:
     moncargName: Natrix
-    maxHealth: 80
-    health: 80
-    attack: 80
-    defense: 10
-    speed: 20
+    baseMaxHealth: 280
+    baseAttack: 232
+    baseDefense: 25
+    baseSpeed: 44
+    baseMaxMana: 305
+    maxHealth: 280
+    health: 280
+    attack: 233
+    defense: 25.41
+    speed: 44
     exp: 0
     level: 1
-    mana: 120
-    maxMana: 120
+    mana: 305
+    maxMana: 305
     catchChance: 0.1
-    dodgeChance: 0.6
+    dodgeChance: 0.3
     type: 2
     active: 1
     skillset:
@@ -36,6 +41,7 @@ MonoBehaviour:
     - {fileID: 11400000, guid: 6c1ec54f72e173949affb398c260b4aa, type: 2}
     isBoss: 0
     isMiniBoss: 0
+    expToNextLevel: 100
   SlotDimension:
     Height: 1
     Width: 1

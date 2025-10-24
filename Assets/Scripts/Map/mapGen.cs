@@ -7,12 +7,14 @@ public class MapGenerator
     private const int roomsToMiniBoss = 6;
     private const int roomsToFinalBoss = 5;
 
-    // Reordered these 
-    public enum RoomType { Water, Fire, Grass, Normal, FinalBoss, MiniBoss }
+    //reordered these 
+    public enum RoomType { Water, Fire, Grass, Normal, FinalBoss, MiniBoss, Event }
 
     private int currentY = 0;
     private float horizontalSpacing = 2f;
     private float verticalSpacing = -2f;
+    private bool preMiniEventPlaced = false;
+    private bool postMiniEventPlaced = false;
 
     public class Room
     {
@@ -193,6 +195,44 @@ public class MapGenerator
             }
         }
 
+        if (!preMiniEventPlaced && currentY < roomsToMiniBoss && Random.value < 0.9f) // 20% chance per layer
+        {
+            MapNode eventNode = new MapNode { Room = new Room { Name = -10, Type = RoomType.Event } };
+            float y = currentY * -verticalSpacing;
+            eventNode.Position = new Vector2(0, y + 2);
+            currentY++;
+
+            foreach (var end in newPathEnds)
+            {
+                end.Exits.Add(eventNode);
+                eventNode.Parents.Add(end);
+            }
+
+            newPathEnds = new List<MapNode> { eventNode };
+            preMiniEventPlaced = true;
+
+            Debug.Log("Placed pre-miniboss Event Room at Y = " + currentY);
+        }
+
+        else if (postMiniEventPlaced && Random.value < 0.9f) // 20% chance per layer
+        {
+            MapNode eventNode = new MapNode { Room = new Room { Name = -11, Type = RoomType.Event } };
+            float y = currentY * -verticalSpacing;
+            eventNode.Position = new Vector2(0, y + 2);
+            currentY++;
+
+            foreach (var end in newPathEnds)
+            {
+                end.Exits.Add(eventNode);
+                eventNode.Parents.Add(end);
+            }
+
+            newPathEnds = new List<MapNode> { eventNode };
+            postMiniEventPlaced = false;
+
+            //Debug.Log("Placed post-miniboss Event Room at Y = " + currentY);
+        }
+
         currentY++;
         return newPathEnds;
     }
@@ -208,6 +248,7 @@ public class MapGenerator
         miniBosses[1].Position = new Vector2(centerX, y);
         miniBosses[2].Position = new Vector2(maxX, y);
         currentY++;
+        postMiniEventPlaced = true;
 
         foreach (var endNode in pathEndNodes)
         {

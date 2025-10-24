@@ -23,25 +23,6 @@ public class Moncarg : MonoBehaviour
     public ElementalType type { get => data.type; set => data.type = value; }
     public SkillDefinition[] skillset { get => data.skillset; set => data.skillset = value; }
 
-    /*
-    public string moncargName;
-    public float maxHealth;
-    public float health;
-    public float attack;
-    public float defense;
-    public int speed;
-    public int exp;
-    public int level;
-    public int mana;
-    public int maxMana;
-    public float catchChance;
-    public float dodgeChance;
-    public bool active;
-    public ElementalType type;*/
-
-    //public Skill[] skillset;
-    //private SkillList skillList;
-
     public enum moncargRole
     {
         PlayerOwned,

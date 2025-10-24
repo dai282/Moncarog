@@ -957,6 +957,52 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 630510524}
   m_CullTransparentMesh: 1
+--- !u!1 &698739453
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 698739454}
+  - component: {fileID: 698739455}
+  m_Layer: 0
+  m_Name: AlertManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &698739454
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 698739453}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 965961524}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &698739455
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 698739453}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 46300e5de83e56f4b888a4db4189e1f4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::AlertManager
+  alertText: {fileID: 0}
+  alertPanel: {fileID: 0}
 --- !u!1 &717188818
 GameObject:
   m_ObjectHideFlags: 0
@@ -989,6 +1035,14 @@ MonoBehaviour:
   combatUI: {fileID: 1010655243}
   selectionUI: {fileID: 462797780}
   forceEquipUI: {fileID: 1587555431}
+  cam: {fileID: 0}
+  victoryScreen: {fileID: 0}
+  commonDrops: []
+  rareDrops: []
+  legendaryDrops: []
+  dropChance: 0.7
+  rareDropChance: 0.15
+  legendaryDropChance: 0.05
 --- !u!4 &717188820
 Transform:
   m_ObjectHideFlags: 0
@@ -1596,11 +1650,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::GameManager
   player: {fileID: 913530031}
   startingMoncargPrefab: {fileID: 4959577150352375591, guid: 7d1d0317d5fe01847954bdc7f098e54c, type: 3}
-  enemyMoncargPrefab: {fileID: 1909571526152986902, guid: 28ea6eec80dcb2f40980d8ed37d09abd, type: 3}
   mapManager: {fileID: 760543198}
-  rooms: []
   board: {fileID: 1272354574}
+  moveUI: {fileID: 0}
+  moncargDatabase: {fileID: 0}
   combatHandler: {fileID: 717188819}
+  loseScreenUI: {fileID: 0}
 --- !u!4 &940294201
 Transform:
   m_ObjectHideFlags: 0
@@ -1630,6 +1685,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PauseMenu
   pauseMenu: {fileID: 1520303967}
   pauseButton: {fileID: 1304238524}
+  mainMenu: {fileID: 0}
   isPaused: 0
 --- !u!1001 &956722045
 PrefabInstance:
@@ -1815,6 +1871,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 698739454}
   - {fileID: 1010655244}
   - {fileID: 174167676}
   - {fileID: 1079650103}
@@ -2361,6 +2418,7 @@ MonoBehaviour:
     Height: 9
     Width: 6
   MaxWeight: 54
+  MaxMoncargs: 6
   m_IsInventoryReady: 0
 --- !u!114 &1079650102
 MonoBehaviour:
@@ -2502,6 +2560,7 @@ MonoBehaviour:
   visitedColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
   currentColor: {r: 0, g: 1, b: 0, a: 1}
   defaultColor: {r: 1, g: 1, b: 1, a: 1}
+  mapRoot: {fileID: 0}
 --- !u!4 &1282217909
 Transform:
   m_ObjectHideFlags: 0
