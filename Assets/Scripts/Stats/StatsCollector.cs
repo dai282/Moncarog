@@ -49,6 +49,7 @@ private GameStats DeepCopy(GameStats original)
     // Subscribe in Awake. This is robust and survives pausing/scene loads.
     private void Awake()
     {
+        // This part is perfect. It only sets up itself.
         if (Instance != null && Instance != this)
         {
             Destroy(gameObject);
@@ -57,11 +58,21 @@ private GameStats DeepCopy(GameStats original)
         Instance = this;
         DontDestroyOnLoad(gameObject);
 
+        // Subscribe here. GameManager will likely be set in its own Awake.
+        // If GameManager.OnTimeTick is static, this is safe.
+        // If GameManager is *also* an Instance, this should also move to Start().
+        // For now, let's assume it's static and safe.
+        GameManager.OnTimeTick += RecordTimeTick; 
+    }
+
+    // Create a new Start() method for everything else
+    private void Start()
+    {
+        // By the time Start() runs, SaveManager.Awake() is guaranteed to have finished.
         LoadLifetimeRecord();
 
+        // This also depends on CurrentSessionStats which is loaded in the method above.
         _lastSavedSessionStats = DeepCopy(CurrentSessionStats);
-
-        GameManager.OnTimeTick += RecordTimeTick; 
     }
 
     // Unsubscribe in OnDestroy to prevent memory leaks when app quits.
@@ -81,8 +92,20 @@ private GameStats DeepCopy(GameStats original)
 
     private void LoadLifetimeRecord()
     {
+        // 1. Try to load the stats
         LifetimeRecord = SaveManager.Instance.LoadLifetimeStats();
-        Debug.Log("[StatsCollector] Lifetime record loaded via SaveManager.");
+
+        // 2. CRITICAL: Check if the load failed (e.g., new game)
+        if (LifetimeRecord == null)
+        {
+            // 3. If it's null, create a new, empty record
+            LifetimeRecord = new GameStats();
+            Debug.Log("[StatsCollector] No lifetime record found. Created a new one.");
+        }
+        else
+        {
+            Debug.Log("[StatsCollector] Lifetime record loaded via SaveManager.");
+        }
     }
 
     // Cleaned up and removed all references to _sessionTimeElapsed.
