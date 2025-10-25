@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Grassmancer
   m_EditorClassIdentifier: Assembly-CSharp::MoncargInventoryAdapter
   FriendlyName: Grassmancer
-  Icon: {fileID: 7935518174836657070, guid: b879dd6ea62cf6640910dc9e748b28a9, type: 3}
+  Icon: {fileID: 21300000, guid: b879dd6ea62cf6640910dc9e748b28a9, type: 3}
   moncargData:
     moncargName: Grassmancer
     baseMaxHealth: 500
@@ -21,15 +21,15 @@ MonoBehaviour:
     baseDefense: 60
     baseSpeed: 20
     baseMaxMana: 200
-    maxHealth: 0
-    health: 0
-    attack: 0
-    defense: 0
-    speed: 0
+    maxHealth: 500
+    health: 500
+    attack: 80
+    defense: 60
+    speed: 20
     exp: 0
     level: 1
-    mana: 0
-    maxMana: 0
+    mana: 200
+    maxMana: 200
     catchChance: 0
     dodgeChance: 0.3
     type: 2

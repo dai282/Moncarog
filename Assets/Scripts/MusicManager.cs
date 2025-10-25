@@ -45,11 +45,13 @@ public class MusicManager : MonoBehaviour
         if (bgPlaying)
         {
             audioSource.clip = combatMusic;
+            audioSource.volume = audioSource.volume + 0.7f;
             audioSource.Play();
         }
         else
         {
             audioSource.clip = bgMusic;
+            audioSource.volume = audioSource.volume - 0.7f;
             audioSource.Play();
         }
 

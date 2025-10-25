@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Sepio
   m_EditorClassIdentifier: Assembly-CSharp::MoncargInventoryAdapter
   FriendlyName: Sepio
-  Icon: {fileID: -4861139540325970476, guid: b6adbfd3c7f7abb439a1a3ad103d2ede, type: 3}
+  Icon: {fileID: 21300000, guid: b6adbfd3c7f7abb439a1a3ad103d2ede, type: 3}
   moncargData:
     moncargName: Sepio
     baseMaxHealth: 80
@@ -21,11 +21,11 @@ MonoBehaviour:
     baseDefense: 10
     baseSpeed: 20
     baseMaxMana: 0
-    maxHealth: 0
-    health: 0
-    attack: 0
-    defense: 0
-    speed: 0
+    maxHealth: 80
+    health: 80
+    attack: 80
+    defense: 10
+    speed: 20
     exp: 0
     level: 1
     mana: 0

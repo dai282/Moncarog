@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Zagen
   m_EditorClassIdentifier: Assembly-CSharp::MoncargItemDefinition
   FriendlyName: Zagen
-  Icon: {fileID: 6363573771445966535, guid: 89eab50d2e0da374782ec54cc07885a6, type: 3}
+  Icon: {fileID: 21300000, guid: 89eab50d2e0da374782ec54cc07885a6, type: 3}
   moncargData:
     moncargName: Zagen
     baseMaxHealth: 500
@@ -21,15 +21,15 @@ MonoBehaviour:
     baseDefense: 30
     baseSpeed: 1
     baseMaxMana: 150
-    maxHealth: 0
-    health: 0
-    attack: 0
-    defense: 0
-    speed: 0
+    maxHealth: 500
+    health: 500
+    attack: 60
+    defense: 30
+    speed: 1
     exp: 0
     level: 1
-    mana: 0
-    maxMana: 0
+    mana: 150
+    maxMana: 150
     catchChance: 1
     dodgeChance: 0.2
     type: 2

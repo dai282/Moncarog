@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Firezard
   m_EditorClassIdentifier: Assembly-CSharp::MoncargInventoryAdapter
   FriendlyName: Firezard
-  Icon: {fileID: -3478766669378677403, guid: 5ca5306ca483e8c4693fedd6186cb2ea, type: 3}
+  Icon: {fileID: 21300000, guid: 5ca5306ca483e8c4693fedd6186cb2ea, type: 3}
   moncargData:
     moncargName: Firezard
     baseMaxHealth: 500
@@ -21,15 +21,15 @@ MonoBehaviour:
     baseDefense: 10
     baseSpeed: 50
     baseMaxMana: 500
-    maxHealth: 0
-    health: 0
-    attack: 0
-    defense: 0
-    speed: 0
+    maxHealth: 500
+    health: 500
+    attack: 50
+    defense: 10
+    speed: 50
     exp: 0
-    level: 5
-    mana: 0
-    maxMana: 0
+    level: 1
+    mana: 500
+    maxMana: 500
     catchChance: 5
     dodgeChance: 5
     type: 0
