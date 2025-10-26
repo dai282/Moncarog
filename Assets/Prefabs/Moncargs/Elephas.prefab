@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &7988431587809860476
+--- !u!1 &3988726585341865935
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,24 +8,24 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 8509507638200852658}
-  - component: {fileID: 2186624301655010043}
-  - component: {fileID: 6736777509539956382}
-  - component: {fileID: 8026639655729725656}
+  - component: {fileID: 5582977701186276007}
+  - component: {fileID: 5617384895508504746}
+  - component: {fileID: 5137169309965298104}
+  - component: {fileID: 1528401502755693485}
   m_Layer: 0
-  m_Name: Vespula
+  m_Name: Elephas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &8509507638200852658
+--- !u!4 &5582977701186276007
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7988431587809860476}
+  m_GameObject: {fileID: 3988726585341865935}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
@@ -34,13 +34,13 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &2186624301655010043
+--- !u!114 &5617384895508504746
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7988431587809860476}
+  m_GameObject: {fileID: 3988726585341865935}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4720bd42dcd40bc40980140288c74169, type: 3}
@@ -48,6 +48,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Moncarg
   data:
     moncargName: 
+    baseMaxHealth: 0
+    baseAttack: 0
+    baseDefense: 0
+    baseSpeed: 0
+    baseMaxMana: 0
     maxHealth: 0
     health: 0
     attack: 0
@@ -61,27 +66,35 @@ MonoBehaviour:
     dodgeChance: 0
     type: 0
     active: 0
+    skillset:
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    isBoss: 0
+    isMiniBoss: 0
+    expToNextLevel: 0
   role: 0
---- !u!114 &6736777509539956382
+--- !u!114 &5137169309965298104
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7988431587809860476}
+  m_GameObject: {fileID: 3988726585341865935}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c5650710273514946a78c54f1a615509, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StoredMoncarg
-  Details: {fileID: 11400000, guid: cc435acecb8a95e43b130fa46dea71e6, type: 2}
---- !u!212 &8026639655729725656
+  Details: {fileID: 11400000, guid: d85c13fd74e1c86418505a5b6f193fe0, type: 2}
+--- !u!212 &1528401502755693485
 SpriteRenderer:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7988431587809860476}
+  m_GameObject: {fileID: 3988726585341865935}
   m_Enabled: 1
   m_CastShadows: 0
   m_ReceiveShadows: 0
@@ -122,12 +135,12 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: -200287596543004917, guid: ba487e93755319c4abbf9914a6d84ce7, type: 3}
+  m_Sprite: {fileID: 21300000, guid: c4790f072ec271843a5864f05135b922, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 0.23, y: 0.27}
+  m_Size: {x: 0.64, y: 0.64}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1

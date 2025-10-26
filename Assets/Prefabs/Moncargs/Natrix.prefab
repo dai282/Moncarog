@@ -48,6 +48,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Moncarg
   data:
     moncargName: 
+    baseMaxHealth: 0
+    baseAttack: 0
+    baseDefense: 0
+    baseSpeed: 0
+    baseMaxMana: 0
     maxHealth: 0
     health: 0
     attack: 0
@@ -61,6 +66,14 @@ MonoBehaviour:
     dodgeChance: 0
     type: 0
     active: 0
+    skillset:
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    isBoss: 0
+    isMiniBoss: 0
+    expToNextLevel: 0
   role: 0
 --- !u!114 &2061496798085229412
 MonoBehaviour:
@@ -122,12 +135,12 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: -5714527108496226148, guid: 6b8c3d32043ec124f9e75e2e1b839f68, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 6b8c3d32043ec124f9e75e2e1b839f68, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 0.45, y: 0.37}
+  m_Size: {x: 0.64, y: 0.64}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
