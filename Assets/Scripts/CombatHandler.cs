@@ -132,6 +132,7 @@ public class CombatHandler : MonoBehaviour
                 //Debug.Log($"Grass");
             }
             if (10 < roomID && roomID < 16) {
+                Debug.Log("Number of water moncargs available: " +  databaseW);
                 int randIndex = Random.Range(0, databaseW);
                 enemyObj = Instantiate(moncargDatabase.waterMoncargs[randIndex]);
                 //Debug.Log($"Water");
