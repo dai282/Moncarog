@@ -13,6 +13,10 @@ public class CombatHandler : MonoBehaviour
     [SerializeField] private ForceEquipPromptUI forceEquipUI;
     [SerializeField] private CameraManager cam;
 
+    [Header("Combat Positions")] // Add this header for organization
+    [SerializeField] private Transform playerSpawnPoint;
+    [SerializeField] private Transform enemySpawnPoint;
+
     [Header("Slash Effect")]
     [SerializeField] private Animator slashAnimator;
     [SerializeField] private Transform slashTransform;
@@ -144,8 +148,12 @@ public class CombatHandler : MonoBehaviour
             }
         }
 
-        enemyObj.transform.localScale = new Vector3(15f, 15f, 0f);
-        enemyObj.transform.position = new Vector3(15f, 0f, 0f);
+        //enemyObj.transform.localScale = new Vector3(15f, 15f, 0f);
+        //enemyObj.transform.position = new Vector3(15f, 0f, 0f);
+
+        enemyObj.transform.position = enemySpawnPoint.position;
+        enemyObj.transform.rotation = enemySpawnPoint.rotation; // Good practice to also set rotation
+
         enemy = enemyObj.GetComponent<Moncarg>();
         enemy.InitStats();
         //hide until combat starts
@@ -530,7 +538,7 @@ public class CombatHandler : MonoBehaviour
 
             slashTransform.position = startPos;
 
-            Vector3 scale = new Vector3(10f, 10f, 1f);
+            Vector3 scale = new Vector3(5f, 5f, 1f);
             scale.x = isPlayerAttacking ? Mathf.Abs(scale.x) : -Mathf.Abs(scale.x);
             slashTransform.localScale = scale;
 
@@ -1106,8 +1114,14 @@ public class CombatHandler : MonoBehaviour
 
         // Spawn the selected moncarg for battle
         GameObject playerMoncargObj = selectedMoncarg.CreateMoncargGameObject();
-        playerMoncargObj.transform.localScale = new Vector3(15f, 15f, 0f);
-        playerMoncargObj.transform.position = new Vector3(-15f, 0f, 0f);
+
+        //playerMoncargObj.transform.localScale = new Vector3(15f, 15f, 0f);
+        //playerMoncargObj.transform.position = new Vector3(-15f, 0f, 0f);
+
+        // --- NEW CODE ---
+        playerMoncargObj.transform.position = playerSpawnPoint.position;
+        playerMoncargObj.transform.rotation = playerSpawnPoint.rotation; // Good practice
+
         player = playerMoncargObj.GetComponent<Moncarg>();
         player.InitStats();
 
