@@ -20,9 +20,14 @@ public class MapManager : MonoBehaviour
 
     [Header("References")]
     public MapTraversalOverlay traversalOverlay;
+    public RectTransform mapContainer; // Assign your "MapBackdrop" GameObject to this in the Inspector
 
     private MapGenerator mapGenerator;
     private MapGenerator.MapNode startNode;
+
+    // We'll store the calculated map bounds here
+    private Vector2 minBounds;
+    private Vector2 maxBounds;
 
     // Store prefab instances so traversalOverlay can recolor them
     private Dictionary<MapGenerator.MapNode, GameObject> nodeToGameObjectMap = new Dictionary<MapGenerator.MapNode, GameObject>();
@@ -79,7 +84,7 @@ public class MapManager : MonoBehaviour
         }
 
         // Draw map and initialize overlay
-        DisplayMap(startNode, new Vector3(0, -14, 0));
+        NewDisplayMap(startNode, new Vector3(0, -14, 0));
 
         if (traversalOverlay != null)
         {
@@ -92,6 +97,124 @@ public class MapManager : MonoBehaviour
 
         isReady = true;
     }
+
+    #region New DisplayMap Logic
+    private void NewDisplayMap(MapGenerator.MapNode node, Vector3 origin)
+    {
+        if (node == null) return;
+
+        // --- New Logic ---
+        // 1. First, traverse the map to find its boundaries
+        minBounds = Vector2.positiveInfinity;
+        maxBounds = Vector2.negativeInfinity;
+        FindMapBounds(node, new HashSet<MapGenerator.MapNode>());
+
+        // 2. Get the size of the container we want to fit the map into
+        Rect containerRect = mapContainer.rect;
+        float containerWidth = containerRect.width;
+        float containerHeight = containerRect.height;
+
+        // 3. Calculate the scale factor to make the map fit
+        float mapWidth = maxBounds.x - minBounds.x;
+        float mapHeight = maxBounds.y - minBounds.y;
+
+        // Add a small padding so nodes aren't right on the edge
+        float padding = 50f;
+        float scaleX = (containerWidth - padding) / (mapWidth > 0 ? mapWidth : 1);
+        float scaleY = (containerHeight - padding) / (mapHeight > 0 ? mapHeight : 1);
+        float scale = Mathf.Min(scaleX, scaleY); // Use the smaller scale to maintain aspect ratio
+
+        // 4. Instantiate and position all nodes with the new scale and offset
+        InstantiateMapObjects(node, new HashSet<MapGenerator.MapNode>(), scale);
+    }
+
+    // New helper function to find the extents of the map
+    private void FindMapBounds(MapGenerator.MapNode node, HashSet<MapGenerator.MapNode> visited)
+    {
+        if (node == null || visited.Contains(node)) return;
+        visited.Add(node);
+
+        if (node.Position.x < minBounds.x) minBounds.x = node.Position.x;
+        if (node.Position.y < minBounds.y) minBounds.y = node.Position.y;
+        if (node.Position.x > maxBounds.x) maxBounds.x = node.Position.x;
+        if (node.Position.y > maxBounds.y) maxBounds.y = node.Position.y;
+
+        foreach (var exit in node.Exits)
+        {
+            FindMapBounds(exit, visited);
+        }
+    }
+
+    // New function to create the actual GameObjects
+    private void InstantiateMapObjects(MapGenerator.MapNode node, HashSet<MapGenerator.MapNode> visited, float scale)
+    {
+        if (node == null || visited.Contains(node)) return;
+        visited.Add(node);
+
+        // --- Main Change: Positioning Logic ---
+        // Convert original map position to a scaled UI position
+        float xPos = (node.Position.x - minBounds.x) * scale;
+        float yPos = (node.Position.y - minBounds.y) * scale;
+
+        // Center the map within the container
+        float mapWidthScaled = (maxBounds.x - minBounds.x) * scale;
+        float mapHeightScaled = (maxBounds.y - minBounds.y) * scale;
+        float xOffset = (mapContainer.rect.width - mapWidthScaled) / 2f;
+        float yOffset = (mapContainer.rect.height - mapHeightScaled) / 2f;
+
+        // We subtract half the container width/height to move the origin (0,0) to the center,
+        // then we position relative to the bottom-left.
+        Vector2 anchoredPosition = new Vector2(xPos + xOffset, yPos + yOffset);
+
+
+        GameObject selectedPrefab = GetPrefabForRoomType(node.Room.Type);
+        // The parent is now traversalOverlay.transform as before
+        GameObject roomObj = Instantiate(selectedPrefab, traversalOverlay.transform);
+        roomObj.name = $"Room {node.Room.Name} ({node.Room.Type})";
+
+        // --- Use RectTransform for positioning ---
+        RectTransform rectTransform = roomObj.GetComponent<RectTransform>();
+        if (rectTransform != null)
+        {
+            // Set anchor to the bottom left for predictable positioning
+            rectTransform.anchorMin = new Vector2(0, 0);
+            rectTransform.anchorMax = new Vector2(0, 0);
+            rectTransform.anchoredPosition = anchoredPosition;
+        }
+        else
+        {
+            Debug.LogWarning($"Prefab for room type {node.Room.Type} is missing a RectTransform component. Make sure it's a UI object.");
+        }
+
+
+        if (!nodeToGameObjectMap.ContainsKey(node)) nodeToGameObjectMap[node] = roomObj;
+
+        // Recurse and draw connections
+        foreach (var exit in node.Exits)
+        {
+            if (exit == null) continue;
+
+            // Make sure we have the exit's GameObject to draw the line to it
+            if (!visited.Contains(exit))
+            {
+                InstantiateMapObjects(exit, visited, scale);
+            }
+
+            if (nodeToGameObjectMap.ContainsKey(node) && nodeToGameObjectMap.ContainsKey(exit))
+            {
+                //Vector3 startPos = nodeToGameObjectMap[node].GetComponent<RectTransform>().anchoredPosition;
+                //Vector3 endPos = nodeToGameObjectMap[exit].GetComponent<RectTransform>().anchoredPosition;
+                //DrawLine(startPos, endPos);
+
+                // Use localPosition, which is relative to the parent's pivot (center)
+                Vector3 startPos = nodeToGameObjectMap[node].transform.localPosition;
+                Vector3 endPos = nodeToGameObjectMap[exit].transform.localPosition;
+                DrawLine(startPos, endPos);
+            }
+        }
+    }
+
+    #endregion
 
     private void DisplayMap(MapGenerator.MapNode node, Vector3 origin)
     {
@@ -127,13 +250,30 @@ public class MapManager : MonoBehaviour
     private void DrawLine(Vector3 start, Vector3 end)
     {
         if (linePrefab == null) return;
-        GameObject lineObj = Instantiate(linePrefab, traversalOverlay != null ? traversalOverlay.transform : null);
+
+        //GameObject lineObj = Instantiate(linePrefab, traversalOverlay != null ? traversalOverlay.transform : null);
+        GameObject lineObj = Instantiate(linePrefab, traversalOverlay.transform);
+        lineObj.name = "ConnectionLine";
+
         LineRenderer lr = lineObj.GetComponent<LineRenderer>();
+
+        // --- Important for LineRenderer in a Canvas ---
+        // Make sure the LineRenderer is using local space
+        lr.useWorldSpace = false;
+
+        //if (lr != null)
+        //{
+        //    lr.positionCount = 2;
+        //    lr.SetPosition(0, start);
+        //    lr.SetPosition(1, end);
+        //}
+
         if (lr != null)
         {
             lr.positionCount = 2;
-            lr.SetPosition(0, start);
-            lr.SetPosition(1, end);
+            // The Z-coordinate should be 0 for UI
+            lr.SetPosition(0, new Vector3(start.x, start.y, 0));
+            lr.SetPosition(1, new Vector3(end.x, end.y, 0));
         }
     }
 

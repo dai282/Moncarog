@@ -1,6 +1,8 @@
 using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEngine.UI;
+
 
 // Handles traversing the generated map with A (left) and D (right).
 // Highlights the current node in green and previously visited nodes in gray.
@@ -156,7 +158,8 @@ public class MapTraversalOverlay : MonoBehaviour
     {
         foreach (var kvp in nodeVisuals)
         {
-            var sr = kvp.Value.GetComponent<SpriteRenderer>();
+            //var sr = kvp.Value.GetComponent<SpriteRenderer>();
+            var sr = kvp.Value.GetComponent<Image>();
             if (sr == null) continue;
 
             if (kvp.Key == currentNode)

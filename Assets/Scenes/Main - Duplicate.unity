@@ -3713,6 +3713,11 @@ MonoBehaviour:
   selectionUI: {fileID: 462797780}
   forceEquipUI: {fileID: 1587555431}
   cam: {fileID: 0}
+  slashAnimator: {fileID: 0}
+  slashTransform: {fileID: 0}
+  slashDuration: 0.3
+  combatCanvas: {fileID: 0}
+  damageIndicatorPrefab: {fileID: 0}
   commonDrops:
   - {fileID: 11400000, guid: ff6f9fbed549bd04f848cb39fcad9805, type: 2}
   rareDrops: []
@@ -4841,6 +4846,81 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::LoseScreenUI
   loseScreen: {fileID: 1941845057}
   isGameOver: 0
+--- !u!1 &944121224
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 944121227}
+  - component: {fileID: 944121226}
+  - component: {fileID: 944121225}
+  m_Layer: 5
+  m_Name: CombatBG
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!114 &944121225
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 944121224}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: -796155573255488767, guid: 613a33886e442ce4a99bb4791913d19a, type: 3}
+  m_Type: 0
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!222 &944121226
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 944121224}
+  m_CullTransparentMesh: 1
+--- !u!224 &944121227
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 944121224}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 90}
+  m_LocalScale: {x: 0.01667, y: 0.01667, z: 0.01667}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: 4, y: -15}
+  m_SizeDelta: {x: 929.9601, y: 600}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &965961523
 GameObject:
   m_ObjectHideFlags: 0
@@ -5258,6 +5338,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CombatHandlerUI
   combatUI: {fileID: 174167675}
+  combatBG: {fileID: 944121224}
+  outerInventoryButton: {fileID: 630510524}
 --- !u!4 &1010655244
 Transform:
   m_ObjectHideFlags: 0
@@ -5453,7 +5535,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0.09738652, y: 0.16862944}
-  m_AnchoredPosition: {x: 502.53094, y: 250.45078}
+  m_AnchoredPosition: {x: 502.53094, y: 250.45074}
   m_SizeDelta: {x: -26.197815, y: -53.864075}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1035303862
@@ -10316,6 +10398,7 @@ MonoBehaviour:
   moveSpeed: 15
   roomGrid: {fileID: 0}
   collisionOffset: 0
+  animator: {fileID: 0}
   walkingClip: {fileID: 0}
   encounterSoundFX: {fileID: 0}
 --- !u!4 &2020702137
@@ -11388,6 +11471,7 @@ SceneRoots:
   - {fileID: 717188820}
   - {fileID: 1500442270}
   - {fileID: 1421222581}
+  - {fileID: 944121227}
   - {fileID: 1272354575}
   - {fileID: 2020702137}
   - {fileID: 1635567585}
