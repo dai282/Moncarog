@@ -31,6 +31,19 @@ public class MoncargDatabase : MonoBehaviour
         Instance = this;
     }
 
+    public int GetNumberOfBossAndMiniboss()
+    {
+        int count = 0;
+        for (GameObject moncarg in availableEnemyMoncargs)
+        {
+            if (moncarg.GetComponent<StoredMoncarg>().Details.moncargData.isBoss == true || moncarg.GetComponent<StoredMoncarg>().Details.moncargData.isMiniBoss == true)
+            {
+                count++
+            }
+        }
+        return count;
+    }
+
     public void SetRoomLevel(int roomNumber)
     {
         currentRoomLevel = Mathf.Clamp(roomNumber, 1, TOTAL_ROOMS);

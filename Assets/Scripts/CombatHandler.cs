@@ -31,9 +31,11 @@ public class CombatHandler : MonoBehaviour
     [SerializeField] private ItemDefinition[] commonDrops;
     [SerializeField] private ItemDefinition[] rareDrops;
     [SerializeField] private ItemDefinition[] legendaryDrops;
-    [SerializeField][Range(0f, 1f)] private float dropChance = 0.7f; // 70% chance to drop something
-    [SerializeField][Range(0f, 1f)] private float rareDropChance = 0.15f; // 15% chance for rare
-    [SerializeField][Range(0f, 1f)] private float legendaryDropChance = 0.05f; // 5% chance for legendary
+
+    // Making these constants, and also static if they need to be accessed globally
+    public const float DROP_CHANCE = 0.7f;            // 70% chance to drop something
+    public const float RARE_DROP_CHANCE = 0.15f;      // 15% chance for rare
+    public const float LEGENDARY_DROP_CHANCE = 0.05f; // 5% chance for legendary
 
     [Header("Sound Effects")]
     [SerializeField] private AudioClip normalAttackSoundFX;
@@ -89,8 +91,33 @@ public class CombatHandler : MonoBehaviour
         int databaseP = moncargDatabase.plantMoncargs.Count;
         int databaseW = moncargDatabase.waterMoncargs.Count;
         int databaseN = moncargDatabase.normalMoncargs.Count;
-        //boss and miniboss rooms
+        int numberOfBossesAndMinibosses = moncargDatabase.GetNumberOfBossAndMiniboss();
         // Instantiate moncarg and check if they're boss or miniboss rooms
+
+        InstantiateMoncargBasedOnRoomID(roomID);
+
+        //enemyObj.transform.localScale = new Vector3(15f, 15f, 0f);
+        //enemyObj.transform.position = new Vector3(15f, 0f, 0f);
+
+        enemyObj.transform.position = enemySpawnPoint.position;
+        enemyObj.transform.rotation = enemySpawnPoint.rotation; // Good practice to also set rotation
+
+        enemy = enemyObj.GetComponent<Moncarg>();
+        enemy.InitStats();
+        //hide until combat starts
+        enemyObj.SetActive(false);
+
+        //auto equip moncargs if none are equipped
+        AutoEquipMoncargs();
+
+        StartCoroutine(StartMoncargSelection());
+
+        //play combat music
+        MusicManager.Instance.SwapTrack();
+    }
+
+    private void InstantiateMoncargBasedOnRoomID(int roomID)
+    {
         if (roomID < 0)
         {
             switch (roomID)
@@ -117,7 +144,7 @@ public class CombatHandler : MonoBehaviour
                     break;
                 default:
                     Debug.LogError("Invalid miniboss/boss room ID: " + roomID);
-                    int randIndex = Random.Range(0, databaseLen - 4);
+                    int randIndex = Random.Range(0, databaseLen - numberOfBossesAndMinibosses);
                     enemyObj = Instantiate(moncargDatabase.availableEnemyMoncargs[randIndex]);
                     break;
             }
@@ -125,48 +152,32 @@ public class CombatHandler : MonoBehaviour
         //otherwise just spawn a normal moncarg
         else
         {
-            if (1 < roomID && roomID < 6) {
+            if (1 < roomID && roomID < 6)
+            {
                 int randIndex = Random.Range(0, databaseN);
                 enemyObj = Instantiate(moncargDatabase.normalMoncargs[randIndex]);
                 //Debug.Log($"Normal");
             }
-            if (5 < roomID && roomID < 11) {
+            if (5 < roomID && roomID < 11)
+            {
                 int randIndex = Random.Range(0, databaseP);
                 enemyObj = Instantiate(moncargDatabase.plantMoncargs[randIndex]);
                 //Debug.Log($"Grass");
             }
-            if (10 < roomID && roomID < 16) {
-                Debug.Log("Number of water moncargs available: " +  databaseW);
+            if (10 < roomID && roomID < 16)
+            {
+                Debug.Log("Number of water moncargs available: " + databaseW);
                 int randIndex = Random.Range(0, databaseW);
                 enemyObj = Instantiate(moncargDatabase.waterMoncargs[randIndex]);
                 //Debug.Log($"Water");
             }
-            if (15 < roomID && roomID < 21) {
+            if (15 < roomID && roomID < 21)
+            {
                 int randIndex = Random.Range(0, databaseF);
                 enemyObj = Instantiate(moncargDatabase.fireMoncargs[randIndex]);
                 //Debug.Log($"Fire");
             }
         }
-
-        //enemyObj.transform.localScale = new Vector3(15f, 15f, 0f);
-        //enemyObj.transform.position = new Vector3(15f, 0f, 0f);
-
-        enemyObj.transform.position = enemySpawnPoint.position;
-        enemyObj.transform.rotation = enemySpawnPoint.rotation; // Good practice to also set rotation
-
-        enemy = enemyObj.GetComponent<Moncarg>();
-        enemy.InitStats();
-        //hide until combat starts
-        enemyObj.SetActive(false);
-
-        //auto equip moncargs if none are equipped
-        AutoEquipMoncargs();
-
-        //start moncarg selection
-        StartCoroutine(StartMoncargSelection());
-
-        //play combat music
-        MusicManager.Instance.SwapTrack();
     }
 
     public void BeginBattle()
@@ -801,7 +812,6 @@ public class CombatHandler : MonoBehaviour
         {
             GameManager.Instance.TriggerVictory();
             Cleanup();
-            //victoryScreen.SetActive(true);
         }
         else
         {
@@ -863,7 +873,7 @@ public class CombatHandler : MonoBehaviour
 
         // Check if anything drops at all
         float dropRoll = Random.value;
-        if (dropRoll > dropChance)
+        if (dropRoll > DROP_CHANCE)
         {
             Debug.Log($"No items dropped from {enemy.moncargName}");
             return;
@@ -873,13 +883,13 @@ public class CombatHandler : MonoBehaviour
         ItemDefinition droppedItem = null;
         float rarityRoll = Random.value;
 
-        if (rarityRoll <= legendaryDropChance && legendaryDrops != null && legendaryDrops.Length > 0)
+        if (rarityRoll <= LEGENDARY_DROP_CHANCE && legendaryDrops != null && legendaryDrops.Length > 0)
         {
             // Legendary drop
             droppedItem = legendaryDrops[Random.Range(0, legendaryDrops.Length)];
             Debug.Log($"LEGENDARY DROP! {enemy.moncargName} dropped {droppedItem.FriendlyName}!");
         }
-        else if (rarityRoll <= legendaryDropChance + rareDropChance && rareDrops != null && rareDrops.Length > 0)
+        else if (rarityRoll <= LEGENDARY_DROP_CHANCE + RARE_DROP_CHANCE && rareDrops != null && rareDrops.Length > 0)
         {
             // Rare drop
             droppedItem = rareDrops[Random.Range(0, rareDrops.Length)];
@@ -922,7 +932,7 @@ public class CombatHandler : MonoBehaviour
     public void SetDropChances(float baseChance, float rareChance, float legendaryChance)
     {
         dropChance = Mathf.Clamp01(baseChance);
-        rareDropChance = Mathf.Clamp01(rareChance);
+        RARE_DROP_CHANCE = Mathf.Clamp01(rareChance);
         legendaryDropChance = Mathf.Clamp01(legendaryChance);
     }
     #endregion
