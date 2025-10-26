@@ -312,6 +312,9 @@ public class GameManager : MonoBehaviour
             Debug.LogError("PlayerInventory.Instance is null during load!");
         }
 
+        // 1.5 Reset Moncarg Database
+        moncargDatabase.resetMoncargDatabase();
+
         // 2. Then rebuild the map 
         mapManager.LoadMapFromData(data.mapNodes);
 
