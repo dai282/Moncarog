@@ -21,12 +21,25 @@ public class FloatingDamageText : MonoBehaviour
     private System.Collections.IEnumerator FadeAndMove()
     {
         float elapsed = 0f;
-        Vector3 startPos = transform.position;
-        Vector3 endPos = startPos + Vector3.up * 50f; // move up 50px
+
+        // Get the RectTransform
+        RectTransform rectTransform = GetComponent<RectTransform>();
+
+        // Use anchoredPosition for UI movement
+        Vector2 startPos = rectTransform.anchoredPosition;
+        Vector2 endPos = startPos + Vector2.up * 50f; // move up 50px in UI space
+
+
+        //Vector3 startPos = transform.position;
+        //Vector3 endPos = startPos + Vector3.up * 50f; // move up 50px
 
         while (elapsed < fadeDuration)
         {
-            transform.position = Vector3.Lerp(startPos, endPos, elapsed / fadeDuration);
+            //transform.position = Vector3.Lerp(startPos, endPos, elapsed / fadeDuration);
+
+            // Lerp the anchoredPosition
+            rectTransform.anchoredPosition = Vector2.Lerp(startPos, endPos, elapsed / fadeDuration);
+
             canvasGroup.alpha = 1f - (elapsed / fadeDuration);
             elapsed += Time.deltaTime;
             yield return null;

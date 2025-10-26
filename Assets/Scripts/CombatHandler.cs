@@ -427,44 +427,44 @@ public class CombatHandler : MonoBehaviour
             StatsCollector.Instance?.RecordManaChange(attackChoice.manaCost, false); // Record mana spent
             StatsCollector.Instance?.RecordAbilityUsed(); // Record that an ability was used
                                                           // Calculate base damage
-
-            // Use the testable calculation method
-            float damage = CalculateDamage(attacker, defender, attackChoice);
-
-            // Apply damage to defender
-            float oldHealth = defender.health;
-            defender.health -= damage;
-            Debug.Log($"[ExecuteAttack] {defender.moncargName} health: {oldHealth} -> {defender.health}");
-
-            if (attacker == player && damage > 0)
-            {
-                StatsCollector.Instance?.RecordDamageDealt(damage); // Record damage dealt BY player
-            }
-            else if (defender == player && damage > 0)
-            {
-                StatsCollector.Instance?.RecordHPChange(damage, false); // Record HP lost BY player
-            }
-
-            Debug.Log(attacker.moncargName + " used " + attackChoice.name + " on " + defender.moncargName + " for " + damage + " damage!");
-            combatUI?.UpdateCombatTerminal(attacker.moncargName + " used " + attackChoice.name + " on " + defender.moncargName + " for " + damage + " damage!");
-            // ADDED: Flash red and show damage indicator
-            StartCoroutine(FlashRed(defender));
-            ShowDamageIndicator(defender, damage);
-
-            Debug.Log($"[ExecuteAttack] {attacker.moncargName} used {attackChoice.name} on {defender.moncargName} for {damage} damage!");
-
-            // Check if defender is defeated
-            if (defender.health <= 0)
-            {
-                defender.health = 0;
-                defender.active = false;
-                Debug.Log(defender.moncargName + " has been defeated!");
-                combatUI.UpdateCombatTerminal(defender.moncargName + " has been defeated!");
-
-            }
-
-            combatUI.UpdateMoncargStats(player, enemy);
         }
+        // Use the testable calculation method
+        float damage = CalculateDamage(attacker, defender, attackChoice);
+
+        // Apply damage to defender
+        float oldHealth = defender.health;
+        defender.health -= damage;
+        Debug.Log($"[ExecuteAttack] {defender.moncargName} health: {oldHealth} -> {defender.health}");
+
+        if (attacker == player && damage > 0)
+        {
+            StatsCollector.Instance?.RecordDamageDealt(damage); // Record damage dealt BY player
+        }
+        else if (defender == player && damage > 0)
+        {
+            StatsCollector.Instance?.RecordHPChange(damage, false); // Record HP lost BY player
+        }
+
+        Debug.Log(attacker.moncargName + " used " + attackChoice.name + " on " + defender.moncargName + " for " + damage + " damage!");
+        combatUI?.UpdateCombatTerminal(attacker.moncargName + " used " + attackChoice.name + " on " + defender.moncargName + " for " + damage + " damage!");
+        // ADDED: Flash red and show damage indicator
+        StartCoroutine(FlashRed(defender));
+        ShowDamageIndicator(defender, damage);
+
+        Debug.Log($"[ExecuteAttack] {attacker.moncargName} used {attackChoice.name} on {defender.moncargName} for {damage} damage!");
+
+        // Check if defender is defeated
+        if (defender.health <= 0)
+        {
+            defender.health = 0;
+            defender.active = false;
+            Debug.Log(defender.moncargName + " has been defeated!");
+            combatUI.UpdateCombatTerminal(defender.moncargName + " has been defeated!");
+
+        }
+
+        combatUI.UpdateMoncargStats(player, enemy);
+        
 
     }
         // ==========================================
@@ -478,12 +478,36 @@ public class CombatHandler : MonoBehaviour
             return;
         }
 
-        // Convert world position to screen position
-        Vector3 screenPos = Camera.main.WorldToScreenPoint(moncarg.transform.position + Vector3.up * 1f);
+        //// Convert world position to screen position
+        //Vector3 screenPos = Camera.main.WorldToScreenPoint(moncarg.transform.position + Vector3.up * 1f);
 
-        // Instantiate as child of combat canvas
+        //// Instantiate as child of combat canvas
+        //GameObject indicator = Instantiate(damageIndicatorPrefab, combatCanvas.transform);
+        //indicator.transform.position = screenPos;
+
+        // --- NEW AND CORRECTED LOGIC ---
+
+        // 1. Get the RectTransform of the canvas.
+        RectTransform canvasRect = combatCanvas.GetComponent<RectTransform>();
+
+        // 2. Convert the Moncarg's world position to a screen pixel position.
+        // (Your original line for this was correct)
+        Vector2 screenPoint = Camera.main.WorldToScreenPoint(moncarg.transform.position + Vector3.up * 1.5f); // Increased the offset a bit to appear above the head
+
+        // 3. Convert the screen pixel position to a local position within the canvas.
+        // This is the key step.
+        Vector2 localPoint;
+        RectTransformUtility.ScreenPointToLocalPointInRectangle(canvasRect, screenPoint, combatCanvas.worldCamera, out localPoint);
+
+        // 4. Instantiate the indicator as a child of the canvas.
         GameObject indicator = Instantiate(damageIndicatorPrefab, combatCanvas.transform);
-        indicator.transform.position = screenPos;
+        indicator.SetActive(true);
+
+        // 5. Set the indicator's anchoredPosition to the calculated local point.
+        indicator.GetComponent<RectTransform>().anchoredPosition = localPoint;
+
+        // --- End of new logic ---
+
         indicator.transform.localScale = new Vector3(5f, 5f, 1f);
 
         FloatingDamageText dmgText = indicator.GetComponent<FloatingDamageText>();
