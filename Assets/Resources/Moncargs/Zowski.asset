@@ -17,7 +17,7 @@ MonoBehaviour:
   moncargData:
     moncargName: Zowski
     baseMaxHealth: 322
-    baseAttack: 260
+    baseAttack: 80
     baseDefense: 27
     baseSpeed: 48
     baseMaxMana: 336
@@ -26,9 +26,9 @@ MonoBehaviour:
     attack: 260
     defense: 27
     speed: 48
-    exp: 0
+    exp: 50
     level: 1
-    mana: 336
+    mana: 50
     maxMana: 336
     catchChance: 0.1
     dodgeChance: 0.4

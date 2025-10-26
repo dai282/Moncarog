@@ -6821,9 +6821,6 @@ MonoBehaviour:
   - {fileID: 11400000, guid: ff6f9fbed549bd04f848cb39fcad9805, type: 2}
   rareDrops: []
   legendaryDrops: []
-  dropChance: 0.7
-  rareDropChance: 0.15
-  legendaryDropChance: 0.05
   normalAttackSoundFX: {fileID: 8300000, guid: 3df6578e4f070da4788a5ac911bfa7fa, type: 3}
   fireAttackSoundFX: {fileID: 8300000, guid: e29389fb66252264d8e291d84097043b, type: 3}
   waterAttackSoundFX: {fileID: 8300000, guid: 027f9943164745d4880195cd076fddba, type: 3}
@@ -8938,15 +8935,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: MyScriptAssembly::TutorialUI
   targetImage: {fileID: 2005118088}
   tutorialPics:
-  - {fileID: -7657343879169699161, guid: b306229979e42b64d9227fe0499d9a1d, type: 3}
-  - {fileID: 3511447545880228160, guid: 317a1dd9407a7864babcbfca61985ae7, type: 3}
-  - {fileID: -3360495847826627155, guid: f03701836f4bf1a40a4fb7954a9f37cb, type: 3}
-  - {fileID: -377946447785088569, guid: 6f7af1a438685144da3abb885462092e, type: 3}
+  - {fileID: -7657343879169699161, guid: 0f4bbbd60c46855408ed9e724ad6f61b, type: 3}
+  - {fileID: 3511447545880228160, guid: 5f7cc719b6fbb5b40b5b4653a5cb8b60, type: 3}
+  - {fileID: -3360495847826627155, guid: 49bcdac2ba7ed3746bae384b09a2e84b, type: 3}
+  - {fileID: 1386075018089193362, guid: c7082c3b6c7f15a40bf7bc560c91743a, type: 3}
   - {fileID: 3651828730828569848, guid: 0c054dc1526b6d149a5af7b93d6392fa, type: 3}
-  - {fileID: 5895671001300766716, guid: 9ce614704bccbe74991c9db4b446f2c0, type: 3}
-  - {fileID: 1274457778950574556, guid: f0c7747b3860cd247a7bfca25a52381e, type: 3}
-  - {fileID: 1786955562604159942, guid: faea0292b79e6794590391d9d9895e07, type: 3}
-  - {fileID: -140148217009556829, guid: 2ee84d1f27f36454e88944abb2c2fd5c, type: 3}
+  - {fileID: -1340376038995001896, guid: 3993232097d14ca42956bc7beecc0785, type: 3}
+  - {fileID: 1786955562604159942, guid: c213b2fb43f783e429970f59b6be3a18, type: 3}
+  - {fileID: 5895671001300766716, guid: 020268d15c8b6a94ab3745c862cbc60e, type: 3}
+  - {fileID: -140148217009556829, guid: ca425f65ea01b8849930413dc35f17b1, type: 3}
   - {fileID: -230604300210488057, guid: 916cb5a6acf219241917aeb561c81115, type: 3}
   tutorialPage: {fileID: 1505330730}
   mainMenu: {fileID: 1866197107}
@@ -17627,7 +17624,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -0.33996582, y: 0.5749512}
+  m_AnchoredPosition: {x: -0.33984375, y: 0.5749512}
   m_SizeDelta: {x: -1.779892, y: -0.64993596}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1907612009
@@ -18719,7 +18716,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: -3360495847826627155, guid: f03701836f4bf1a40a4fb7954a9f37cb, type: 3}
+  m_Sprite: {fileID: -7657343879169699161, guid: 0f4bbbd60c46855408ed9e724ad6f61b, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1

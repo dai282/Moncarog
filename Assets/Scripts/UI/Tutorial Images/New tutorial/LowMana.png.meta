@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 2ee84d1f27f36454e88944abb2c2fd5c
+guid: 020268d15c8b6a94ab3745c862cbc60e
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -140148217009556829
-    second: SwitchBt_0
+      213: 5895671001300766716
+    second: LowMana_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -113,13 +113,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: SwitchBt_0
+      name: LowMana_0
       rect:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 715
-        height: 405
+        width: 722
+        height: 408
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -128,8 +128,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 3a2bd3d60f71e0ef0800000000000000
-      internalID: -140148217009556829
+      spriteID: cff8a110a81a1d150800000000000000
+      internalID: 5895671001300766716
       vertices: []
       indices: 
       edges: []
@@ -148,7 +148,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      SwitchBt_0: -140148217009556829
+      LowMana_0: 5895671001300766716
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
