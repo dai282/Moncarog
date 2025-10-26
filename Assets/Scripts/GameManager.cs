@@ -17,6 +17,7 @@ public class GameManager : MonoBehaviour
     private List<MapManager.RoomInfo> nextRooms;
     private RoomGrid currentRoomGrid;
 
+
     [SerializeField] private AudioClip loseSoundFX;
     [SerializeField] private AudioClip winSoundFX;
     [SerializeField] private AudioClip doorEnterSoundFX;
@@ -296,6 +297,21 @@ public class GameManager : MonoBehaviour
 
         StatsCollector.Instance?.SetCurrentSessionStats(data.sessionStats);
 
+        // **WAIT FOR RESOURCEDB TO BE READY**
+        yield return new WaitUntil(() => ResourceDB.Instance != null && ResourceDB.Instance.IsReady);
+        Debug.Log("ResourceDB is ready");
+
+        // 1. Restore inventory
+        if (PlayerInventory.Instance != null)
+        {
+            PlayerInventory.Instance.LoadInventory(data.items, data.moncargs);
+            Debug.Log($"Loaded inventory: {data.items.Count} items, {data.moncargs.Count} moncargs");
+        }
+        else
+        {
+            Debug.LogError("PlayerInventory.Instance is null during load!");
+        }
+
         // 2. Then rebuild the map 
         mapManager.LoadMapFromData(data.mapNodes);
 
@@ -329,6 +345,7 @@ public class GameManager : MonoBehaviour
 
         // 6. Place the player at their saved position
         player.transform.position = data.playerPosition;
+
 
         // 7. Re-enable controls
         if (moveUI != null) moveUI.EnableAllButtons();

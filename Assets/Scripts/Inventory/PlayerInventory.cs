@@ -839,6 +839,12 @@ public sealed class PlayerInventory : MonoBehaviour
     
     public void LoadInventory(List<SavedStoredItem> savedItems, List<SavedStoredMoncarg> savedMoncargs)
     {
+        if (ResourceDB.Instance == null)
+        {
+            Debug.LogError("[PlayerInventory] ResourceDB.Instance is null! Cannot load inventory.");
+            return;
+        }
+
         StoredItems.Clear();
         StoredMoncargs.Clear();
 

@@ -6,6 +6,7 @@ using System.Linq;
 public class ResourceDB : MonoBehaviour
 {
     public static ResourceDB Instance { get; private set; }
+    public bool IsReady { get; private set; } = false;
 
     private Dictionary<string, ItemDefinition> _itemDefinitions;
     private Dictionary<string, MoncargInventoryAdapter> _moncargAdapters;
@@ -21,6 +22,8 @@ public class ResourceDB : MonoBehaviour
         DontDestroyOnLoad(gameObject);
 
         LoadResources();
+        IsReady = true;
+        Debug.Log("[ResourceDB] ResourceDB is ready.");
     }
 
     private void LoadResources()

@@ -8491,6 +8491,7 @@ GameObject:
   - component: {fileID: 940294204}
   - component: {fileID: 940294205}
   - component: {fileID: 940294206}
+  - component: {fileID: 940294207}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -8620,6 +8621,18 @@ MonoBehaviour:
   - {fileID: -230604300210488057, guid: 916cb5a6acf219241917aeb561c81115, type: 3}
   tutorialPage: {fileID: 1505330730}
   mainMenu: {fileID: 1866197107}
+--- !u!114 &940294207
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 940294199}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4921912f3b1104f4db4828b2d34d6f22, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: MyScriptAssembly::ResourceDB
 --- !u!1 &947154831
 GameObject:
   m_ObjectHideFlags: 0
@@ -10721,8 +10734,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 940294203}
-        m_TargetAssemblyTypeName: MainMenu, Assembly-CSharp
+      - m_Target: {fileID: 940294200}
+        m_TargetAssemblyTypeName: GameManager, MyScriptAssembly
         m_MethodName: ContinueGame
         m_Mode: 1
         m_Arguments:
@@ -10737,6 +10750,18 @@ MonoBehaviour:
         m_TargetAssemblyTypeName: SoundFxManager, Assembly-CSharp
         m_MethodName: PlayButtonFXClip
         m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 1866197107}
+        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+        m_MethodName: SetActive
+        m_Mode: 6
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
