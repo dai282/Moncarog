@@ -34,11 +34,12 @@ public class MoncargDatabase : MonoBehaviour
     public int GetNumberOfBossAndMiniboss()
     {
         int count = 0;
-        for (GameObject moncarg in availableEnemyMoncargs)
+        
+        foreach (GameObject moncarg in availableEnemyMoncargs)
         {
             if (moncarg.GetComponent<StoredMoncarg>().Details.moncargData.isBoss == true || moncarg.GetComponent<StoredMoncarg>().Details.moncargData.isMiniBoss == true)
             {
-                count++
+                count++;
             }
         }
         return count;

@@ -84,16 +84,6 @@ public class CombatHandler : MonoBehaviour
 
         encounterStarted = true;
 
-        //Create enemy Moncarg instance for battle
-        moncargDatabase = GameManager.Instance.moncargDatabase;
-        int databaseLen = moncargDatabase.availableEnemyMoncargs.Count;
-        int databaseF = moncargDatabase.fireMoncargs.Count;
-        int databaseP = moncargDatabase.plantMoncargs.Count;
-        int databaseW = moncargDatabase.waterMoncargs.Count;
-        int databaseN = moncargDatabase.normalMoncargs.Count;
-        int numberOfBossesAndMinibosses = moncargDatabase.GetNumberOfBossAndMiniboss();
-        // Instantiate moncarg and check if they're boss or miniboss rooms
-
         InstantiateMoncargBasedOnRoomID(roomID);
 
         //enemyObj.transform.localScale = new Vector3(15f, 15f, 0f);
@@ -118,6 +108,15 @@ public class CombatHandler : MonoBehaviour
 
     private void InstantiateMoncargBasedOnRoomID(int roomID)
     {
+        //Create enemy Moncarg instance for battle
+        moncargDatabase = GameManager.Instance.moncargDatabase;
+        int databaseLen = moncargDatabase.availableEnemyMoncargs.Count;
+        int databaseF = moncargDatabase.fireMoncargs.Count;
+        int databaseP = moncargDatabase.plantMoncargs.Count;
+        int databaseW = moncargDatabase.waterMoncargs.Count;
+        int databaseN = moncargDatabase.normalMoncargs.Count;
+        int numberOfBossesAndMinibosses = moncargDatabase.GetNumberOfBossAndMiniboss();
+        // Instantiate moncarg and check if they're boss or miniboss rooms
         if (roomID < 0)
         {
             switch (roomID)
@@ -926,14 +925,6 @@ public class CombatHandler : MonoBehaviour
         commonDrops = commons;
         rareDrops = rares;
         legendaryDrops = legendaries;
-    }
-
-    // Optional: Method to modify drop chances dynamically
-    public void SetDropChances(float baseChance, float rareChance, float legendaryChance)
-    {
-        dropChance = Mathf.Clamp01(baseChance);
-        RARE_DROP_CHANCE = Mathf.Clamp01(rareChance);
-        legendaryDropChance = Mathf.Clamp01(legendaryChance);
     }
     #endregion
 
