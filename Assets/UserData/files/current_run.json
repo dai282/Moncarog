@@ -1,18 +1,11 @@
 {
     "playerPosition": {
-        "x": 12.099998474121094,
-        "y": 4.19999885559082
+        "x": 4.0,
+        "y": -15.0
     },
-    "currentRoomId": 2,
+    "currentRoomId": 1,
     "items": [],
-    "moncargs": [
-        {
-            "moncargAdapterId": "Zagen",
-            "currentHealth": 500.0,
-            "currentMana": 80.0,
-            "isEquipped": true
-        }
-    ],
+    "moncargs": [],
     "mapNodes": [
         {
             "roomId": 1,
@@ -29,8 +22,8 @@
         },
         {
             "roomId": 2,
-            "originalRoomName": 13,
-            "roomType": 0,
+            "originalRoomName": 3,
+            "roomType": 3,
             "position": {
                 "x": -1.0,
                 "y": 2.0
@@ -48,35 +41,97 @@
                 "y": 2.0
             },
             "exitRoomIds": [
-                4
+                5,
+                6
             ]
         },
         {
             "roomId": 4,
-            "originalRoomName": 7,
+            "originalRoomName": 10,
             "roomType": 2,
+            "position": {
+                "x": -2.0,
+                "y": 4.0
+            },
+            "exitRoomIds": [
+                7
+            ]
+        },
+        {
+            "roomId": 5,
+            "originalRoomName": 12,
+            "roomType": 0,
             "position": {
                 "x": 0.0,
                 "y": 4.0
             },
             "exitRoomIds": [
-                5
-            ]
-        },
-        {
-            "roomId": 5,
-            "originalRoomName": 14,
-            "roomType": 0,
-            "position": {
-                "x": 0.0,
-                "y": 6.0
-            },
-            "exitRoomIds": [
-                6
+                8,
+                9
             ]
         },
         {
             "roomId": 6,
+            "originalRoomName": 15,
+            "roomType": 0,
+            "position": {
+                "x": 2.0,
+                "y": 4.0
+            },
+            "exitRoomIds": [
+                10
+            ]
+        },
+        {
+            "roomId": 7,
+            "originalRoomName": 7,
+            "roomType": 2,
+            "position": {
+                "x": -3.0,
+                "y": 6.0
+            },
+            "exitRoomIds": [
+                11
+            ]
+        },
+        {
+            "roomId": 8,
+            "originalRoomName": 5,
+            "roomType": 3,
+            "position": {
+                "x": -1.0,
+                "y": 6.0
+            },
+            "exitRoomIds": [
+                11
+            ]
+        },
+        {
+            "roomId": 9,
+            "originalRoomName": 9,
+            "roomType": 2,
+            "position": {
+                "x": 1.0,
+                "y": 6.0
+            },
+            "exitRoomIds": [
+                11
+            ]
+        },
+        {
+            "roomId": 10,
+            "originalRoomName": 10,
+            "roomType": 2,
+            "position": {
+                "x": 3.0,
+                "y": 6.0
+            },
+            "exitRoomIds": [
+                11
+            ]
+        },
+        {
+            "roomId": 11,
             "originalRoomName": -10,
             "roomType": 6,
             "position": {
@@ -84,265 +139,289 @@
                 "y": 8.0
             },
             "exitRoomIds": [
-                7
-            ]
-        },
-        {
-            "roomId": 7,
-            "originalRoomName": 12,
-            "roomType": 0,
-            "position": {
-                "x": 0.0,
-                "y": 10.0
-            },
-            "exitRoomIds": [
-                8
-            ]
-        },
-        {
-            "roomId": 8,
-            "originalRoomName": 17,
-            "roomType": 1,
-            "position": {
-                "x": 0.0,
-                "y": 12.0
-            },
-            "exitRoomIds": [
-                9,
-                10
-            ]
-        },
-        {
-            "roomId": 9,
-            "originalRoomName": 4,
-            "roomType": 3,
-            "position": {
-                "x": -1.0,
-                "y": 14.0
-            },
-            "exitRoomIds": [
-                11,
-                12
-            ]
-        },
-        {
-            "roomId": 10,
-            "originalRoomName": 11,
-            "roomType": 0,
-            "position": {
-                "x": 1.0,
-                "y": 14.0
-            },
-            "exitRoomIds": [
+                12,
                 13
             ]
         },
         {
-            "roomId": 11,
-            "originalRoomName": 2,
-            "roomType": 3,
+            "roomId": 12,
+            "originalRoomName": 19,
+            "roomType": 1,
             "position": {
-                "x": -2.0,
-                "y": 16.0
+                "x": -1.0,
+                "y": 10.0
             },
             "exitRoomIds": [
                 14
             ]
         },
         {
-            "roomId": 12,
-            "originalRoomName": 16,
+            "roomId": 13,
+            "originalRoomName": 17,
             "roomType": 1,
             "position": {
-                "x": 0.0,
-                "y": 16.0
+                "x": 1.0,
+                "y": 10.0
             },
             "exitRoomIds": [
                 15
             ]
         },
         {
-            "roomId": 13,
-            "originalRoomName": 5,
-            "roomType": 3,
-            "position": {
-                "x": 2.0,
-                "y": 16.0
-            },
-            "exitRoomIds": [
-                16
-            ]
-        },
-        {
             "roomId": 14,
-            "originalRoomName": -1,
-            "roomType": 5,
+            "originalRoomName": 18,
+            "roomType": 1,
             "position": {
-                "x": -2.0,
-                "y": 18.0
+                "x": -1.0,
+                "y": 12.0
             },
             "exitRoomIds": [
+                16,
                 17
             ]
         },
         {
             "roomId": 15,
-            "originalRoomName": -2,
-            "roomType": 5,
+            "originalRoomName": 2,
+            "roomType": 3,
             "position": {
-                "x": 0.0,
-                "y": 18.0
+                "x": 1.0,
+                "y": 12.0
             },
             "exitRoomIds": [
-                18
-            ]
-        },
-        {
-            "roomId": 16,
-            "originalRoomName": -3,
-            "roomType": 5,
-            "position": {
-                "x": 2.0,
-                "y": 18.0
-            },
-            "exitRoomIds": [
+                18,
                 19
             ]
         },
         {
-            "roomId": 17,
-            "originalRoomName": 6,
-            "roomType": 2,
-            "position": {
-                "x": -2.0,
-                "y": 20.0
-            },
-            "exitRoomIds": [
-                20
-            ]
-        },
-        {
-            "roomId": 18,
-            "originalRoomName": 15,
+            "roomId": 16,
+            "originalRoomName": 13,
             "roomType": 0,
             "position": {
-                "x": 0.0,
-                "y": 20.0
+                "x": -3.0,
+                "y": 14.0
             },
             "exitRoomIds": [
                 20
             ]
         },
         {
-            "roomId": 19,
-            "originalRoomName": 4,
-            "roomType": 3,
+            "roomId": 17,
+            "originalRoomName": 11,
+            "roomType": 0,
             "position": {
-                "x": 2.0,
-                "y": 20.0
-            },
-            "exitRoomIds": [
-                20
-            ]
-        },
-        {
-            "roomId": 20,
-            "originalRoomName": -11,
-            "roomType": 6,
-            "position": {
-                "x": 0.0,
-                "y": 22.0
+                "x": -1.0,
+                "y": 14.0
             },
             "exitRoomIds": [
                 21
             ]
         },
         {
+            "roomId": 18,
+            "originalRoomName": 19,
+            "roomType": 1,
+            "position": {
+                "x": 1.0,
+                "y": 14.0
+            },
+            "exitRoomIds": [
+                21
+            ]
+        },
+        {
+            "roomId": 19,
+            "originalRoomName": 8,
+            "roomType": 2,
+            "position": {
+                "x": 3.0,
+                "y": 14.0
+            },
+            "exitRoomIds": [
+                22
+            ]
+        },
+        {
+            "roomId": 20,
+            "originalRoomName": -1,
+            "roomType": 5,
+            "position": {
+                "x": -3.0,
+                "y": 16.0
+            },
+            "exitRoomIds": [
+                23
+            ]
+        },
+        {
             "roomId": 21,
-            "originalRoomName": 3,
+            "originalRoomName": -2,
+            "roomType": 5,
+            "position": {
+                "x": 0.0,
+                "y": 16.0
+            },
+            "exitRoomIds": [
+                24,
+                25
+            ]
+        },
+        {
+            "roomId": 22,
+            "originalRoomName": -3,
+            "roomType": 5,
+            "position": {
+                "x": 3.0,
+                "y": 16.0
+            },
+            "exitRoomIds": [
+                26,
+                27
+            ]
+        },
+        {
+            "roomId": 23,
+            "originalRoomName": 14,
+            "roomType": 0,
+            "position": {
+                "x": -4.0,
+                "y": 18.0
+            },
+            "exitRoomIds": [
+                28
+            ]
+        },
+        {
+            "roomId": 24,
+            "originalRoomName": 6,
+            "roomType": 2,
+            "position": {
+                "x": -2.0,
+                "y": 18.0
+            },
+            "exitRoomIds": [
+                28
+            ]
+        },
+        {
+            "roomId": 25,
+            "originalRoomName": 16,
+            "roomType": 1,
+            "position": {
+                "x": 0.0,
+                "y": 18.0
+            },
+            "exitRoomIds": [
+                28
+            ]
+        },
+        {
+            "roomId": 26,
+            "originalRoomName": 11,
+            "roomType": 0,
+            "position": {
+                "x": 2.0,
+                "y": 18.0
+            },
+            "exitRoomIds": [
+                28
+            ]
+        },
+        {
+            "roomId": 27,
+            "originalRoomName": 13,
+            "roomType": 0,
+            "position": {
+                "x": 4.0,
+                "y": 18.0
+            },
+            "exitRoomIds": [
+                28
+            ]
+        },
+        {
+            "roomId": 28,
+            "originalRoomName": -11,
+            "roomType": 6,
+            "position": {
+                "x": 0.0,
+                "y": 20.0
+            },
+            "exitRoomIds": [
+                29
+            ]
+        },
+        {
+            "roomId": 29,
+            "originalRoomName": 4,
             "roomType": 3,
+            "position": {
+                "x": 0.0,
+                "y": 22.0
+            },
+            "exitRoomIds": [
+                30
+            ]
+        },
+        {
+            "roomId": 30,
+            "originalRoomName": 20,
+            "roomType": 1,
             "position": {
                 "x": 0.0,
                 "y": 24.0
             },
             "exitRoomIds": [
-                22,
-                23
+                31
             ]
         },
         {
-            "roomId": 22,
-            "originalRoomName": 8,
-            "roomType": 2,
+            "roomId": 31,
+            "originalRoomName": 11,
+            "roomType": 0,
             "position": {
-                "x": -1.0,
+                "x": 0.0,
                 "y": 26.0
             },
             "exitRoomIds": [
-                24
+                32
             ]
         },
         {
-            "roomId": 23,
-            "originalRoomName": 18,
-            "roomType": 1,
-            "position": {
-                "x": 1.0,
-                "y": 26.0
-            },
-            "exitRoomIds": [
-                24
-            ]
-        },
-        {
-            "roomId": 24,
-            "originalRoomName": 19,
-            "roomType": 1,
+            "roomId": 32,
+            "originalRoomName": 12,
+            "roomType": 0,
             "position": {
                 "x": 0.0,
                 "y": 28.0
             },
             "exitRoomIds": [
-                25
+                33
             ]
         },
         {
-            "roomId": 25,
-            "originalRoomName": 9,
-            "roomType": 2,
-            "position": {
-                "x": 0.0,
-                "y": 30.0
-            },
-            "exitRoomIds": [
-                26
-            ]
-        },
-        {
-            "roomId": 26,
+            "roomId": 33,
             "originalRoomName": -99,
             "roomType": 4,
             "position": {
                 "x": 0.0,
-                "y": 32.0
+                "y": 30.0
             },
             "exitRoomIds": []
         }
     ],
-    "traversalPath": [
-        0
-    ],
+    "traversalPath": [],
     "sessionStats": {
-        "StepsTaken": 68,
-        "DamageDealt": 130.0,
-        "moncargsDefeated": 1,
+        "StepsTaken": 0,
+        "DamageDealt": 0.0,
+        "moncargsDefeated": 0,
         "HPRecovered": 0.0,
         "HPLost": 0.0,
         "ManaRecovered": 0.0,
-        "ManaSpent": 70.0,
+        "ManaSpent": 0.0,
         "PotionsUsed": 0,
-        "AbilitiesUsed": 1,
+        "AbilitiesUsed": 0,
         "moncargsCollected": 0,
-        "timeSpentIngame": 268.29254150390627
+        "timeSpentIngame": 7.9192728996276859
     }
 }
