@@ -219,7 +219,10 @@ public class CombatHandler : MonoBehaviour
 
             //remove defeated moncarg from inventory
             PlayerInventory.Instance.RemoveMoncargFromInventory(player.GetComponent<StoredMoncarg>().Details);
-            //destroy player moncarg object
+
+            //disable skill buttons
+            combatUI.DisableSkillButtons(false);
+
             combatUI.UpdateCombatTerminal($"{player.moncargName} was defeated!");
             combatUI.UpdateCombatTerminal("You need to switch Moncargs!");
 

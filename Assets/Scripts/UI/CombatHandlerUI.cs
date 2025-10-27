@@ -224,6 +224,14 @@ public class CombatHandlerUI : MonoBehaviour
         fleeButton.SetEnabled(false);
     }
 
+    public void DisableSkillButtons(bool enable)
+    {
+        for (int i = 0; i < 4; i++)
+        {
+            skillButtons[i].SetEnabled(enable);
+        }
+    }
+
     public void Cleanup()
     {
         //moves back to default panel

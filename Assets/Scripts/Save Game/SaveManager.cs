@@ -24,7 +24,7 @@ public class SaveManager : MonoBehaviour
 
 
         // 1. Application.dataPath IS the "Assets" folder in the editor.
-        string saveDirectory = Path.Combine(Application.dataPath, "UserData", "files");
+        string saveDirectory = Path.Combine(Application.persistentDataPath, "SaveData");
 
         // 2. Create the directory if it doesn't already exist.
         if (!Directory.Exists(saveDirectory))
@@ -118,13 +118,26 @@ public class SaveManager : MonoBehaviour
 
     public RunData LoadRun()
     {
+        Debug.Log($"Attempting to load from: {_runDataPath}");
+        Debug.Log($"File exists: {File.Exists(_runDataPath)}");
+
         if (File.Exists(_runDataPath))
         {
-            Debug.Log($"Loading run data from: {_runDataPath}");
-            string json = File.ReadAllText(_runDataPath);
-            RunData data = JsonUtility.FromJson<RunData>(json);
-            return data;
+            try
+            {
+                string json = File.ReadAllText(_runDataPath);
+                Debug.Log($"File content length: {json.Length}");
+                RunData data = JsonUtility.FromJson<RunData>(json);
+                Debug.Log($"Successfully loaded run data");
+                return data;
+            }
+            catch (System.Exception ex)
+            {
+                Debug.LogError($"Error loading run data: {ex.Message}");
+                return null;
+            }
         }
+
         Debug.Log("No run data file found.");
         return null;
     }

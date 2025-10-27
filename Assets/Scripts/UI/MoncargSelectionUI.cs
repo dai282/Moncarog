@@ -90,7 +90,17 @@ public class MoncargSelectionUI : MonoBehaviour
             moncargList.Rebuild();
         }
 
-        confirmButton.SetEnabled(false);
+        // ADD THIS: Pre-select the first moncarg
+        if (equippedMoncargs.Count > 0)
+        {
+            moncargList.selectedIndex = 0;
+            selectedMoncarg = equippedMoncargs[0];
+            confirmButton.SetEnabled(true);
+        }
+        else
+        {
+            confirmButton.SetEnabled(false);
+        }
         root.style.display = DisplayStyle.Flex;
     }
 
