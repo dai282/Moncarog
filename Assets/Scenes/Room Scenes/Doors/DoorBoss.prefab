@@ -46,7 +46,7 @@ Tilemap:
     second:
       serializedVersion: 2
       m_TileIndex: 10
-      m_TileSpriteIndex: 6
+      m_TileSpriteIndex: 12
       m_TileMatrixIndex: 0
       m_TileColorIndex: 0
       m_TileObjectToInstantiateIndex: 65535
@@ -66,7 +66,7 @@ Tilemap:
     second:
       serializedVersion: 2
       m_TileIndex: 6
-      m_TileSpriteIndex: 2
+      m_TileSpriteIndex: 6
       m_TileMatrixIndex: 0
       m_TileColorIndex: 0
       m_TileObjectToInstantiateIndex: 65535
@@ -136,7 +136,7 @@ Tilemap:
     second:
       serializedVersion: 2
       m_TileIndex: 12
-      m_TileSpriteIndex: 0
+      m_TileSpriteIndex: 2
       m_TileMatrixIndex: 0
       m_TileColorIndex: 0
       m_TileObjectToInstantiateIndex: 65535
@@ -233,12 +233,12 @@ Tilemap:
   - m_RefCount: 0
     m_Data: {fileID: 0}
   m_TileSpriteArray:
-  - m_RefCount: 1
-    m_Data: {fileID: 673954580, guid: eedffa53898d345e58a08f01c35d9e4c, type: 3}
+  - m_RefCount: 0
+    m_Data: {fileID: 0}
   - m_RefCount: 1
     m_Data: {fileID: 567939393, guid: eedffa53898d345e58a08f01c35d9e4c, type: 3}
   - m_RefCount: 1
-    m_Data: {fileID: -1547818485, guid: eedffa53898d345e58a08f01c35d9e4c, type: 3}
+    m_Data: {fileID: 673954580, guid: eedffa53898d345e58a08f01c35d9e4c, type: 3}
   - m_RefCount: 1
     m_Data: {fileID: 1710783441, guid: eedffa53898d345e58a08f01c35d9e4c, type: 3}
   - m_RefCount: 1
@@ -246,7 +246,7 @@ Tilemap:
   - m_RefCount: 1
     m_Data: {fileID: 1103989085, guid: eedffa53898d345e58a08f01c35d9e4c, type: 3}
   - m_RefCount: 1
-    m_Data: {fileID: -1238924138, guid: eedffa53898d345e58a08f01c35d9e4c, type: 3}
+    m_Data: {fileID: -1547818485, guid: eedffa53898d345e58a08f01c35d9e4c, type: 3}
   - m_RefCount: 1
     m_Data: {fileID: 752051167, guid: eedffa53898d345e58a08f01c35d9e4c, type: 3}
   - m_RefCount: 1
@@ -257,8 +257,8 @@ Tilemap:
     m_Data: {fileID: -747030473, guid: eedffa53898d345e58a08f01c35d9e4c, type: 3}
   - m_RefCount: 4
     m_Data: {fileID: 1383974086, guid: cb822e655c2b346f199548638abfd68b, type: 3}
-  - m_RefCount: 0
-    m_Data: {fileID: 0}
+  - m_RefCount: 1
+    m_Data: {fileID: -1238924138, guid: eedffa53898d345e58a08f01c35d9e4c, type: 3}
   - m_RefCount: 1
     m_Data: {fileID: -344668016, guid: eedffa53898d345e58a08f01c35d9e4c, type: 3}
   m_TileMatrixArray:
@@ -408,8 +408,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a3effce329c7d42429e4011a6ed7c804, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DoorDetector
-  doorID: 
-  destination: {fileID: 0}
+  doorIndex: 0
 --- !u!1 &4966543986278844967
 GameObject:
   m_ObjectHideFlags: 0

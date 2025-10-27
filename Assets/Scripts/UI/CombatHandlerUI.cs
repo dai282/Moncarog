@@ -218,12 +218,19 @@ public class CombatHandlerUI : MonoBehaviour
         catchContainer.style.display = DisplayStyle.Flex;
     }
 
+    //in case its boss or mini boss, you cannot flee
+    public void DisableFlee()
+    {
+        fleeButton.SetEnabled(false);
+    }
+
     public void Cleanup()
     {
         //moves back to default panel
         ShowOptionsPanel();
 
         // Unregister all callbacks to prevent memory leaks
+        fleeButton.SetEnabled(true);
         fightButton.clicked -= () => ShowFightPanel();
         backButton.clicked -= () => ShowOptionsPanel();
         fleeButton.clicked -= () => OnFleeClicked?.Invoke();

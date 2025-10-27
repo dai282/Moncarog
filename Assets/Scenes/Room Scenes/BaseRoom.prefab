@@ -1512,6 +1512,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 99c50e2a2302f40169690b601941caf5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
+  Event: 0
   collisionTilemap: {fileID: 3887283334654385345}
   decorations: {fileID: 1247073850806134414}
   floor: {fileID: 8285451073506177213}

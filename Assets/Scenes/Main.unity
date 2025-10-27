@@ -6962,6 +6962,7 @@ MonoBehaviour:
   waterAttackSoundFX: {fileID: 8300000, guid: 027f9943164745d4880195cd076fddba, type: 3}
   plantAttackSoundFX: {fileID: 8300000, guid: 392d1327a676914429e294e1e718f939, type: 3}
   levelUpSoundFX: {fileID: 8300000, guid: d374fd3626e9e4c48b7ca52af2a8b6f0, type: 3}
+  encounterStarted: 0
 --- !u!4 &717188820
 Transform:
   m_ObjectHideFlags: 0
@@ -7693,6 +7694,18 @@ MonoBehaviour:
         m_TargetAssemblyTypeName: LoseScreenUI, Assembly-CSharp
         m_MethodName: NewGame
         m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 835464287}
+        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+        m_MethodName: SetActive
+        m_Mode: 6
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -11148,7 +11161,9 @@ MonoBehaviour:
   - Details: {fileID: 11400000, guid: 8d09827b02946224289d63e99ee7b9b8, type: 2}
   - Details: {fileID: 11400000, guid: 0d6e3e8c54c86c041a6173e4c1054230, type: 2}
   - Details: {fileID: 11400000, guid: 0c11d71b8c6ccaa4ea0781c21a3621a9, type: 2}
-  StoredMoncargs: []
+  StoredMoncargs:
+  - Details: {fileID: 11400000, guid: eb0f327fc73469a4681c174cedfd57ef, type: 2}
+    IsEquipped: 1
   InventoryDimensions:
     Height: 9
     Width: 6

@@ -22,6 +22,8 @@ public class Moncarg : MonoBehaviour
     public bool active { get => data.active; set => data.active = value; }
     public ElementalType type { get => data.type; set => data.type = value; }
     public SkillDefinition[] skillset { get => data.skillset; set => data.skillset = value; }
+    public bool isBoss { get => data.isBoss; set => data.isBoss = value; }
+    public bool isMiniBoss{ get => data.isMiniBoss; set => data.isMiniBoss = value;}
 
     public enum moncargRole
     {

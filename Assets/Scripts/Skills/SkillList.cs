@@ -9,7 +9,7 @@ public class SkillList
     { 
         //basic moves
         skills[0] = new Skill("Rest", ElementalType.Normal, 0.0f, -50);
-        skills[1] = new Skill("Bite", ElementalType.Normal, 10.0f, 10);
+        skills[1] = new Skill("Bite", ElementalType.Normal, 10.0f, 0);
         skills[2] = new Skill("Tackle", ElementalType.Normal, 30.0f, 20);
 
         //elemental moves

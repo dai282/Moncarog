@@ -35,6 +35,7 @@ public class MoncargData
 
     //Level Progression
     public int expToNextLevel;
+    private bool leveledUp = false;
     public const int BASE_EXP_REQUIRED = 100;
     public const float EXP_GROWTH_RATE = 1.2f;
 
@@ -105,7 +106,7 @@ public class MoncargData
     public bool AddExp(int expGained)
     {
         exp += expGained;
-        bool leveledUp = false;
+        leveledUp = false;
 
         //when exp gained exceeds next level threshold, level up
         while (exp >= expToNextLevel && level < 12) // Cap at level 12
@@ -117,10 +118,16 @@ public class MoncargData
             ScaleStatsToLevel();
             CalculateExpToNextLevel();
 
+            AlertManager.Instance.ShowNotification($"{moncargName} leveled up to level {level}!", 2.0f);
             Debug.Log($"{moncargName} leveled up to level {level}!");
         }
 
         return leveledUp;
+    }
+
+    public bool LeveledUp()
+    {
+        return this.leveledUp;
     }
 
     //call this when defeating an enemy

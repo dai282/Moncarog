@@ -206,14 +206,6 @@ public class GameManager : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.M))
-        {
-            Debug.Log($"Current Room: {currentRoom.roomName} ({currentRoom.numDoors} doors),");
-            foreach (var nextRoom in nextRooms)
-            {
-                Debug.Log($"Next Room(s): {nextRoom.roomName}");
-            }
-        }
         // Check if anyone is subscribed before invoking
         if (OnTimeTick != null)
         {

@@ -16,6 +16,8 @@ public class MoncargSelectionUI : MonoBehaviour
     private List<MoncargInventoryAdapter> equippedMoncargs = new List<MoncargInventoryAdapter>();
     private MoncargInventoryAdapter selectedMoncarg;
 
+    private bool isEncounterStart = false;
+
     public System.Action<MoncargInventoryAdapter> OnMoncargSelected;
     public System.Action OnSelectionCancelled;
 
@@ -76,9 +78,10 @@ public class MoncargSelectionUI : MonoBehaviour
         Hide();
     }
 
-    public void Show(List<MoncargInventoryAdapter> equippedMoncargs)
+    public void Show(List<MoncargInventoryAdapter> equippedMoncargs, bool isEncounterStart = false)
     {
         this.equippedMoncargs = equippedMoncargs;
+        this.isEncounterStart = isEncounterStart; // Store the context
         selectedMoncarg = null;
 
         if (moncargList != null)
@@ -207,5 +210,11 @@ public class MoncargSelectionUI : MonoBehaviour
     private void OnEntryMouseLeave(VisualElement element)
     {
         element.style.backgroundColor = new StyleColor(StyleKeyword.Null);
+    }
+
+    // ADD THIS: Public getter so CombatHandler can check the context
+    public bool IsEncounterStart()
+    {
+        return isEncounterStart;
     }
 }

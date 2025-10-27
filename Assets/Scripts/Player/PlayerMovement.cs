@@ -89,9 +89,13 @@ public class PlayerMovement : MonoBehaviour
         DoorDetector door = roomGrid.GetDoorAtCell(cellPos);
         if (door != null)
         {
-            if (PlayerInventory.Instance.StoredMoncargs.Count == 0)
+            if (PlayerInventory.Instance.StoredMoncargs.Count == 0 )
             {
                 AlertManager.Instance.ShowAlert("You need to choose a starting Moncarg before leaving!");
+            }
+            else if (roomGrid.roomGridID < 0)
+            {
+                AlertManager.Instance.ShowAlert("You cannot skip this room!");
             }
             else
             {

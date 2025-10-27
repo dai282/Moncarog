@@ -50,8 +50,9 @@ public class CombatHandler : MonoBehaviour
     private Moncarg other;
     private MoncargDatabase moncargDatabase;
     private GameObject enemyObj;
+    private GameObject playerObj;
     private bool waitingForPlayerToEquip = false;
-    private bool encounterStarted = false;
+    public bool encounterStarted = false;
 
     #endregion
 
@@ -82,8 +83,6 @@ public class CombatHandler : MonoBehaviour
         //disable move buttons
         GameManager.Instance.moveUI.DisableAllButtons();
 
-        encounterStarted = true;
-
         InstantiateMoncargBasedOnRoomID(roomID);
 
         //enemyObj.transform.localScale = new Vector3(15f, 15f, 0f);
@@ -93,6 +92,10 @@ public class CombatHandler : MonoBehaviour
         enemyObj.transform.rotation = enemySpawnPoint.rotation; // Good practice to also set rotation
 
         enemy = enemyObj.GetComponent<Moncarg>();
+        if (enemy.isBoss || enemy.isMiniBoss)
+        {
+            combatUI.DisableFlee();
+        }
         enemy.InitStats();
         //hide until combat starts
         enemyObj.SetActive(false);
@@ -213,6 +216,11 @@ public class CombatHandler : MonoBehaviour
         if (!player.active)
         {
             Debug.Log("You need to switch Moncargs!");
+
+            //remove defeated moncarg from inventory
+            PlayerInventory.Instance.RemoveMoncargFromInventory(player.GetComponent<StoredMoncarg>().Details);
+            //destroy player moncarg object
+            combatUI.UpdateCombatTerminal($"{player.moncargName} was defeated!");
             combatUI.UpdateCombatTerminal("You need to switch Moncargs!");
 
             // ADDED: Check if all player Moncargs are dead
@@ -985,6 +993,11 @@ public class CombatHandler : MonoBehaviour
     {
         encounterStarted = false;
 
+        if (player.gameObject.GetComponent<StoredMoncarg>().Details.moncargData.LeveledUp())
+        {
+            AlertManager.Instance.ShowNotification($"{player.moncargName} leveled up to level {player.level}!", 4.0f);
+        }
+
         combatUI.Cleanup();
         combatUI.ShowCombatUI(false);
 
@@ -1070,7 +1083,7 @@ public class CombatHandler : MonoBehaviour
         else
         {
             // Show selection UI for multiple equipped moncargs
-            selectionUI.Show(equippedMoncargs);
+            selectionUI.Show(equippedMoncargs, true);
         }
     }
 
@@ -1147,6 +1160,7 @@ public class CombatHandler : MonoBehaviour
         playerMoncargObj.transform.position = playerSpawnPoint.position;
         playerMoncargObj.transform.rotation = playerSpawnPoint.rotation; // Good practice
 
+        playerObj = playerMoncargObj;
         player = playerMoncargObj.GetComponent<Moncarg>();
         player.InitStats();
 
@@ -1157,8 +1171,8 @@ public class CombatHandler : MonoBehaviour
     private void OnSelectionCancelled()
     {
         //Auto selection and force equip only applies at the beginning of encounter
-        //this prevents counting a turn when player switches Moncargs mid battle
-        if (!encounterStarted)
+        //this prevents counting a turn when player switches Moncargs mid 
+        if (selectionUI.IsEncounterStart())
         {
             // If selection was cancelled but we have equipped moncargs, use the first one
             var equippedMoncargs = PlayerInventory.Instance.StoredMoncargs
@@ -1176,6 +1190,11 @@ public class CombatHandler : MonoBehaviour
                 // If no equipped moncargs after cancellation, force equip
                 ForcePlayerToEquipMoncarg();
             }
+        }
+        else
+        {
+            // Mid-combat cancellation - just close the UI, don't auto-select or count as a turn
+            Debug.Log("Mid-combat switch cancelled. Keeping current Moncarg.");
         }
 
     }

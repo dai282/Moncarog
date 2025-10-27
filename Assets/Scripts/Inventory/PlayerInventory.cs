@@ -247,6 +247,7 @@ public sealed class PlayerInventory : MonoBehaviour
         if (m_Root != null)
         {
             m_Root.style.display = DisplayStyle.Flex;
+            UpdateDropButtonState();
         }
     }
 
@@ -446,6 +447,7 @@ public sealed class PlayerInventory : MonoBehaviour
         Debug.Log("Switching to Items mode");
         SoundFxManager.Instance.PlayButtonFXClip();
         m_CurrentMode = InventoryMode.Items;
+        UpdateDropButtonState();
         SetActiveButton(m_ItemsButton);
         RefreshInventoryDisplay();
         UpdateWeightDisplay();
@@ -457,6 +459,7 @@ public sealed class PlayerInventory : MonoBehaviour
         Debug.Log("Switching to Moncargs mode");
         SoundFxManager.Instance.PlayButtonFXClip();
         m_CurrentMode = InventoryMode.Moncargs;
+        UpdateDropButtonState();
         SetActiveButton(m_MoncargButton);
         RefreshInventoryDisplay();
         UpdateWeightDisplay();
@@ -820,6 +823,22 @@ public sealed class PlayerInventory : MonoBehaviour
         UpdateMoncargEquippedCount();
         Debug.Log($"Added moncarg to inventory: {moncarg.FriendlyName} (Equipped: {storedMoncarg.IsEquipped}) [{GetCurrentMoncargCount()}/{MaxMoncargs}]");
     }
+
+    public void RemoveMoncargFromInventory(MoncargInventoryAdapter moncarg)
+    {
+        var storedMoncarg = StoredMoncargs.FirstOrDefault(m => m.Details == moncarg);
+        if (storedMoncarg != null)
+        {
+            if (storedMoncarg.RootVisual != null)
+            {
+                storedMoncarg.RootVisual.RemoveFromHierarchy();
+            }
+            StoredMoncargs.Remove(storedMoncarg);
+            UpdateMoncargEquippedCount();
+            UpdateWeightDisplay();
+            Debug.Log($"Removed moncarg from inventory: {moncarg.FriendlyName}");
+        }
+    }
     
     // Check if player has any equipped moncargs
     public bool HasEquippedMoncargs()
@@ -878,5 +897,23 @@ public sealed class PlayerInventory : MonoBehaviour
         }
         Debug.Log($"Inventory loaded. {StoredItems.Count} items, {StoredMoncargs.Count} Moncargs.");
         RefreshAfterClear(); // This will update all the UI correctly
+    }
+
+    // ADD THIS: Centralized method to update drop button state
+    private void UpdateDropButtonState()
+    {
+        if (m_DropButton == null) return;
+
+        if (m_CurrentMode == InventoryMode.Moncargs)
+        {
+            // Disable drop if player has 3 or fewer Moncargs
+            bool canDrop = StoredMoncargs.Count > 3;
+            m_DropButton.SetEnabled(canDrop);
+        }
+        else
+        {
+            // Items can always be dropped
+            m_DropButton.SetEnabled(true);
+        }
     }
 }
