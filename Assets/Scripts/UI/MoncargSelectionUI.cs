@@ -103,7 +103,7 @@ public class MoncargSelectionUI : MonoBehaviour
     {
         if (moncargList != null)
         {
-            moncargList.fixedItemHeight = 75;
+            moncargList.fixedItemHeight = 150;
 
             moncargList.makeItem = () =>
             {
@@ -119,73 +119,83 @@ public class MoncargSelectionUI : MonoBehaviour
                     var moncargData = equippedMoncargs[index];
                     element.Clear();
 
-                    // Icon
+                    // Root layout for this Moncarg
+                    element.style.flexDirection = FlexDirection.Row;
+                    element.style.justifyContent = Justify.FlexStart;
+                    element.style.alignItems = Align.Center;
+
+                    // === ICON ===
                     var icon = new VisualElement();
                     icon.AddToClassList("moncarg-icon");
                     icon.style.backgroundImage = new StyleBackground(moncargData.Icon);
 
-                    // Info container
+                    // === INFO CONTAINER (two columns) ===
                     var infoContainer = new VisualElement();
                     infoContainer.AddToClassList("info-container");
+                    infoContainer.style.flexDirection = FlexDirection.Row;
+                    infoContainer.style.justifyContent = Justify.SpaceBetween;
+                    infoContainer.style.alignItems = Align.FlexStart;
+                    infoContainer.style.flexGrow = 1;
 
-                    // Name and level
-                    var nameLabel = new Label($"{moncargData.FriendlyName}");
+                    // LEFT COLUMN
+                    var leftColumn = new VisualElement();
+                    leftColumn.AddToClassList("info-left");
+                    leftColumn.style.flexDirection = FlexDirection.Column;
+
+                    // Line 1: Name + Type
+                    var nameTypeRow = new VisualElement();
+                    nameTypeRow.style.flexDirection = FlexDirection.Row;
+                    nameTypeRow.style.alignItems = Align.Center;
+
+                    var nameLabel = new Label(moncargData.FriendlyName);
                     nameLabel.AddToClassList("moncarg-name");
 
-                    var levelLabel = new Label($"Lv. {moncargData.moncargData.level}");
-                    levelLabel.AddToClassList("moncarg-level");
-
-                    var nameandLevelContainer = new VisualElement();
-                    infoContainer.AddToClassList("name-level-container");
-
-                    nameandLevelContainer.Add(nameLabel);
-                    nameandLevelContainer.Add(levelLabel);
-
-                    //Type and stat container
-                    var typeAndStatContainer = new VisualElement();
-                    infoContainer.AddToClassList("type-stat-container");
-
-                    // Type with appropriate color class
                     var typeLabel = new Label(moncargData.moncargData.type.ToString());
                     typeLabel.AddToClassList("moncarg-type");
                     typeLabel.AddToClassList($"type-{moncargData.moncargData.type.ToString().ToLower()}");
 
-                    // Stats container
-                    var statsContainer = new VisualElement();
-                    statsContainer.AddToClassList("stats-container");
+                    nameTypeRow.Add(nameLabel);
+                    nameTypeRow.Add(typeLabel);
 
-                    // Health
-                    var healthContainer = new VisualElement();
-                    healthContainer.AddToClassList("stat-item");
+                    // Line 2: Level
+                    var levelLabel = new Label($"Level {moncargData.moncargData.level}");
+                    levelLabel.AddToClassList("moncarg-level");
 
+                    leftColumn.Add(nameTypeRow);
+                    leftColumn.Add(levelLabel);
+
+                    // RIGHT COLUMN
+                    var rightColumn = new VisualElement();
+                    rightColumn.AddToClassList("info-right");
+                    rightColumn.style.flexDirection = FlexDirection.Column;
+                    rightColumn.style.alignItems = Align.FlexEnd;
+
+                    // Line 1: Health
                     var healthLabel = new Label($"Health: {moncargData.moncargData.health}/{moncargData.moncargData.maxHealth}");
                     healthLabel.AddToClassList("health-text");
 
-                    healthContainer.Add(healthLabel);
-
-                    // Mana
-                    var manaContainer = new VisualElement();
-                    manaContainer.AddToClassList("stat-item");
-
+                    // Line 2: Mana
                     var manaLabel = new Label($"Mana: {moncargData.moncargData.mana}/{moncargData.moncargData.maxMana}");
                     manaLabel.AddToClassList("mana-text");
 
-                    manaContainer.Add(manaLabel);
+                    rightColumn.Add(healthLabel);
+                    rightColumn.Add(manaLabel);
 
-                    statsContainer.Add(healthContainer);
-                    statsContainer.Add(manaContainer);
-
-                    typeAndStatContainer.Add(typeLabel);
-                    typeAndStatContainer.Add(statsContainer);
+                    // Build info container
+                    infoContainer.Add(leftColumn);
+                    infoContainer.Add(rightColumn);
 
                     // Build hierarchy
-                    infoContainer.Add(nameandLevelContainer);
-                    infoContainer.Add(typeAndStatContainer);
+                    element.Add(icon);
+                    element.Add(infoContainer);
 
+
+                    // Build hierarchy
                     element.Add(icon);
                     element.Add(infoContainer);
                 }
             };
+
 
             moncargList.selectionChanged += OnSelectionChanged;
         }

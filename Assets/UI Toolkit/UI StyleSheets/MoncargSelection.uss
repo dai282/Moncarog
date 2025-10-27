@@ -35,6 +35,7 @@
 .moncarg-item {
     flex-direction: row;
     background-color: rgba(40, 40, 55, 0.8);
+    height: 33%
     border-radius: 6px;
     padding: 10px;
     margin-bottom: 8px;
@@ -55,8 +56,8 @@
 }
 
 .moncarg-icon {
-    width: 60px;
-    height: 60px;
+    width: 100px;
+    height: 100px;
     border-radius: 50%;
     border-width: 2px;
     border-color: rgba(100, 100, 120, 0.8);
@@ -65,18 +66,11 @@
 }
 
 .info-container {
-    flex-direction: column;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-start;
     flex-grow: 1;
-    justify-content: flex-start;
-    align-content: auto;
-    border-top-width: 0;
-    border-right-width: 0;
-    border-bottom-width: 0;
-    border-left-width: 0;
-    border-left-color: rgb(255, 0, 0);
-    border-right-color: rgb(255, 0, 0);
-    border-top-color: rgb(255, 0, 0);
-    border-bottom-color: rgb(255, 0, 0);
+    margin-left: 10px;
 }
 
 .name-level-container {
@@ -84,24 +78,21 @@
 }
 
 .moncarg-name {
-    font-size: 20px;
+    font-size: 32px;
     color: rgb(255, 255, 255);
     -unity-font-style: normal;
-    margin-bottom: 4px;
     -unity-font-definition: url("project://database/Assets/BoldPixels/Assets/font/BoldPixels.ttf?fileID=12800000&guid=71a55b0538d48354b87afab937af74d2&type=3#BoldPixels");
 }
 
 .moncarg-level {
-    font-size: 20px;
+    font-size: 28px;
     color: rgb(255, 255, 255);
     -unity-font-style: normal;
-    margin-bottom: 4px;
     -unity-font-definition: url("project://database/Assets/BoldPixels/Assets/font/BoldPixels.ttf?fileID=12800000&guid=71a55b0538d48354b87afab937af74d2&type=3#BoldPixels");
 }
 
 .moncarg-type {
-    font-size: 14px;
-    -unity-font-style: bold;
+    font-size: 28px;
     padding: 2px 8px;
     border-radius: 4px;
     align-self: flex-start;
@@ -129,12 +120,18 @@
     border-color: rgb(100, 200, 50);
 }
 
+.type-normal {
+    background-color: rgba(200, 200, 200, 0.2);
+    color: rgb(230, 230, 230);
+    border-width: 1px;
+    border-color: rgb(180, 180, 180);
+}
+
 .type-stat-container {
     display: flex;
     flex-direction: row;
     justify-content: flex-start;
     align-items: center;
-    gap: 5px;
     border-left-color: rgb(255, 0, 0);
     border-right-color: rgb(255, 0, 0);
     border-top-color: rgb(255, 0, 0);
@@ -156,15 +153,13 @@
 }
 
 .health-text {
-    font-size: 13px;
+    font-size: 28px;
     color: rgb(255, 100, 100);
-    -unity-font-style: bold;
 }
 
 .mana-text {
-    font-size: 13px;
+    font-size: 28px;
     color: rgb(100, 150, 255);
-    -unity-font-style: bold;
 }
 
 .button-container {

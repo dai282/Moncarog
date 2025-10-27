@@ -5625,7 +5625,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 630510524}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9c4f5236df9c3b84dab958a0f5bf6174, type: 3}
   m_Name: 
@@ -5678,6 +5678,18 @@ MonoBehaviour:
       - m_Target: {fileID: 2131696063}
         m_TargetAssemblyTypeName: SoundFxManager, Assembly-CSharp
         m_MethodName: PlayButtonFXClip
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 1079650101}
+        m_TargetAssemblyTypeName: PlayerInventory, MyScriptAssembly
+        m_MethodName: ShowInventory
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
