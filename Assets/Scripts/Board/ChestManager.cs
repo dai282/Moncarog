@@ -55,7 +55,13 @@ public class ChestManager : MonoBehaviour
                 if (storedMoncarg != null)
                 {
                     moncargNameTexts[i].text = storedMoncarg.Details.FriendlyName;
-                    moncargDescriptionTexts[i].text = $"Type: {storedMoncarg.Details.moncargData.type}\nHP: {storedMoncarg.Details.moncargData.maxHealth}\nAttack: {storedMoncarg.Details.moncargData.attack}";
+                    moncargDescriptionTexts[i].text =
+                        $"Type: {storedMoncarg.Details.moncargData.type}\n" +
+                        $"HP: {storedMoncarg.Details.moncargData.maxHealth}\n" +
+                        $"Mana: {storedMoncarg.Details.moncargData.maxMana}\n" +
+                        $"Attack: {storedMoncarg.Details.moncargData.attack}\n"+
+                        $"Defense: {storedMoncarg.Details.moncargData.defense}";
+
                     moncargImages[i].sprite = storedMoncarg.Details.Icon;
 
                     // Set up button with correct index
@@ -81,6 +87,8 @@ public class ChestManager : MonoBehaviour
             AddMoncargToInventory(selectedMoncarg);
             ShowSelectedMoncargCard(selectedMoncarg);
         }
+        MoncargDatabase.Instance.UpdateMoncargLists();
+        MoncargDatabase.Instance.UpdateEnemyDatabase();
 
         MovementUI.Instance.EnableAllButtons();
 

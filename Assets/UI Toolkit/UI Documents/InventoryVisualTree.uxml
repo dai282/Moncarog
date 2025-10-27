@@ -10,7 +10,7 @@
             </ui:VisualElement>
             <ui:VisualElement name="MoncargEquip" style="flex-grow: 1; flex-direction: row; align-items: center; justify-content: center; padding-top: 10px;">
                 <ui:Label text="1/3" display-tooltip-when-elided="true" name="Value" class="header_Main header_main" style="color: rgb(255, 255, 255); -unity-font-definition: url(&quot;project://database/Assets/BoldPixels/Assets/font/BoldPixels.ttf?fileID=12800000&amp;guid=71a55b0538d48354b87afab937af74d2&amp;type=3#BoldPixels&quot;); font-size: 70%;" />
-                <ui:VisualElement name="Icon" style="width: 60px; height: 60px; margin-right: 10px; background-image: url(&quot;project://database/Assets/UI%20Toolkit/InventoryAssets/pokeball.png?fileID=2800000&amp;guid=3b3a3bbfdd6505b4a8a7000c9459d88f&amp;type=3#pokeball&quot;); -unity-background-image-tint-color: rgb(255, 255, 255);" />
+                <ui:VisualElement name="Icon" style="width: 60px; height: 60px; margin-right: 10px; background-image: url(&quot;project://database/Assets/Sprites/1x%20Size/027_3.png?fileID=2800000&amp;guid=a3cb934982599394192a27c1920d2b20&amp;type=3#027_3&quot;); -unity-background-image-tint-color: rgb(255, 255, 255); align-items: auto;" />
             </ui:VisualElement>
             <ui:VisualElement name="Container_Weight" style="flex-grow: 1; flex-direction: row; align-items: center; justify-content: flex-end; padding-top: 10px;">
                 <ui:VisualElement name="Icon" style="width: 20%; height: 100%; margin-right: 10px; background-image: url(&quot;project://database/Assets/UI%20Toolkit/InventoryAssets/backpack.png?fileID=2800000&amp;guid=b76b648b07f78eb419749b3591f673cf&amp;type=3#backpack&quot;);" />
