@@ -6,13 +6,14 @@
 
 ## 🧭 Table of Contents
 1.  [Overview](#-overview)
-2.  [Gameplay Features](#️-gameplay-features)
-3.  [Core Systems](#-core-systems)
-4.  [Development Setup](#-development-setup)
-5.  [Branching & Version Control](#-branching--version-control)
-6.  [Future Plans](#-future-plans)
-7.  [Credits](#-credits)
-8.  [License](#-license)
+2.  [Screenshots](#-screenshots)
+3.  [Gameplay Features](#️-gameplay-features)
+4.  [Core Systems](#-core-systems)
+5.  [Development Setup](#-development-setup)
+6.  [Branching & Version Control](#-branching--version-control)
+7.  [Future Plans](#-future-plans)
+8.  [Credits](#-credits)
+9.  [License](#-license)
 ---
 
 ## 🌍 Overview
@@ -20,6 +21,19 @@
 **Moncarog** combines the thrill of roguelike exploration with strategic, turn-based combat. Each run offers new challenges, enemies, and rewards — no two playthroughs are ever the same.
 
 You’ll encounter **wild Moncargs**, engage them in tactical battles, and attempt to **catch and recruit** them to your party. Victory depends on smart decisions, resource management, and mastering elemental types.
+
+---
+## 📸 Screenshots
+
+<img width="591" height="329" alt="image" src="https://github.com/user-attachments/assets/21bbdec0-dbbc-45b1-93dc-2833d3094c4e" />
+
+<img width="591" height="329" alt="image" src="https://github.com/user-attachments/assets/222c755d-1ccd-4b20-b1ff-598d226b5d74" />
+
+<img width="591" height="329" alt="image" src="https://github.com/user-attachments/assets/c2138549-192b-4175-bb6c-3a369f9f113c" />
+
+<img width="591" height="329" alt="image" src="https://github.com/user-attachments/assets/f0a62d63-b052-4df2-8079-50a7a2339b1c" />
+
+<img width="591" height="329" alt="image" src="https://github.com/user-attachments/assets/dfd4e30f-a06f-4e87-b788-65980b34efd7" />
 
 ---
 
